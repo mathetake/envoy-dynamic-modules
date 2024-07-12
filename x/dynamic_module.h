@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 #include <string>
 
 #include "envoy/server/filter_config.h"
@@ -67,16 +68,19 @@ public:
    * @return the function pointer of Symbols::EnvoyModuleHttpStreamInit.
    */
   Symbols::EnvoyModuleHttpStreamContextInit envoyModuleHttpStreamContextInit() {
-    ASSERT(fn_envoy_module_http_stream_context_init_ != nullptr);
-    return fn_envoy_module_http_stream_context_init_;
+    ASSERT(envoy_module_http_stream_context_init_ != nullptr);
+    return envoy_module_http_stream_context_init_;
   }
 
-private:
-  void* handler_ = nullptr;
-  std::string symlink_path_;
+  void* handlerForTesting() { return handler_; }
 
-  // Symbols.
-  Symbols::EnvoyModuleHttpStreamContextInit fn_envoy_module_http_stream_context_init_ = nullptr;
+private:
+  // The raw dlopen handler.
+  void* handler_ = nullptr;
+  // The path to the copied object file.
+  std::string copied_file_path_;
+
+  Symbols::EnvoyModuleHttpStreamContextInit envoy_module_http_stream_context_init_ = nullptr;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;

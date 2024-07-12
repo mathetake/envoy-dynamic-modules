@@ -3,11 +3,16 @@
 int already_called = 0;
 
 int __envoy_module_init(char* config) {
-  if (already_called) {
+  printf("\t\tinit called with config: %s and already_called_ptr: %p, already_called: %d\n", config,
+         &already_called, already_called);
+  if (already_called == 1) {
     // This function should only be called once.
     return 1;
   }
   already_called = 1;
+
+  printf("init called with config: %s and already_called_ptr: %p, already_called: %d\n", config,
+         &already_called, already_called);
 
   // Checks if the config is equals to "config"
   if (strcmp(config, "config") != 0) {

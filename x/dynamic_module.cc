@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <string>
 
 #include "x/dynamic_module.h"
@@ -14,34 +15,25 @@ namespace DynamicModule {
 DynamicModule::~DynamicModule() {
   ASSERT(handler_ != nullptr);
   dlclose(handler_);
-  unlink(symlink_path_.c_str());
+  std::filesystem::remove(copied_file_path_);
 }
 
 DynamicModule::DynamicModule(const std::string& file_path, const std::string& config,
                              const std::string&& uuid) {
-
-  // dlopen does not take care of the content of the file. It just checks the file name,
-  // and if the name is the same as the one of a previously loaded library, it returns the
-  // same handle.
+  // dlopen does only return a new handle if the file is not already loaded. If the inode
+  // of the file is the same as a file that is already loaded, dlopen will return the same one.
   //
-  // The problem can be avoided by creating a symlink to the file before loading it.
-  // First create a symlink to the file to avoid the reuse of the same file.
-  //
+  // To reload a module, we need to create a hard copy of the file and load that.
+  const std::filesystem::path file_path_absolute = std::filesystem::absolute(file_path);
+  copied_file_path_ = file_path_absolute.string() + "." + uuid;
 
-  auto file_path_absolute = std::filesystem::absolute(file_path);
-  symlink_path_ = file_path_absolute.string() + "." + uuid;
-
-  // Create the symlink.
-  if (symlink(file_path_absolute.c_str(), symlink_path_.c_str()) != 0) {
-    throw EnvoyException(
-        fmt::format("cannot create symlink: {} error: {}", symlink_path_, strerror(errno)));
-  }
+  std::filesystem::copy(file_path_absolute, copied_file_path_,
+                        std::filesystem::copy_options::recursive);
 
   // Load the module with RTLD_LOCAL to avoid symbol conflicts with other modules.
-  handler_ = dlopen(symlink_path_.c_str(), RTLD_LOCAL | RTLD_LAZY);
+  handler_ = dlopen(copied_file_path_.c_str(), RTLD_LOCAL | RTLD_LAZY);
   if (!handler_) {
-    unlink(symlink_path_.c_str());
-    throw EnvoyException(fmt::format("cannot load : {} error: {}", symlink_path_, dlerror()));
+    throw EnvoyException(fmt::format("cannot load : {} error: {}", copied_file_path_, dlerror()));
   }
 
   // Initialize the module.
@@ -49,23 +41,24 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
 }
 
 void DynamicModule::initModule(const std::string& config) {
-  auto init =
+  const Symbols::EnvoyModuleInit init =
       Symbols::resolveSymbol<Symbols::EnvoyModuleInit, Symbols::__envoy_module_init>(handler_);
 
   if (!init) {
-    throw EnvoyException(fmt::format("cannot find init function in {}", symlink_path_));
+    throw EnvoyException(fmt::format("cannot find init function in {}", copied_file_path_));
   }
   const int result = init(config.data());
   if (result != 0) {
     throw EnvoyException(
-        fmt::format("init function in {} failed with result {}", symlink_path_, result));
+        fmt::format("init function in {} failed with result {}", copied_file_path_, result));
   }
 
-  fn_envoy_module_http_stream_context_init_ =
+  envoy_module_http_stream_context_init_ =
       Symbols::resolveSymbol<Symbols::EnvoyModuleHttpStreamContextInit,
                              Symbols::__envoy_module_http_stream_context_init>(handler_);
-  if (!fn_envoy_module_http_stream_context_init_) {
-    throw EnvoyException(fmt::format("cannot find http stream init function in {}", symlink_path_));
+  if (!envoy_module_http_stream_context_init_) {
+    throw EnvoyException(
+        fmt::format("cannot find http stream init function in {}", copied_file_path_));
   }
 }
 

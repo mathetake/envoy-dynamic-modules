@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include <exception>
+#include <vector>
 
 #include "x/dynamic_module.h"
 
@@ -9,8 +11,8 @@ namespace Http {
 namespace DynamicModule {
 
 TEST(TestDynamicModule, InvalidPath) {
-  EXPECT_THROW_WITH_REGEX(DynamicModule("./non_exist.so", "config", "aaaa"), EnvoyException,
-                          "cannot open shared object file: No such file or directory");
+  EXPECT_THROW_WITH_REGEX(DynamicModule("./non_exist.so", "config", "aaaa"), std::exception,
+                          "filesystem error: in copy: No such file or directory");
 }
 
 TEST(TestDynamicModule, InitNonExist) {
@@ -26,13 +28,20 @@ TEST(TestDynamicModule, InitFail) {
 }
 
 TEST(TestDynamicModule, ConstructorHappyPath) {
-  for (int i = 0; i < 10;
-       i++) { // Ensures that the module can be loaded multiple times independently.
+  // Ensures that the module can be loaded multiple times independently.
+  std::vector<DynamicModuleSharedPtr> modules;
+  for (int i = 0; i < 10; i++) {
     std::string config = "config";
-    DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(DynamicModule(
-        "./test/test_programs/libinit.so", config, "ConstructorHappyPath" + std::to_string(i)));
+    DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
+        "./test/test_programs/libinit.so", config, "ConstructorHappyPath" + std::to_string(i));
     // We intentionally set the config to "111111" in the init function, so check it.
     EXPECT_EQ(config, "111111");
+    modules.push_back(module);
+  }
+
+  // Check handlers are different.
+  for (int i = 0; i < 9; i++) {
+    EXPECT_NE(modules[i]->handlerForTesting(), modules[i + 1]->handlerForTesting());
   }
 }
 

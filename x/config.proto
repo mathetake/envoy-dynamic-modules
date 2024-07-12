@@ -13,5 +13,5 @@ message DynamicModuleConfig {
   string file_path = 1;
 
   // Configuration for the module. This will be pased at the load time.
-  google.protobuf.Any module_config = 5;
+  google.protobuf.Any module_config = 3;
 }
