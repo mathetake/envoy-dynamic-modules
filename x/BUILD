@@ -39,10 +39,20 @@ envoy_cc_library(
 )
 
 envoy_cc_library(
+    name = "abi_impl_lib",
+    srcs = ["abi_impl.cc"],
+    repository = "@envoy",
+    deps = [
+        ":filter_lib",
+    ],
+)
+
+envoy_cc_library(
     name = "factory",
     srcs = ["factory.cc"],
     repository = "@envoy",
     deps = [
+        ":abi_impl_lib",
         ":filter_lib",
     ],
 )

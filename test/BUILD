@@ -36,3 +36,13 @@ cc_test(
         "//x:filter_lib",
     ] + DEPS,
 )
+
+cc_test(
+    name = "abi_impl_test",
+    srcs = ["abi_impl_test.cc"],
+    linkopts = LINK_OPTS,
+    deps = [
+        "//abi:abi_lib",
+        "//x:abi_impl_lib",
+    ] + DEPS,
+)

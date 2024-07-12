@@ -1,2 +1,2 @@
 
-int __envoy_module_init(char* config) { return 12345; }
+int __envoy_dynamic_module_init(char* config) { return 12345; }

@@ -3,7 +3,7 @@
 
 int already_called = 0;
 
-int __envoy_module_init(char* config) {
+int __envoy_dynamic_module_init(char* config) {
   printf("\t\tinit called with config: %s and already_called_ptr: %p, already_called: %d\n", config,
          &already_called, already_called);
   if (already_called == 1) {
@@ -26,25 +26,25 @@ int __envoy_module_init(char* config) {
   return 0;
 }
 
-void* __envoy_module_http_context_init() { return NULL; }
+void* __envoy_dynamic_module_http_context_init() { return NULL; }
 
-int __envoy_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr, void* headers,
+int __envoy_dynamic_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr,
+                                                   void* headers, int end_of_stream) {
+  return 0;
+}
+int __envoy_dynamic_module_http_on_request_body(void* envoy_filter_ptr, void* context_ptr,
+                                                void* buffer, int end_of_stream) {
+  return 0;
+}
+int __envoy_dynamic_module_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr,
+                                                    void* headers, int end_of_stream) {
+  return 0;
+}
+int __envoy_dynamic_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr,
+                                                 void* buffer, int end_of_stream) {
+  return 0;
+}
+int __envoy_dynamic_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr, void* buffer,
                                            int end_of_stream) {
-  return 0;
-}
-int __envoy_module_http_on_request_body(void* envoy_filter_ptr, void* context_ptr, void* buffer,
-                                        int end_of_stream) {
-  return 0;
-}
-int __envoy_module_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr,
-                                            void* headers, int end_of_stream) {
-  return 0;
-}
-int __envoy_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr, void* buffer,
-                                         int end_of_stream) {
-  return 0;
-}
-int __envoy_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr, void* buffer,
-                                   int end_of_stream) {
   return 0;
 }
