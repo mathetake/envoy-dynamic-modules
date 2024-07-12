@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 int already_called = 0;
 
@@ -26,8 +27,24 @@ int __envoy_module_init(char* config) {
 }
 
 void* __envoy_module_http_context_init() { return NULL; }
-int __envoy_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr) { return 0; }
-int __envoy_module_http_on_request_body(void* envoy_filter_ptr, void* context_ptr) { return 0; }
-int __envoy_module_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr) { return 0; }
-int __envoy_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr) { return 0; }
-int __envoy_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr) { return 0; }
+
+int __envoy_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr, void* headers,
+                                           int end_of_stream) {
+  return 0;
+}
+int __envoy_module_http_on_request_body(void* envoy_filter_ptr, void* context_ptr, void* buffer,
+                                        int end_of_stream) {
+  return 0;
+}
+int __envoy_module_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr,
+                                            void* headers, int end_of_stream) {
+  return 0;
+}
+int __envoy_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr, void* buffer,
+                                         int end_of_stream) {
+  return 0;
+}
+int __envoy_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr, void* buffer,
+                                   int end_of_stream) {
+  return 0;
+}

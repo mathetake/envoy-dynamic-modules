@@ -52,53 +52,53 @@ public:
    * Get the function pointer to the module's http stream init function.
    * @return the function pointer of Symbols::EnvoyModuleHttpStreamInit.
    */
-  ABI::EnvoyModuleHttpContextInit envoyModuleHttpContextInit() {
+  ABI::EnvoyModuleHttpContextInitSig envoyModuleHttpContextInit() {
     ASSERT(envoy_module_http_context_init_ != nullptr);
     return envoy_module_http_context_init_;
   }
 
   /**
    * Get the function pointer to the module's http on request headers function.
-   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestHeaders.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestHeadersSig.
    */
-  ABI::EnvoyModuleHttpOnRequestHeaders envoyModuleHttpOnRequestHeaders() {
+  ABI::EnvoyModuleHttpOnRequestHeadersSig envoyModuleHttpOnRequestHeaders() {
     ASSERT(envoy_module_http_on_request_headers_ != nullptr);
     return envoy_module_http_on_request_headers_;
   }
 
   /**
    * Get the function pointer to the module's http on request body function.
-   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestBody.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestBodySig.
    */
-  ABI::EnvoyModuleHttpOnRequestBody envoyModuleHttpOnRequestBody() {
+  ABI::EnvoyModuleHttpOnRequestBodySig envoyModuleHttpOnRequestBody() {
     ASSERT(envoy_module_http_on_request_body_ != nullptr);
     return envoy_module_http_on_request_body_;
   }
 
   /**
    * Get the function pointer to the module's http on response headers function.
-   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseHeaders.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseHeadersSig.
    */
-  ABI::EnvoyModuleHttpOnResponseHeaders envoyModuleHttpOnResponseHeaders() {
+  ABI::EnvoyModuleHttpOnResponseHeadersSig envoyModuleHttpOnResponseHeaders() {
     ASSERT(envoy_module_http_on_response_headers_ != nullptr);
     return envoy_module_http_on_response_headers_;
   }
 
   /**
    * Get the function pointer to the module's http on response body function.
-   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseBody.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseBodySig.
    */
 
-  ABI::EnvoyModuleHttpOnResponseBody envoyModuleHttpOnResponseBody() {
+  ABI::EnvoyModuleHttpOnResponseBodySig envoyModuleHttpOnResponseBody() {
     ASSERT(envoy_module_http_on_response_body_ != nullptr);
     return envoy_module_http_on_response_body_;
   }
 
   /**
    * Get the function pointer to the module's http on destroy function.
-   * @return the function pointer of Symbols::EnvoyModuleHttpOnDestroy.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnDestroySig.
    */
-  ABI::EnvoyModuleHttpOnDestroy envoyModuleHttpOnDestroy() {
+  ABI::EnvoyModuleHttpOnDestroySig envoyModuleHttpOnDestroy() {
     ASSERT(envoy_module_http_on_destroy_ != nullptr);
     return envoy_module_http_on_destroy_;
   }
@@ -111,12 +111,12 @@ private:
   // The path to the copied object file.
   std::string copied_file_path_;
 
-  ABI::EnvoyModuleHttpContextInit envoy_module_http_context_init_ = nullptr;
-  ABI::EnvoyModuleHttpOnRequestHeaders envoy_module_http_on_request_headers_ = nullptr;
-  ABI::EnvoyModuleHttpOnRequestBody envoy_module_http_on_request_body_ = nullptr;
-  ABI::EnvoyModuleHttpOnResponseHeaders envoy_module_http_on_response_headers_ = nullptr;
-  ABI::EnvoyModuleHttpOnResponseBody envoy_module_http_on_response_body_ = nullptr;
-  ABI::EnvoyModuleHttpOnDestroy envoy_module_http_on_destroy_ = nullptr;
+  ABI::EnvoyModuleHttpContextInitSig envoy_module_http_context_init_ = nullptr;
+  ABI::EnvoyModuleHttpOnRequestHeadersSig envoy_module_http_on_request_headers_ = nullptr;
+  ABI::EnvoyModuleHttpOnRequestBodySig envoy_module_http_on_request_body_ = nullptr;
+  ABI::EnvoyModuleHttpOnResponseHeadersSig envoy_module_http_on_response_headers_ = nullptr;
+  ABI::EnvoyModuleHttpOnResponseBodySig envoy_module_http_on_response_body_ = nullptr;
+  ABI::EnvoyModuleHttpOnDestroySig envoy_module_http_on_destroy_ = nullptr;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
