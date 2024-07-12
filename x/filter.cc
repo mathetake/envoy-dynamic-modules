@@ -8,61 +8,38 @@ namespace Envoy {
 namespace Http {
 namespace DynamicModule {
 
-HttpFilter::HttpFilter(DynamicModuleSharedPtr config) : config_(config) {}
+HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module)
+    : dynamic_module_(dynamic_module), stream_context_(nullptr) {}
 
 HttpFilter::~HttpFilter() = default;
-
-void HttpFilter::onStreamComplete(){};
 
 void HttpFilter::onDestroy(){};
 
 FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap&, bool) {
+  if (!stream_context_) {
+    stream_context_ = dynamic_module_->envoyModuleHttpStreamContextInit()();
+    if (!stream_context_) {
+      return FilterHeadersStatus::StopIteration;
+    }
+  }
+  ASSERT(stream_context_);
   return FilterHeadersStatus::Continue;
 };
 
 FilterDataStatus HttpFilter::decodeData(Buffer::Instance&, bool) {
+  ASSERT(stream_context_);
   return FilterDataStatus::Continue;
 };
 
-FilterTrailersStatus HttpFilter::decodeTrailers(RequestTrailerMap&) {
-  return FilterTrailersStatus::Continue;
-};
-
-FilterMetadataStatus HttpFilter::decodeMetadata(MetadataMap&) {
-  return FilterMetadataStatus::Continue;
-};
-
-void HttpFilter::setDecoderFilterCallbacks(StreamDecoderFilterCallbacks& callbacks) {
-  decoder_callbacks_ = &callbacks;
-};
-
-void HttpFilter::decodeComplete(){};
-
-Filter1xxHeadersStatus HttpFilter::encode1xxHeaders(ResponseHeaderMap&) {
-  return Filter1xxHeadersStatus::Continue;
-};
-
 FilterHeadersStatus HttpFilter::encodeHeaders(ResponseHeaderMap&, bool) {
+  ASSERT(stream_context_);
   return FilterHeadersStatus::Continue;
 };
 
 FilterDataStatus HttpFilter::encodeData(Buffer::Instance&, bool) {
+  ASSERT(stream_context_);
   return FilterDataStatus::Continue;
 };
-
-FilterTrailersStatus HttpFilter::encodeTrailers(ResponseTrailerMap&) {
-  return FilterTrailersStatus::Continue;
-};
-
-FilterMetadataStatus HttpFilter::encodeMetadata(MetadataMap&) {
-  return FilterMetadataStatus::Continue;
-};
-
-void HttpFilter::setEncoderFilterCallbacks(StreamEncoderFilterCallbacks& callbacks) {
-  encoder_callbacks_ = &callbacks;
-};
-
-void HttpFilter::encodeComplete(){};
 
 } // namespace DynamicModule
 } // namespace Http

@@ -14,17 +14,21 @@ namespace DynamicModule {
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
 
+/**
+ * A filter that uses a dynamic module and corresponds to a single filter instance.
+ */
 class HttpFilter : public Http::StreamFilter {
 public:
   HttpFilter(DynamicModuleSharedPtr);
   ~HttpFilter() override;
 
+  void* streamContextForTesting() { return stream_context_; };
+
+  // N.B. The event hooks inlined here are supported by the dynamic modules for now.
+
   // ---------- Http::StreamFilterBase ------------
-  /**
-   * This routine is called before the access log handlers' final log() is called. Filters can use
-   * this callback to enrich the data passed in to the log handlers.
-   */
-  void onStreamComplete() override;
+
+  void onStreamComplete() override{};
 
   /**
    * This routine is called prior to a filter being destroyed. This may happen after normal stream
@@ -56,53 +60,25 @@ public:
    */
   FilterDataStatus decodeData(Buffer::Instance& data, bool end_stream) override;
 
-  /**
-   * Called with decoded trailers, implicitly ending the stream.
-   * @param trailers supplies the decoded trailers.
-   */
-  FilterTrailersStatus decodeTrailers(RequestTrailerMap& trailers) override;
+  FilterTrailersStatus decodeTrailers(RequestTrailerMap&) override {
+    return FilterTrailersStatus::Continue;
+  }
 
-  /**
-   * Called with decoded metadata. Add new metadata to metadata_map directly. Do not call
-   * StreamDecoderFilterCallbacks::addDecodedMetadata() to add new metadata.
-   *
-   * Note: decodeMetadata() currently cannot stop the filter iteration, and always returns Continue.
-   * That means metadata will go through the complete filter chain at once, even if the other frame
-   * types return StopIteration. If metadata should not pass through all filters at once, users
-   * should consider using StopAllIterationAndBuffer or StopAllIterationAndWatermark in
-   * decodeHeaders() to prevent metadata passing to the following filters.
-   *
-   * @param metadata_map supplies the decoded metadata.
-   */
-  FilterMetadataStatus decodeMetadata(MetadataMap&) override;
+  FilterMetadataStatus decodeMetadata(MetadataMap&) override {
+    return FilterMetadataStatus::Continue;
+  };
 
-  /**
-   * Called by the filter manager once to initialize the filter decoder callbacks that the
-   * filter should use. Callbacks will not be invoked by the filter after onDestroy() is called.
-   */
-  void setDecoderFilterCallbacks(StreamDecoderFilterCallbacks& callbacks) override;
+  void setDecoderFilterCallbacks(StreamDecoderFilterCallbacks& callbacks) override {
+    decoder_callbacks_ = &callbacks;
+  }
 
-  /**
-   * Called at the end of the stream, when all data has been decoded.
-   */
-  void decodeComplete() override;
+  void decodeComplete() override{};
 
   // ----------  Http::StreamEncoderFilter  ----------
 
-  /**
-   * Called with supported 1xx headers.
-   *
-   * This is not folded into encodeHeaders because most Envoy users and filters
-   * will not be proxying 1xxs and with it split out, can ignore the
-   * complexity of multiple encodeHeaders calls.
-   *
-   * This will only be invoked once per request.
-   *
-   * @param headers supplies the 1xx response headers to be encoded.
-   * @return Filter1xxHeadersStatus determines how filter chain iteration proceeds.
-   *
-   */
-  Filter1xxHeadersStatus encode1xxHeaders(ResponseHeaderMap& headers) override;
+  Filter1xxHeadersStatus encode1xxHeaders(ResponseHeaderMap&) override {
+    return Filter1xxHeadersStatus::Continue;
+  };
 
   /**
    * Called with headers to be encoded, optionally indicating end of stream.
@@ -125,39 +101,28 @@ public:
    */
   FilterDataStatus encodeData(Buffer::Instance& data, bool end_stream) override;
 
-  /**
-   * Called with trailers to be encoded, implicitly ending the stream.
-   * @param trailers supplies the trailers to be encoded.
-   */
-  FilterTrailersStatus encodeTrailers(ResponseTrailerMap& trailers) override;
+  FilterTrailersStatus encodeTrailers(ResponseTrailerMap&) override {
+    return FilterTrailersStatus::Continue;
+  };
 
-  /**
-   * Called with metadata to be encoded. New metadata should be added directly to metadata_map. DO
-   * NOT call StreamDecoderFilterCallbacks::encodeMetadata() interface to add new metadata.
-   *
-   * @param metadata_map supplies the metadata to be encoded.
-   * @return FilterMetadataStatus, which currently is always FilterMetadataStatus::Continue;
-   */
-  FilterMetadataStatus encodeMetadata(MetadataMap& metadata_map) override;
+  FilterMetadataStatus encodeMetadata(MetadataMap&) override {
+    return FilterMetadataStatus::Continue;
+  };
 
-  /**
-   * Called by the filter manager once to initialize the filter callbacks that the filter should
-   * use. Callbacks will not be invoked by the filter after onDestroy() is called.
-   */
-  void setEncoderFilterCallbacks(StreamEncoderFilterCallbacks& callbacks) override;
+  void setEncoderFilterCallbacks(StreamEncoderFilterCallbacks& callbacks) override {
+    encoder_callbacks_ = &callbacks;
+  }
 
-  /**
-   * Called at the end of the stream, when all data has been encoded.
-   */
-  void encodeComplete() override;
+  void encodeComplete() override{};
 
 private:
-  const DynamicModuleSharedPtr config_;
+  const DynamicModuleSharedPtr dynamic_module_;
   StreamDecoderFilterCallbacks* decoder_callbacks_;
   StreamEncoderFilterCallbacks* encoder_callbacks_;
 
-  const LowerCaseString headerKey() const;
-  const std::string headerValue() const;
+  // The in-module per-stream context for the module. This will be set to the return value by
+  // Symbols::__envoy_module_http_stream_context_init.
+  void* stream_context_;
 };
 
 } // namespace DynamicModule

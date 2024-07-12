@@ -26,11 +26,14 @@ TEST(TestDynamicModule, InitFail) {
 }
 
 TEST(TestDynamicModule, ConstructorHappyPath) {
-  std::string config = "config";
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      DynamicModule("./test/test_programs/libinit.so", config, "ConstructorHappyPath"));
-  // We intentionally set the config to "111111" in the init function, so check it.
-  EXPECT_EQ(config, "111111");
+  for (int i = 0; i < 10;
+       i++) { // Ensures that the module can be loaded multiple times independently.
+    std::string config = "config";
+    DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(DynamicModule(
+        "./test/test_programs/libinit.so", config, "ConstructorHappyPath" + std::to_string(i)));
+    // We intentionally set the config to "111111" in the init function, so check it.
+    EXPECT_EQ(config, "111111");
+  }
 }
 
 } // namespace DynamicModule

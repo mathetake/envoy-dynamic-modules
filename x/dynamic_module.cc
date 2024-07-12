@@ -49,7 +49,8 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
 }
 
 void DynamicModule::initModule(const std::string& config) {
-  auto init = reinterpret_cast<Symbols::EnvoyInit>(dlsym(handler_, Symbols::INIT_FUNCTION_NAME));
+  auto init =
+      Symbols::resolveSymbol<Symbols::EnvoyModuleInit, Symbols::__envoy_module_init>(handler_);
 
   if (!init) {
     throw EnvoyException(fmt::format("cannot find init function in {}", symlink_path_));
@@ -58,6 +59,13 @@ void DynamicModule::initModule(const std::string& config) {
   if (result != 0) {
     throw EnvoyException(
         fmt::format("init function in {} failed with result {}", symlink_path_, result));
+  }
+
+  fn_envoy_module_http_stream_context_init_ =
+      Symbols::resolveSymbol<Symbols::EnvoyModuleHttpStreamContextInit,
+                             Symbols::__envoy_module_http_stream_context_init>(handler_);
+  if (!fn_envoy_module_http_stream_context_init_) {
+    throw EnvoyException(fmt::format("cannot find http stream init function in {}", symlink_path_));
   }
 }
 

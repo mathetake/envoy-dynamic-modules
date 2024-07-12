@@ -1,6 +1,14 @@
 #include <stdio.h>
 
-int __envoy_init(char* config) {
+int already_called = 0;
+
+int __envoy_module_init(char* config) {
+  if (already_called) {
+    // This function should only be called once.
+    return 1;
+  }
+  already_called = 1;
+
   // Checks if the config is equals to "config"
   if (strcmp(config, "config") != 0) {
     return 1;
@@ -11,3 +19,5 @@ int __envoy_init(char* config) {
   }
   return 0;
 }
+
+void* __envoy_module_http_stream_context_init() { return NULL; }

@@ -25,3 +25,10 @@ cc_library(
     linkopts = LINK_OPTS,
     linkstatic = False,
 )
+
+cc_library(
+    name = "stream_init",
+    srcs = ["stream_init.c"],
+    linkopts = LINK_OPTS,
+    linkstatic = False,
+)
