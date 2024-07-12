@@ -8,38 +8,23 @@
 #include "envoy/server/filter_config.h"
 
 #include "x/config.pb.h"
+#include "abi/abi.h"
 
 namespace Envoy {
 namespace Http {
 namespace DynamicModule {
 
-namespace Symbols {
-
-// __envoy_module_init is called by the main thread when the module is loaded exactly once per
-// module. The function should return 0 on success and non-zero on failure.
-constexpr char __envoy_module_init[] = "__envoy_module_init";
-using EnvoyModuleInit = int (*)(const char*);
-
-// __envoy_module_http_stream_context_init is called by any worker thread when a new stream is
-// created. That means that the function should be thread-safe.
-//
-// The function should return a pointer to a new instance of the filter or nullptr on failure.
-// The lifetime of the returned pointer should be managed by the dynamic module.
-constexpr char __envoy_module_http_stream_context_init[] =
-    "__envoy_module_http_stream_context_init";
-using EnvoyModuleHttpStreamContextInit = void* (*)();
-
-// Generic template function to resolve symbols.
-template <typename SymbolType, const char* symbolName> SymbolType resolveSymbol(void* handler) {
+// Generic template function to resolve symbols from a dynamic module, or throw an exception if the
+// symbol is not found.
+template <typename SymbolType, const char* symbolName>
+SymbolType resolveSymbolOrThrow(void* handler) {
   static_assert(symbolName != nullptr, "Symbol name must not be null.");
   void* symbol = dlsym(handler, symbolName);
   if (!symbol) {
-    return nullptr;
+    throw EnvoyException(fmt::format("cannot find symbol: {} error: {}", symbolName, dlerror()));
   }
   return reinterpret_cast<SymbolType>(symbol);
 }
-
-} // namespace Symbols
 
 /**
  * A class to manage a dynamic module. This will be owned by multiple filters.
@@ -67,9 +52,55 @@ public:
    * Get the function pointer to the module's http stream init function.
    * @return the function pointer of Symbols::EnvoyModuleHttpStreamInit.
    */
-  Symbols::EnvoyModuleHttpStreamContextInit envoyModuleHttpStreamContextInit() {
-    ASSERT(envoy_module_http_stream_context_init_ != nullptr);
-    return envoy_module_http_stream_context_init_;
+  ABI::EnvoyModuleHttpContextInit envoyModuleHttpContextInit() {
+    ASSERT(envoy_module_http_context_init_ != nullptr);
+    return envoy_module_http_context_init_;
+  }
+
+  /**
+   * Get the function pointer to the module's http on request headers function.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestHeaders.
+   */
+  ABI::EnvoyModuleHttpOnRequestHeaders envoyModuleHttpOnRequestHeaders() {
+    ASSERT(envoy_module_http_on_request_headers_ != nullptr);
+    return envoy_module_http_on_request_headers_;
+  }
+
+  /**
+   * Get the function pointer to the module's http on request body function.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnRequestBody.
+   */
+  ABI::EnvoyModuleHttpOnRequestBody envoyModuleHttpOnRequestBody() {
+    ASSERT(envoy_module_http_on_request_body_ != nullptr);
+    return envoy_module_http_on_request_body_;
+  }
+
+  /**
+   * Get the function pointer to the module's http on response headers function.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseHeaders.
+   */
+  ABI::EnvoyModuleHttpOnResponseHeaders envoyModuleHttpOnResponseHeaders() {
+    ASSERT(envoy_module_http_on_response_headers_ != nullptr);
+    return envoy_module_http_on_response_headers_;
+  }
+
+  /**
+   * Get the function pointer to the module's http on response body function.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnResponseBody.
+   */
+
+  ABI::EnvoyModuleHttpOnResponseBody envoyModuleHttpOnResponseBody() {
+    ASSERT(envoy_module_http_on_response_body_ != nullptr);
+    return envoy_module_http_on_response_body_;
+  }
+
+  /**
+   * Get the function pointer to the module's http on destroy function.
+   * @return the function pointer of Symbols::EnvoyModuleHttpOnDestroy.
+   */
+  ABI::EnvoyModuleHttpOnDestroy envoyModuleHttpOnDestroy() {
+    ASSERT(envoy_module_http_on_destroy_ != nullptr);
+    return envoy_module_http_on_destroy_;
   }
 
   void* handlerForTesting() { return handler_; }
@@ -80,7 +111,12 @@ private:
   // The path to the copied object file.
   std::string copied_file_path_;
 
-  Symbols::EnvoyModuleHttpStreamContextInit envoy_module_http_stream_context_init_ = nullptr;
+  ABI::EnvoyModuleHttpContextInit envoy_module_http_context_init_ = nullptr;
+  ABI::EnvoyModuleHttpOnRequestHeaders envoy_module_http_on_request_headers_ = nullptr;
+  ABI::EnvoyModuleHttpOnRequestBody envoy_module_http_on_request_body_ = nullptr;
+  ABI::EnvoyModuleHttpOnResponseHeaders envoy_module_http_on_response_headers_ = nullptr;
+  ABI::EnvoyModuleHttpOnResponseBody envoy_module_http_on_response_body_ = nullptr;
+  ABI::EnvoyModuleHttpOnDestroy envoy_module_http_on_destroy_ = nullptr;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;

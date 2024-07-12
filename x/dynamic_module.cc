@@ -41,25 +41,38 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
 }
 
 void DynamicModule::initModule(const std::string& config) {
-  const Symbols::EnvoyModuleInit init =
-      Symbols::resolveSymbol<Symbols::EnvoyModuleInit, Symbols::__envoy_module_init>(handler_);
+  const ABI::EnvoyModuleInit init =
+      resolveSymbolOrThrow<ABI::EnvoyModuleInit, ABI::__envoy_module_init>(handler_);
 
-  if (!init) {
-    throw EnvoyException(fmt::format("cannot find init function in {}", copied_file_path_));
-  }
   const int result = init(config.data());
   if (result != 0) {
     throw EnvoyException(
         fmt::format("init function in {} failed with result {}", copied_file_path_, result));
   }
 
-  envoy_module_http_stream_context_init_ =
-      Symbols::resolveSymbol<Symbols::EnvoyModuleHttpStreamContextInit,
-                             Symbols::__envoy_module_http_stream_context_init>(handler_);
-  if (!envoy_module_http_stream_context_init_) {
-    throw EnvoyException(
-        fmt::format("cannot find http stream init function in {}", copied_file_path_));
-  }
+  envoy_module_http_context_init_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpContextInit, ABI::__envoy_module_http_context_init>(
+          handler_);
+
+  envoy_module_http_on_request_headers_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnRequestHeaders,
+                           ABI::__envoy_module_http_on_request_headers>(handler_);
+
+  envoy_module_http_on_request_body_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnRequestBody,
+                           ABI::__envoy_module_http_on_request_body>(handler_);
+
+  envoy_module_http_on_response_headers_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnResponseHeaders,
+                           ABI::__envoy_module_http_on_response_headers>(handler_);
+
+  envoy_module_http_on_response_body_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnResponseBody,
+                           ABI::__envoy_module_http_on_response_body>(handler_);
+
+  envoy_module_http_on_destroy_ =
+      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnDestroy, ABI::__envoy_module_http_on_destroy>(
+          handler_);
 }
 
 } // namespace DynamicModule

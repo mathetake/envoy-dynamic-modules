@@ -121,7 +121,7 @@ private:
   StreamEncoderFilterCallbacks* encoder_callbacks_;
 
   // The in-module per-stream context for the module. This will be set to the return value by
-  // Symbols::__envoy_module_http_stream_context_init.
+  // Symbols::__envoy_module_http_context_init.
   void* stream_context_;
 };
 

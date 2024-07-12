@@ -18,7 +18,7 @@ TEST(TestDynamicModule, InvalidPath) {
 TEST(TestDynamicModule, InitNonExist) {
   EXPECT_THROW_WITH_REGEX(
       DynamicModule("./test/test_programs/libno_init.so", "config", "InitNonExist"), EnvoyException,
-      "cannot find init function in");
+      "cannot find symbol: __envoy_module_init");
 }
 
 TEST(TestDynamicModule, InitFail) {
