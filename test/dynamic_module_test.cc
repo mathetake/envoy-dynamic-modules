@@ -18,7 +18,7 @@ TEST(TestDynamicModule, InvalidPath) {
 TEST(TestDynamicModule, InitNonExist) {
   EXPECT_THROW_WITH_REGEX(
       DynamicModule("./test/test_programs/libno_init.so", "config", "InitNonExist"), EnvoyException,
-      "cannot find symbol: __envoy_dynamic_module_init");
+      "cannot find symbol: __envoy_dynamic_module_v1_init");
 }
 
 TEST(TestDynamicModule, InitFail) {
@@ -50,11 +50,15 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
   const std::filesystem::path tmpdir = std::filesystem::temp_directory_path();
   const auto path = tmpdir / "libtmptmp_TestDynamicModule_SameNameDifferentFile.so";
 
+  // Clean up the file if it exists.
+  std::filesystem::remove(path);
+
   DynamicModuleSharedPtr module1 = nullptr;
   {
     const std::string file_path = "./test/test_programs/libinit.so";
     std::filesystem::copy(file_path, path, std::filesystem::copy_options::recursive);
-    module1 = std::make_shared<DynamicModule>(path.string(), config, "TestDynamicModule_SameNameDifferentFile_old");
+    module1 = std::make_shared<DynamicModule>(path.string(), config,
+                                              "TestDynamicModule_SameNameDifferentFile_old");
   }
 
   // Delete the file.
@@ -64,7 +68,8 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
   {
     const std::string file_path = "./test/test_programs/libstream_init.so";
     std::filesystem::copy(file_path, path, std::filesystem::copy_options::recursive);
-    module2 = std::make_shared<DynamicModule>(path.string(), config, "TestDynamicModule_SameNameDifferentFile_new");
+    module2 = std::make_shared<DynamicModule>(path.string(), config,
+                                              "TestDynamicModule_SameNameDifferentFile_new");
   }
 
   // Even after the file is deleted, the module should still be able to be loaded. Just make sure
@@ -74,6 +79,8 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
 
   // Check handlers are different because the uuid is different even when the file name is the same.
   EXPECT_NE(module1->handlerForTesting(), module2->handlerForTesting());
+
+  std::filesystem::remove(path);
 }
 
 } // namespace DynamicModule

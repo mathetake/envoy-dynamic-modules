@@ -18,7 +18,7 @@ TEST(TestABI, GetRequestHeaderValueEmpty) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  int num_values = ABI::__envoy_dynamic_module_http_get_request_header_value(
+  int num_values = ABI::__envoy_dynamic_module_v1_http_get_request_header_value(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
@@ -33,7 +33,7 @@ TEST(TestABI, GetResponseHeaderValueEmpty) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  int num_values = ABI::__envoy_dynamic_module_http_get_response_header_value(
+  int num_values = ABI::__envoy_dynamic_module_v1_http_get_response_header_value(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
@@ -49,7 +49,7 @@ TEST(TestABI, GetRequestHeaderValue) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  int num_values = ABI::__envoy_dynamic_module_http_get_request_header_value(
+  int num_values = ABI::__envoy_dynamic_module_v1_http_get_request_header_value(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
@@ -62,7 +62,7 @@ TEST(TestABI, GetRequestHeaderValue) {
   ABI::InModuleBufferLength key_length2 = strlen(key2);
   ABI::InModuleBufferPtr result_buffer_ptr2;
   ABI::InModuleBufferLength result_buffer_length_ptr2;
-  int num_values2 = ABI::__envoy_dynamic_module_http_get_request_header_value(
+  int num_values2 = ABI::__envoy_dynamic_module_v1_http_get_request_header_value(
       headers, key_ptr2, key_length2, &result_buffer_ptr2, &result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 1);
   // Read the value from the buffer.
@@ -78,7 +78,7 @@ TEST(TestABI, GetResponseHeaderValue) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  int num_values = ABI::__envoy_dynamic_module_http_get_response_header_value(
+  int num_values = ABI::__envoy_dynamic_module_v1_http_get_response_header_value(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
@@ -91,7 +91,7 @@ TEST(TestABI, GetResponseHeaderValue) {
   ABI::InModuleBufferLength key_length2 = strlen(key2);
   ABI::InModuleBufferPtr result_buffer_ptr2;
   ABI::InModuleBufferLength result_buffer_length_ptr2;
-  int num_values2 = ABI::__envoy_dynamic_module_http_get_response_header_value(
+  int num_values2 = ABI::__envoy_dynamic_module_v1_http_get_response_header_value(
       headers, key_ptr2, key_length2, &result_buffer_ptr2, &result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 0);
   EXPECT_EQ(result_buffer_ptr2, nullptr);
@@ -108,7 +108,7 @@ TEST(TestABI, GetRequestHeaderValueNth) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  ABI::__envoy_dynamic_module_http_get_request_header_value_nth(
+  ABI::__envoy_dynamic_module_v1_http_get_request_header_value_nth(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(result_buffer_ptr, result_buffer_length_ptr);
@@ -125,7 +125,7 @@ TEST(TestABI, GetResponseHeaderValueNth) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  ABI::__envoy_dynamic_module_http_get_response_header_value_nth(
+  ABI::__envoy_dynamic_module_v1_http_get_response_header_value_nth(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(result_buffer_ptr, result_buffer_length_ptr);
@@ -141,7 +141,7 @@ TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  ABI::__envoy_dynamic_module_http_get_request_header_value_nth(
+  ABI::__envoy_dynamic_module_v1_http_get_request_header_value_nth(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
@@ -156,7 +156,7 @@ TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
   ABI::InModuleBufferLength key_length = strlen(key);
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length_ptr;
-  ABI::__envoy_dynamic_module_http_get_response_header_value_nth(
+  ABI::__envoy_dynamic_module_v1_http_get_response_header_value_nth(
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
@@ -178,24 +178,24 @@ TEST(TestABIRoundTrip, GetHeaders) {
 
 TEST(TestABI, GetRequestBodyBufferSlicesCount) {
   Buffer::OwnedImpl body;
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 0);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 0);
 
   body.appendSliceForTest("hello");
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 1);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 1);
 
   body.appendSliceForTest("world");
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 2);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 2);
 }
 
 TEST(TestABI, GetResponseBodyBufferSlicesCount) {
   Buffer::OwnedImpl body;
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 0);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 0);
 
   body.appendSliceForTest("hello");
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 1);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 1);
 
   body.appendSliceForTest("world");
-  EXPECT_EQ(ABI::__envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 2);
+  EXPECT_EQ(ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 2);
 }
 
 TEST(TestABI, GetRequestBodyBufferSlice) {
@@ -205,18 +205,18 @@ TEST(TestABI, GetRequestBodyBufferSlice) {
 
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length;
-  ABI::__envoy_dynamic_module_http_get_request_body_buffer_slice(&body, 0, &result_buffer_ptr,
-                                                                 &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 0, &result_buffer_ptr,
+                                                                    &result_buffer_length);
   std::string result = std::string(result_buffer_ptr, result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  ABI::__envoy_dynamic_module_http_get_request_body_buffer_slice(&body, 1, &result_buffer_ptr,
-                                                                 &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 1, &result_buffer_ptr,
+                                                                    &result_buffer_length);
   std::string result2 = std::string(result_buffer_ptr, result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  ABI::__envoy_dynamic_module_http_get_request_body_buffer_slice(&body, 2, &result_buffer_ptr,
-                                                                 &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 2, &result_buffer_ptr,
+                                                                    &result_buffer_length);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
 }
@@ -228,18 +228,18 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 
   ABI::InModuleBufferPtr result_buffer_ptr;
   ABI::InModuleBufferLength result_buffer_length;
-  ABI::__envoy_dynamic_module_http_get_response_body_buffer_slice(&body, 0, &result_buffer_ptr,
-                                                                  &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 0, &result_buffer_ptr,
+                                                                     &result_buffer_length);
   std::string result = std::string(result_buffer_ptr, result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  ABI::__envoy_dynamic_module_http_get_response_body_buffer_slice(&body, 1, &result_buffer_ptr,
-                                                                  &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 1, &result_buffer_ptr,
+                                                                     &result_buffer_length);
   std::string result2 = std::string(result_buffer_ptr, result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  ABI::__envoy_dynamic_module_http_get_response_body_buffer_slice(&body, 2, &result_buffer_ptr,
-                                                                  &result_buffer_length);
+  ABI::__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 2, &result_buffer_ptr,
+                                                                     &result_buffer_length);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
 }

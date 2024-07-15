@@ -83,6 +83,7 @@ CheckOptions:
     |Returns(Default)?WorkerId$|
     |^sched_getaffinity$|
     |^shutdownThread_$|
+    |^__envoy_dynamic_module_(.*)$|
     |TEST|
     |^use_count$)
 - key: readability-identifier-naming.ParameterCase
@@ -104,14 +105,8 @@ CheckOptions:
 - key: readability-identifier-naming.FunctionCase
   value: 'camelBack'
 
-HeaderFilterRegex: '^./source/.*|^./contrib/.*|^./test/.*|^./envoy/.*'
+HeaderFilterRegex: '^./test/.*|^./x/.*'
 
 UseColor: true
 
 WarningsAsErrors: '*'
-
-## The version here is arbitrary since any change to this file will
-## trigger a full run of clang-tidy against all files.
-## It can be useful as it seems some header changes may not trigger the
-## expected rerun.
-# v0

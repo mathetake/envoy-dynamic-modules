@@ -14,7 +14,7 @@ namespace Http {
 namespace DynamicModule {
 extern "C" {
 
-size_t __envoy_dynamic_module_http_get_request_header_value(
+size_t __envoy_dynamic_module_v1_http_get_request_header_value(
     ABI::ResponseHeaderMapPtr headers, ABI::InModuleBufferPtr key,
     ABI::InModuleBufferLength key_length, ABI::InModuleBufferPtr* result_buffer_ptr,
     ABI::InModuleBufferLength* result_buffer_length_ptr) {
@@ -35,7 +35,7 @@ size_t __envoy_dynamic_module_http_get_request_header_value(
   }
 }
 
-size_t __envoy_dynamic_module_http_get_response_header_value(
+size_t __envoy_dynamic_module_v1_http_get_response_header_value(
     ABI::ResponseHeaderMapPtr headers, ABI::InModuleBufferPtr key,
     ABI::InModuleBufferLength key_length, ABI::InModuleBufferPtr* result_buffer_ptr,
     ABI::InModuleBufferLength* result_buffer_length_ptr) {
@@ -56,7 +56,7 @@ size_t __envoy_dynamic_module_http_get_response_header_value(
   }
 }
 
-void __envoy_dynamic_module_http_get_request_header_value_nth(
+void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
     ABI::ResponseHeaderMapPtr headers, ABI::InModuleBufferPtr key,
     ABI::InModuleBufferLength key_length, ABI::InModuleBufferPtr* result_buffer_ptr,
     ABI::InModuleBufferLength* result_buffer_length_ptr, size_t nth) {
@@ -76,7 +76,7 @@ void __envoy_dynamic_module_http_get_request_header_value_nth(
   *result_buffer_length_ptr = entry_length;
 }
 
-void __envoy_dynamic_module_http_get_response_header_value_nth(
+void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
     ABI::ResponseHeaderMapPtr headers, ABI::InModuleBufferPtr key,
     ABI::InModuleBufferLength key_length, ABI::InModuleBufferPtr* result_buffer_ptr,
     ABI::InModuleBufferLength* result_buffer_length_ptr, size_t nth) {
@@ -97,12 +97,12 @@ void __envoy_dynamic_module_http_get_response_header_value_nth(
 }
 
 size_t
-__envoy_dynamic_module_http_get_request_body_buffer_slices_count(ABI::RequestBufferPtr buffer) {
+__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(ABI::RequestBufferPtr buffer) {
   Buffer::Instance* request_buffer = static_cast<Buffer::Instance*>(buffer);
   return request_buffer->getRawSlices(std::nullopt).size();
 }
 
-void __envoy_dynamic_module_http_get_request_body_buffer_slice(
+void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
     ABI::RequestBufferPtr buffer, size_t nth, ABI::DataSlicePtr* result_buffer_ptr,
     ABI::DataSliceLength* result_buffer_length_ptr) {
   Buffer::Instance* request_buffer = static_cast<Buffer::Instance*>(buffer);
@@ -116,13 +116,13 @@ void __envoy_dynamic_module_http_get_request_body_buffer_slice(
   *result_buffer_length_ptr = slices[nth].len_;
 }
 
-size_t
-__envoy_dynamic_module_http_get_response_body_buffer_slices_count(ABI::ResponseBufferPtr buffer) {
+size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(
+    ABI::ResponseBufferPtr buffer) {
   Buffer::Instance* response_buffer = static_cast<Buffer::Instance*>(buffer);
   return response_buffer->getRawSlices(std::nullopt).size();
 }
 
-void __envoy_dynamic_module_http_get_response_body_buffer_slice(
+void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
     ABI::ResponseBufferPtr buffer, size_t nth, ABI::DataSlicePtr* result_buffer_ptr,
     ABI::DataSliceLength* result_buffer_length_ptr) {
   Buffer::Instance* response_buffer = static_cast<Buffer::Instance*>(buffer);
