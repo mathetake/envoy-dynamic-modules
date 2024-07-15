@@ -23,7 +23,7 @@ void HttpFilter::onDestroy() {
 
 FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool end_of_stream) {
   if (!stream_context_) {
-    stream_context_ = dynamic_module_->envoyModuleHttpContextInit()();
+    this->ensureStreamContext();
     if (!stream_context_) {
       return FilterHeadersStatus::StopIteration;
     }

@@ -39,3 +39,10 @@ cc_library(
     linkopts = LINK_OPTS,
     linkstatic = False,
 )
+
+cc_library(
+    name = "get_body",
+    srcs = ["get_body.c"],
+    linkopts = LINK_OPTS,
+    linkstatic = False,
+)

@@ -24,6 +24,13 @@ public:
 
   void* streamContextForTesting() { return stream_context_; };
 
+  /**
+   * Ensure that the stream context is initialized. This is called by decodeHeaders() to ensure that
+   * the stream context is initialized before calling into the * dynamic module.
+   * Note: this is made public for testing purposes.
+   */
+  void ensureStreamContext() { stream_context_ = dynamic_module_->envoyModuleHttpContextInit()(); }
+
   // N.B. The event hooks inlined here are supported by the dynamic modules for now.
 
   // ---------- Http::StreamFilterBase ------------

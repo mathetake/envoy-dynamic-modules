@@ -39,8 +39,9 @@ cc_test(
 
 cc_test(
     name = "abi_test",
-    srcs = ["abi_impl_test.cc"],
+    srcs = ["abi_test.cc"],
     data = [
+        "//test/test_programs:get_body",
         "//test/test_programs:get_headers",
     ],
     linkopts = LINK_OPTS,
