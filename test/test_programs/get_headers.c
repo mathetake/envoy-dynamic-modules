@@ -2,22 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-int __envoy_dynamic_module_init(char* config) { return 0; }
+size_t __envoy_dynamic_module_init(char* config) { return 0; }
 
-int context = 0;
+size_t context = 0;
 
 void* __envoy_dynamic_module_http_context_init() {
   context = 999999;
   return &context;
 }
 
-extern int __envoy_dynamic_module_get_request_header_value(void* headers, void* key,
-                                                           size_t key_length,
-                                                           void** result_buffer_ptr,
-                                                           size_t* result_buffer_length_ptr);
+extern size_t __envoy_dynamic_module_get_request_header_value(void* headers, void* key,
+                                                              size_t key_length,
+                                                              void** result_buffer_ptr,
+                                                              size_t* result_buffer_length_ptr);
 
-int __envoy_dynamic_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr,
-                                                   void* headers, int end_of_stream) {
+size_t __envoy_dynamic_module_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr,
+                                                      void* headers, size_t end_of_stream) {
   // Get the value of the header "key" from the headers.
   void* key = "key";
   size_t key_length = 3;
@@ -48,12 +48,12 @@ int __envoy_dynamic_module_http_on_request_headers(void* envoy_filter_ptr, void*
 }
 
 int __envoy_dynamic_module_http_on_request_body(void* envoy_filter_ptr, void* context_ptr,
-                                                void* buffer, int end_of_stream) {
+                                                void* buffer, size_t end_of_stream) {
   return 0;
 }
 
 int __envoy_dynamic_module_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr,
-                                                    void* headers, int end_of_stream) {
+                                                    void* headers, size_t end_of_stream) {
   // Get the value of the header "foo" from the headers.
   void* key = "foo";
   size_t key_length = 3;
@@ -83,12 +83,12 @@ int __envoy_dynamic_module_http_on_response_headers(void* envoy_filter_ptr, void
   return 0;
 }
 
-int __envoy_dynamic_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr,
-                                                 void* buffer, int end_of_stream) {
+size_t __envoy_dynamic_module_http_on_response_body(void* envoy_filter_ptr, void* context_ptr,
+                                                    void* buffer, size_t end_of_stream) {
   return 0;
 }
 
-int __envoy_dynamic_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr, void* buffer,
-                                           int end_of_stream) {
+size_t __envoy_dynamic_module_http_on_destroy(void* envoy_filter_ptr, void* context_ptr,
+                                              void* buffer, size_t end_of_stream) {
   return 0;
 }
