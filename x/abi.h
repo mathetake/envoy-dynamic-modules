@@ -1,15 +1,25 @@
 #ifndef ENVOY_DYNAMIC_MODULE_ABI_
 #define ENVOY_DYNAMIC_MODULE_ABI_
 
-typedef unsigned long size_t;
-
 #ifdef __cplusplus
+#include <cstdlib>
 extern "C" {
+#else
+#include <stdlib.h>
 #endif
 
 // -----------------------------------------------------------------------------
 // ----------------------------------- Types -----------------------------------
 // -----------------------------------------------------------------------------
+
+// __envoy_dynamic_module_v1_type_ModuleConfigPtr is a pointer to the configuration passed to the
+// __envoy_dynamic_module_v1_init function. Envoy owns the memory of the configuration and the
+// module is not supposed to take ownership of it.
+typedef const char* __envoy_dynamic_module_v1_type_ModuleConfigPtr;
+
+// __envoy_dynamic_module_v1_type_ModuleConfigSize is the size of the configuration passed to the
+// __envoy_dynamic_module_v1_init function.
+typedef size_t __envoy_dynamic_module_v1_type_ModuleConfigSize;
 
 // __envoy_dynamic_module_v1_type_EnvoyFilterPtr is a pointer to the DynamicModule::HttpFilter
 // instance. It is always passed to the module's event hooks. Modules are not supposed to manipulate
@@ -89,10 +99,13 @@ typedef size_t __envoy_dynamic_module_v1_type_DataSliceLength;
 //
 // Event hooks are functions that are called by Envoy to notify the module of events.
 // The module must implement and export these functions in the dynamic module.
+//
+// All definitions are declared as function pointers typedefs.
 
 // __envoy_dynamic_module_v1_init is called by the main thread when the module is loaded exactly
 // once per module. The function should return 0 on success and non-zero on failure.
-typedef size_t (*__envoy_dynamic_module_v1_init)(const char*);
+typedef size_t (*__envoy_dynamic_module_v1_init)(__envoy_dynamic_module_v1_type_ModuleConfigPtr,
+                                                 __envoy_dynamic_module_v1_type_ModuleConfigSize);
 
 // __envoy_dynamic_module_v1_http_context_init is called by any worker thread when a new stream is
 // created. That means that the function should be thread-safe.

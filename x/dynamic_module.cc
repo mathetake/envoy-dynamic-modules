@@ -52,7 +52,7 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
 void DynamicModule::initModule(const std::string& config) {
   __envoy_dynamic_module_v1_init init = nullptr;
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_init, "__envoy_dynamic_module_v1_init", init);
-  const int result = init(config.data());
+  const int result = init(config.data(), config.size());
   if (result != 0) {
     throw EnvoyException(
         fmt::format("init function in {} failed with result {}", copied_file_path_, result));
