@@ -1,121 +1,141 @@
-#pragma once
+#ifndef ENVOY_DYNAMIC_MODULE_ABI_
+#define ENVOY_DYNAMIC_MODULE_ABI_
 
-#include <cstdio>
+typedef unsigned long size_t;
 
-namespace Envoy {
-namespace Http {
-namespace DynamicModule {
-namespace ABI {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// -------------- Event Hooks --------------
+// -----------------------------------------------------------------------------
+// ----------------------------------- Types -----------------------------------
+// -----------------------------------------------------------------------------
 
-// EnvoyFilterPtr is a pointer to the DynamicModule::HttpFilter instance. It is always passed to the
-// module's event hooks. Modules are not supposed to manipulate this pointer.
-using EnvoyFilterPtr = void*;
+// __envoy_dynamic_module_v1_type_EnvoyFilterPtr is a pointer to the DynamicModule::HttpFilter
+// instance. It is always passed to the module's event hooks. Modules are not supposed to manipulate
+// this pointer.
+typedef void* __envoy_dynamic_module_v1_type_EnvoyFilterPtr;
 
-// ModuleContextPtr is a pointer to in-module context corresponding to a single
-// DynamicModule::HttpFilter instance. It is always passed to the module's event hooks.
-using ModuleContextPtr = void*;
+// __envoy_dynamic_module_v1_type_ModuleContextPtr is a pointer to in-module context corresponding
+// to a single DynamicModule::HttpFilter instance. It is always passed to the module's event hooks.
+typedef void* __envoy_dynamic_module_v1_type_ModuleContextPtr;
 
-// RequestHeadersPtr is a pointer to the RequestHeaderMap instance. This is passed to the
+// __envoy_dynamic_module_v1_type_RequestHeadersPtr is a pointer to the RequestHeaderMap instance.
+// This is passed to the
 // __envoy_dynamic_module_v1_http_on_request_headers event hook.
 // Modules are not supposed to manipulate this pointer.
-using RequestHeadersPtr = void*;
+typedef void* __envoy_dynamic_module_v1_type_RequestHeadersPtr;
 
-// OnRequestHeadersStatus is the return value of the
+// __envoy_dynamic_module_v1_type_OnRequestHeadersStatus is the return value of the
 // __envoy_dynamic_module_v1_http_on_request_headers event. It should be one of the values defined
 // in the FilterHeadersStatus enum.
-using OnRequestHeadersStatus = size_t;
+typedef size_t __envoy_dynamic_module_v1_type_OnRequestHeadersStatus;
 
-// ResponseHeaderMapPtr is a pointer to the ResponseHeaderMap instance. This is passed to the
+// __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr is a pointer to the ResponseHeaderMap
+// instance. This is passed to the
 // __envoy_dynamic_module_v1_http_on_response_headers event hook.
 // Modules are not supposed to manipulate this pointer.
-using ResponseHeaderMapPtr = void*;
+typedef void* __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr;
 
-// OnResponseHeadersStatus is the return value of the
+// __envoy_dynamic_module_v1_type_OnResponseHeadersStatus is the return value of the
 // __envoy_dynamic_module_v1_http_on_response_headers event. It should be one of the values defined
 // in the FilterHeadersStatus enum.
-using OnResponseHeadersStatus = size_t;
+typedef size_t __envoy_dynamic_module_v1_type_OnResponseHeadersStatus;
 
-// RequestBufferPtr is a pointer to the Buffer::Instance instance. This is passed to the
+// __envoy_dynamic_module_v1_type_RequestBufferPtr is a pointer to the Buffer::Instance instance.
+// This is passed to the
 // __envoy_dynamic_module_v1_http_on_request_body event hook.
 // Modules are not supposed to manipulate this pointer.
-using RequestBufferPtr = void*;
+typedef void* __envoy_dynamic_module_v1_type_RequestBufferPtr;
 
-// OnRequestBodyStatus is the return value of the __envoy_dynamic_module_v1_http_on_request_body
-// event. It should be one of the values defined in the FilterDataStatus enum.
-using OnRequestBodyStatus = size_t;
+// __envoy_dynamic_module_v1_type_OnRequestBodyStatus is the return value of the
+// __envoy_dynamic_module_v1_http_on_request_body event. It should be one of the values defined in
+// the FilterDataStatus enum.
+typedef size_t __envoy_dynamic_module_v1_type_OnRequestBodyStatus;
 
-// ResponseBufferPtr is a pointer to the Buffer::Instance instance. This is passed to the
+// __envoy_dynamic_module_v1_type_ResponseBufferPtr is a pointer to the Buffer::Instance instance.
+// This is passed to the
 // __envoy_dynamic_module_v1_http_on_response_body event hook.
 // Modules are not supposed to manipulate this pointer.
-using ResponseBufferPtr = void*;
+typedef void* __envoy_dynamic_module_v1_type_ResponseBufferPtr;
 
-// OnResponseBodyStatus is the return value of the __envoy_dynamic_module_v1_http_on_response_body
-// event. It should be one of the values defined in the FilterDataStatus enum.
-using OnResponseBodyStatus = size_t;
+// __envoy_dynamic_module_v1_type_OnResponseBodyStatus is the return value of the
+// __envoy_dynamic_module_v1_http_on_response_body event. It should be one of the values defined in
+// the FilterDataStatus enum.
+typedef size_t __envoy_dynamic_module_v1_type_OnResponseBodyStatus;
+
+// __envoy_dynamic_module_v1_type_EndOfStream is a boolean value indicating whether the stream has
+// reached the end. The value should be 0 if the stream has not reached the end, and 1 if the stream
+// has reached the end.
+typedef size_t __envoy_dynamic_module_v1_type_EndOfStream;
+
+// __envoy_dynamic_module_v1_type_InModuleBufferPtr is a pointer to a buffer that is managed by the
+// module.
+typedef const char* __envoy_dynamic_module_v1_type_InModuleBufferPtr;
+
+// __envoy_dynamic_module_v1_type_InModuleBufferLength is the length of the buffer.
+typedef size_t __envoy_dynamic_module_v1_type_InModuleBufferLength;
+
+// __envoy_dynamic_module_v1_type_DataSlicePtr is a pointer to a buffer that is managed by Envoy.
+// This is used to pass buffer slices to the module.
+typedef const char* __envoy_dynamic_module_v1_type_DataSlicePtr;
+
+// __envoy_dynamic_module_v1_type_DataSliceLength is the length of the buffer slice.
+typedef size_t __envoy_dynamic_module_v1_type_DataSliceLength;
+
+// -----------------------------------------------------------------------------
+// ------------------------------- Event Hooks ---------------------------------
+// -----------------------------------------------------------------------------
+//
+// Event hooks are functions that are called by Envoy to notify the module of events.
+// The module must implement and export these functions in the dynamic module.
 
 // __envoy_dynamic_module_v1_init is called by the main thread when the module is loaded exactly
 // once per module. The function should return 0 on success and non-zero on failure.
-constexpr char __envoy_dynamic_module_v1_init[] = "__envoy_dynamic_module_v1_init";
-using EnvoyModuleInitSig = size_t (*)(const char*);
+typedef size_t (*__envoy_dynamic_module_v1_init)(const char*);
 
 // __envoy_dynamic_module_v1_http_context_init is called by any worker thread when a new stream is
 // created. That means that the function should be thread-safe.
 //
 // The function should return a pointer to a new instance of the context or nullptr on failure.
 // The lifetime of the returned pointer should be managed by the dynamic module.
-constexpr char __envoy_dynamic_module_v1_http_context_init[] =
-    "__envoy_dynamic_module_v1_http_context_init";
-using EnvoyModuleHttpContextInitSig = ModuleContextPtr (*)();
+typedef __envoy_dynamic_module_v1_type_ModuleContextPtr (
+    *__envoy_dynamic_module_v1_http_context_init)();
 
 // __envoy_dynamic_module_v1_http_on_request_headers is called when request headers are received.
-constexpr char __envoy_dynamic_module_v1_http_on_request_headers[] =
-    "__envoy_dynamic_module_v1_http_on_request_headers";
-using EnvoyModuleHttpOnRequestHeadersSig = OnRequestHeadersStatus (*)(EnvoyFilterPtr,
-                                                                      ModuleContextPtr,
-                                                                      RequestHeadersPtr,
-                                                                      bool /* End of stream */);
+typedef __envoy_dynamic_module_v1_type_OnRequestHeadersStatus (
+    *__envoy_dynamic_module_v1_http_on_request_headers)(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_ModuleContextPtr,
+    __envoy_dynamic_module_v1_type_RequestHeadersPtr, __envoy_dynamic_module_v1_type_EndOfStream);
 
 // __envoy_dynamic_module_v1_http_on_request_body is called when request body data is received.
-constexpr char __envoy_dynamic_module_v1_http_on_request_body[] =
-    "__envoy_dynamic_module_v1_http_on_request_body";
-using EnvoyModuleHttpOnRequestBodySig = OnRequestBodyStatus (*)(EnvoyFilterPtr, ModuleContextPtr,
-                                                                RequestBufferPtr,
-                                                                bool /* End of stream */);
+typedef __envoy_dynamic_module_v1_type_OnRequestBodyStatus (
+    *__envoy_dynamic_module_v1_http_on_request_body)(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_ModuleContextPtr,
+    __envoy_dynamic_module_v1_type_RequestBufferPtr, __envoy_dynamic_module_v1_type_EndOfStream);
 
 // __envoy_dynamic_module_v1_http_on_response_headers is called when response headers are received.
-constexpr char __envoy_dynamic_module_v1_http_on_response_headers[] =
-    "__envoy_dynamic_module_v1_http_on_response_headers";
-using EnvoyModuleHttpOnResponseHeadersSig = OnResponseHeadersStatus (*)(EnvoyFilterPtr,
-                                                                        ModuleContextPtr,
-                                                                        ResponseHeaderMapPtr,
-                                                                        bool /* End of stream */);
+typedef __envoy_dynamic_module_v1_type_OnResponseHeadersStatus (
+    *__envoy_dynamic_module_v1_http_on_response_headers)(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_ModuleContextPtr,
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr,
+    __envoy_dynamic_module_v1_type_EndOfStream);
 
 // __envoy_dynamic_module_v1_http_on_response_body is called when response body data is received.
-constexpr char __envoy_dynamic_module_v1_http_on_response_body[] =
-    "__envoy_dynamic_module_v1_http_on_response_body";
-using EnvoyModuleHttpOnResponseBodySig = OnResponseBodyStatus (*)(EnvoyFilterPtr, ModuleContextPtr,
-                                                                  ResponseBufferPtr,
-                                                                  bool /* End of stream */);
+typedef __envoy_dynamic_module_v1_type_OnResponseBodyStatus (
+    *__envoy_dynamic_module_v1_http_on_response_body)(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_ModuleContextPtr,
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr, __envoy_dynamic_module_v1_type_EndOfStream);
 
 // __envoy_dynamic_module_v1_http_on_destroy is called when the stream is destroyed.
-constexpr char __envoy_dynamic_module_v1_http_on_destroy[] =
-    "__envoy_dynamic_module_v1_http_on_destroy";
-using EnvoyModuleHttpOnDestroySig = void (*)(EnvoyFilterPtr, ModuleContextPtr);
+typedef void (*__envoy_dynamic_module_v1_http_on_destroy)(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_ModuleContextPtr);
 
-// -------------- Envoy Functions --------------
-
-using InModuleBufferPtr = const char*;
-using InModuleBufferLength = size_t;
-using DataSlicePtr = const char*;
-using DataSliceLength = size_t;
-
-// The following functions are implemented by Envoy and are called by the module to interact with
-// it.
-extern "C" {
-
-// ---------------- Header Manipulation ----------------
+// ---------------------------------------------------------------------------------
+// ----------------------------------- Envoy API -----------------------------------
+// ---------------------------------------------------------------------------------
+//
+// The following functions are called by the module to interact with Envoy.
 
 // __envoy_dynamic_module_v1_get_request_header is called by the module to get the value for a
 // request header key. headers is the one passed to the
@@ -128,17 +148,22 @@ extern "C" {
 // guaranteed to be true. In case of multiple values, the module can access n-th value by calling
 // __envoy_dynamic_module_v1_http_get_request_header_value_nth following this function.
 size_t __envoy_dynamic_module_v1_http_get_request_header_value(
-    ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
-    InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr);
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr);
 
 // __envoy_dynamic_module_v1_http_get_request_header_value_nth is almost the same as
 // __envoy_dynamic_module_v1_http_get_request_header_value, but it allows the module to access n-th
 // value of the header. The function should return the number of values found. If nth is out of
 // bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
-    ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
-    InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr,
-    size_t nth);
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr, size_t nth);
 
 // __envoy_dynamic_module_v1_http_get_response_header_value is called by the module to get the value
 // for a response header key. headers is the one passed to the
@@ -151,17 +176,22 @@ void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
 // guaranteed to be true. In case of multiple values, the module can access n-th value by calling
 // __envoy_dynamic_module_v1_http_get_response_header_value_nth following this function.
 size_t __envoy_dynamic_module_v1_http_get_response_header_value(
-    ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
-    InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr);
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr);
 
 // __envoy_dynamic_module_v1_http_get_response_header_value_nth is almost the same as
 // __envoy_dynamic_module_v1_http_get_response_header_value, but it allows the module to access n-th
 // value of the header. The function should return the number of values found. If nth is out of
 // bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
-    ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
-    InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr,
-    size_t nth);
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr, size_t nth);
 
 // __envoy_dynamic_module_v1_http_set_request_header is called by the module to set the value
 // for a request header key. headers is the one passed to the
@@ -169,11 +199,12 @@ void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
 // add a new header with the key and value. If the key is found, this function should replace the
 // value with the new one. If the value is empty, this function should remove the key. If there are
 // multiple headers with the same key, this function removes all of them and adds a new one.
-void __envoy_dynamic_module_v1_http_set_request_header(RequestHeadersPtr headers,
-                                                       InModuleBufferPtr key,
-                                                       InModuleBufferLength key_length,
-                                                       InModuleBufferPtr value,
-                                                       InModuleBufferLength value_length);
+void __envoy_dynamic_module_v1_http_set_request_header(
+    __envoy_dynamic_module_v1_type_RequestHeadersPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr value,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength value_length);
 
 // __envoy_dynamic_module_v1_http_set_response_header is called by the module to set the value
 // for a response header key. headers is the one passed to the
@@ -182,42 +213,45 @@ void __envoy_dynamic_module_v1_http_set_request_header(RequestHeadersPtr headers
 // is found, this function should replace the value with the new one. If the value is empty, this
 // function should remove the key. If there are multiple headers with the same key, this function
 // removes all of them and adds a new one.
-void __envoy_dynamic_module_v1_http_set_response_header(ResponseHeaderMapPtr headers,
-                                                        InModuleBufferPtr key,
-                                                        InModuleBufferLength key_length,
-                                                        InModuleBufferPtr value,
-                                                        InModuleBufferLength value_length);
+void __envoy_dynamic_module_v1_http_set_response_header(
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr value,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength value_length);
 
 // ---------------- Buffer Manipulation ----------------
 
 // __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count is called by the module to
 // get the number of slices in the request body buffer. The function should return the number of
 // slices.
-size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(RequestBufferPtr buffer);
+size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer);
 
 // __envoy_dynamic_module_v1_http_get_request_body_buffer_slice is called by the module to get the
 // n-th slice of the request body buffer. The function should return the buffer and length of the
 // slice. If nth is out of bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
-    RequestBufferPtr buffer, size_t nth, DataSlicePtr* result_buffer_ptr,
-    DataSliceLength* result_buffer_length_ptr);
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer, size_t nth,
+    __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr);
 
 // __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count is called by the module to
 // get the number of slices in the response body buffer. The function should return the number of
 // slices.
-size_t
-__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(ResponseBufferPtr buffer);
+size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer);
 
 // __envoy_dynamic_module_v1_http_get_response_body_buffer_slice is called by the module to get the
 // n-th slice of the response body buffer. The function should return the buffer and length of the
 // slice. If nth is out of bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
-    ResponseBufferPtr buffer, size_t nth, DataSlicePtr* result_buffer_ptr,
-    DataSliceLength* result_buffer_length_ptr);
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer, size_t nth,
+    __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr);
 
-} // extern "C"
+#ifdef __cplusplus
+}
+#endif
 
-} // namespace ABI
-} // namespace DynamicModule
-} // namespace Http
-} // namespace Envoy
+#endif // ENVOY_DYNAMIC_MODULE_ABI_

@@ -40,39 +40,42 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
   initModule(config);
 }
 
-void DynamicModule::initModule(const std::string& config) {
-  const ABI::EnvoyModuleInitSig init =
-      resolveSymbolOrThrow<ABI::EnvoyModuleInitSig, ABI::__envoy_dynamic_module_v1_init>(handler_);
+// Generic template function to resolve symbols from a dynamic module, or throw an exception if the
+// symbol is not found.
+#define RESOLVE_SYMBOL_OR_THROW(symbol_type, symbol_name, symbol_var)                              \
+  symbol_var = reinterpret_cast<symbol_type>(dlsym(handler_, symbol_name));                        \
+  if (symbol_var == nullptr) {                                                                     \
+    throw EnvoyException(                                                                          \
+        fmt::format("cannot resolve symbol: {} error: {}", symbol_name, dlerror()));               \
+  }
 
+void DynamicModule::initModule(const std::string& config) {
+  __envoy_dynamic_module_v1_init init = nullptr;
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_init, "__envoy_dynamic_module_v1_init", init);
   const int result = init(config.data());
   if (result != 0) {
     throw EnvoyException(
         fmt::format("init function in {} failed with result {}", copied_file_path_, result));
   }
 
-  envoy_module_http_context_init_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpContextInitSig,
-                           ABI::__envoy_dynamic_module_v1_http_context_init>(handler_);
-
-  envoy_module_http_on_request_headers_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnRequestHeadersSig,
-                           ABI::__envoy_dynamic_module_v1_http_on_request_headers>(handler_);
-
-  envoy_module_http_on_request_body_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnRequestBodySig,
-                           ABI::__envoy_dynamic_module_v1_http_on_request_body>(handler_);
-
-  envoy_module_http_on_response_headers_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnResponseHeadersSig,
-                           ABI::__envoy_dynamic_module_v1_http_on_response_headers>(handler_);
-
-  envoy_module_http_on_response_body_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnResponseBodySig,
-                           ABI::__envoy_dynamic_module_v1_http_on_response_body>(handler_);
-
-  envoy_module_http_on_destroy_ =
-      resolveSymbolOrThrow<ABI::EnvoyModuleHttpOnDestroySig,
-                           ABI::__envoy_dynamic_module_v1_http_on_destroy>(handler_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_context_init,
+                          "__envoy_dynamic_module_v1_http_context_init",
+                          envoy_dynamic_module_v1_http_context_init_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_request_headers,
+                          "__envoy_dynamic_module_v1_http_on_request_headers",
+                          envoy_dynamic_module_v1_http_on_request_headers_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_request_body,
+                          "__envoy_dynamic_module_v1_http_on_request_body",
+                          envoy_dynamic_module_v1_http_on_request_body_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_response_headers,
+                          "__envoy_dynamic_module_v1_http_on_response_headers",
+                          envoy_dynamic_module_v1_http_on_response_headers_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_response_body,
+                          "__envoy_dynamic_module_v1_http_on_response_body",
+                          envoy_dynamic_module_v1_http_on_response_body_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_destroy,
+                          "__envoy_dynamic_module_v1_http_on_destroy",
+                          envoy_dynamic_module_v1_http_on_destroy_);
 }
 
 } // namespace DynamicModule
