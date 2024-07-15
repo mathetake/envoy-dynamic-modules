@@ -24,7 +24,7 @@ using RequestHeadersPtr = void*;
 
 // OnRequestHeadersStatus is the return value of the __envoy_dynamic_module_http_on_request_headers
 // event. It should be one of the values defined in the FilterHeadersStatus enum.
-using OnRequestHeadersStatus = int;
+using OnRequestHeadersStatus = size_t;
 
 // ResponseHeaderMapPtr is a pointer to the ResponseHeaderMap instance. This is passed to the
 // __envoy_dynamic_module_http_on_response_headers event hook.
@@ -34,7 +34,7 @@ using ResponseHeaderMapPtr = void*;
 // OnResponseHeadersStatus is the return value of the
 // __envoy_dynamic_module_http_on_response_headers event. It should be one of the values defined in
 // the FilterHeadersStatus enum.
-using OnResponseHeadersStatus = int;
+using OnResponseHeadersStatus = size_t;
 
 // RequestBufferPtr is a pointer to the Buffer::Instance instance. This is passed to the
 // __envoy_dynamic_module_http_on_request_body event hook.
@@ -43,7 +43,7 @@ using RequestBufferPtr = void*;
 
 // OnRequestBodyStatus is the return value of the __envoy_dynamic_module_http_on_request_body event.
 // It should be one of the values defined in the FilterDataStatus enum.
-using OnRequestBodyStatus = int;
+using OnRequestBodyStatus = size_t;
 
 // ResponseBufferPtr is a pointer to the Buffer::Instance instance. This is passed to the
 // __envoy_dynamic_module_http_on_response_body event hook.
@@ -52,12 +52,12 @@ using ResponseBufferPtr = void*;
 
 // OnResponseBodyStatus is the return value of the __envoy_dynamic_module_http_on_response_body
 // event. It should be one of the values defined in the FilterDataStatus enum.
-using OnResponseBodyStatus = int;
+using OnResponseBodyStatus = size_t;
 
 // __envoy_dynamic_module_init is called by the main thread when the module is loaded exactly once
 // per module. The function should return 0 on success and non-zero on failure.
 constexpr char __envoy_dynamic_module_init[] = "__envoy_dynamic_module_init";
-using EnvoyModuleInitSig = int (*)(const char*);
+using EnvoyModuleInitSig = size_t (*)(const char*);
 
 // __envoy_dynamic_module_http_context_init is called by any worker thread when a new stream is
 // created. That means that the function should be thread-safe.
@@ -110,7 +110,8 @@ using InModuleBufferLength = size_t;
 // The following functions are implemented by Envoy and are called by the module to interact with
 // it.
 extern "C" {
-// __envoy_dynamic_module_get_request_header is called by the module to get the values for a request
+
+// __envoy_dynamic_module_get_request_header is called by the module to get the value for a request
 // header key. headers is the one passed to the __envoy_dynamic_module_http_on_request_headers.
 // key is the header key to look up. result_buffer_ptr and result_buffer_length_ptr are direct
 // references to the buffer and length of the value. The function should return the number of
@@ -119,11 +120,9 @@ extern "C" {
 // Basically, this acts as a fast zero-copy lookup for a single header value, which is almost always
 // guaranteed to be true. In case of multiple values, the module can access n-th value by calling
 // __envoy_dynamic_module_get_request_header_nth following this function.
-int __envoy_dynamic_module_get_request_header_value(ResponseHeaderMapPtr headers,
-                                                    InModuleBufferPtr key,
-                                                    InModuleBufferLength key_length,
-                                                    InModuleBufferPtr* result_buffer_ptr,
-                                                    InModuleBufferLength* result_buffer_length_ptr);
+size_t __envoy_dynamic_module_get_request_header_value(
+    ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
+    InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr);
 
 // __envoy_dynamic_module_get_request_header_value_nth is almost the same as
 // __envoy_dynamic_module_get_request_header_value, but it allows the module to access n-th value
@@ -133,7 +132,8 @@ void __envoy_dynamic_module_get_request_header_value_nth(
     ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
     InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr,
     size_t nth);
-}
+
+} // extern "C"
 
 } // namespace ABI
 } // namespace DynamicModule

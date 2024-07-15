@@ -8,7 +8,7 @@
 #include "envoy/server/filter_config.h"
 
 #include "x/config.pb.h"
-#include "abi/abi.h"
+#include "x/abi.h"
 
 namespace Envoy {
 namespace Http {

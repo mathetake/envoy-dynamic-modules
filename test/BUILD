@@ -38,11 +38,13 @@ cc_test(
 )
 
 cc_test(
-    name = "abi_impl_test",
+    name = "abi_test",
     srcs = ["abi_impl_test.cc"],
+    data = [
+        "//test/test_programs:get_headers",
+    ],
     linkopts = LINK_OPTS,
     deps = [
-        "//abi:abi_lib",
-        "//x:abi_impl_lib",
+        "//x:abi_lib",
     ] + DEPS,
 )

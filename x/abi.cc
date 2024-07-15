@@ -1,11 +1,9 @@
 #include <filesystem>
 #include <string>
-
-#include "x/dynamic_module.h"
-#include "x/filter.h"
-#include "abi/abi.h"
-
 #include <dlfcn.h>
+
+#include "x/filter.h"
+#include "x/abi.h"
 
 #include "source/common/common/assert.h"
 #include "envoy/common/exception.h"
@@ -15,7 +13,7 @@ namespace Http {
 namespace DynamicModule {
 extern "C" {
 
-int __envoy_dynamic_module_get_request_header_value(
+size_t __envoy_dynamic_module_get_request_header_value(
     ABI::ResponseHeaderMapPtr headers, ABI::InModuleBufferPtr key,
     ABI::InModuleBufferLength key_length, ABI::InModuleBufferPtr* result_buffer_ptr,
     ABI::InModuleBufferLength* result_buffer_length_ptr) {

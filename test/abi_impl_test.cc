@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-#include "abi/abi.h"
+#include "x/abi.h"
+#include "x/filter.h"
 
 #include "test/test_common/utility.h"
 
@@ -84,6 +85,20 @@ TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
       headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
+}
+
+TEST(TestABIRoundTrip, GetHeaders) {
+  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
+      "./test/test_programs/libget_headers.so", "config", "StreamContextNull");
+  auto filter = std::make_shared<HttpFilter>(module);
+
+  Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
+  const auto result = filter->decodeHeaders(request_headers, false);
+  EXPECT_EQ(result, FilterHeadersStatus::Continue);
+
+  Http::TestResponseHeaderMapImpl response_headers{{"foo", "bar"}};
+  const auto result2 = filter->encodeHeaders(response_headers, false);
+  EXPECT_EQ(result2, FilterHeadersStatus::Continue);
 }
 
 } // namespace DynamicModule

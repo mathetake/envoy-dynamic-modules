@@ -15,11 +15,13 @@ api_proto_package(
 envoy_cc_library(
     name = "dynamic_module_lib",
     srcs = ["dynamic_module.cc"],
-    hdrs = ["dynamic_module.h"],
+    hdrs = [
+        "abi.h",
+        "dynamic_module.h",
+    ],
     repository = "@envoy",
     deps = [
         ":pkg_cc_proto",
-        "//abi:abi_lib",
         "@envoy//envoy/common:exception_lib",
         "@envoy//envoy/server:filter_config_interface",
         "@envoy//source/extensions/filters/http/common:pass_through_filter_lib",
@@ -39,8 +41,10 @@ envoy_cc_library(
 )
 
 envoy_cc_library(
-    name = "abi_impl_lib",
-    srcs = ["abi_impl.cc"],
+    name = "abi_lib",
+    srcs = ["abi.cc"],
+    # Make sure that the symbols are exported so that they can be found by the dynamic loader.
+    linkopts = ["-Wl,--export-dynamic"],
     repository = "@envoy",
     deps = [
         ":filter_lib",
@@ -49,10 +53,13 @@ envoy_cc_library(
 
 envoy_cc_library(
     name = "factory",
-    srcs = ["factory.cc"],
+    srcs = [
+        "abi.h",
+        "factory.cc",
+    ],
     repository = "@envoy",
     deps = [
-        ":abi_impl_lib",
         ":filter_lib",
     ],
+    alwayslink = True,
 )
