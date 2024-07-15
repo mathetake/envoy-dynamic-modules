@@ -246,7 +246,7 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 
 TEST(TestABIRoundTrip, GetBody) {
   DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libget_body.so", "config", "TestABIRoundTripGetHeaders");
+      "./test/test_programs/libget_body.so", "config", "TestABIRoundTripGetBody");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureStreamContext();
 

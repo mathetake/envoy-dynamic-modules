@@ -17,6 +17,7 @@ cc_test(
         "//test/test_programs:init",
         "//test/test_programs:init_fail",
         "//test/test_programs:no_init",
+        "//test/test_programs:stream_init",
     ],
     linkopts = LINK_OPTS,
     deps = [
