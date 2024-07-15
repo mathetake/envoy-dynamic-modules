@@ -115,6 +115,8 @@ using DataSliceLength = size_t;
 // it.
 extern "C" {
 
+// ---------------- Header Manipulation ----------------
+
 // __envoy_dynamic_module_v1_get_request_header is called by the module to get the value for a
 // request header key. headers is the one passed to the
 // __envoy_dynamic_module_v1_http_on_request_headers. key is the header key to look up.
@@ -160,6 +162,33 @@ void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
     ResponseHeaderMapPtr headers, InModuleBufferPtr key, InModuleBufferLength key_length,
     InModuleBufferPtr* result_buffer_ptr, InModuleBufferLength* result_buffer_length_ptr,
     size_t nth);
+
+// __envoy_dynamic_module_v1_http_set_request_header is called by the module to set the value
+// for a request header key. headers is the one passed to the
+// __envoy_dynamic_module_v1_http_on_request_headers. If the key is not found, this function should
+// add a new header with the key and value. If the key is found, this function should replace the
+// value with the new one. If the value is empty, this function should remove the key. If there are
+// multiple headers with the same key, this function removes all of them and adds a new one.
+void __envoy_dynamic_module_v1_http_set_request_header(RequestHeadersPtr headers,
+                                                       InModuleBufferPtr key,
+                                                       InModuleBufferLength key_length,
+                                                       InModuleBufferPtr value,
+                                                       InModuleBufferLength value_length);
+
+// __envoy_dynamic_module_v1_http_set_response_header is called by the module to set the value
+// for a response header key. headers is the one passed to the
+// __envoy_dynamic_module_v1_http_on_response_headers.
+// If the key is not found, this function should add a new header with the key and value. If the key
+// is found, this function should replace the value with the new one. If the value is empty, this
+// function should remove the key. If there are multiple headers with the same key, this function
+// removes all of them and adds a new one.
+void __envoy_dynamic_module_v1_http_set_response_header(ResponseHeaderMapPtr headers,
+                                                        InModuleBufferPtr key,
+                                                        InModuleBufferLength key_length,
+                                                        InModuleBufferPtr value,
+                                                        InModuleBufferLength value_length);
+
+// ---------------- Buffer Manipulation ----------------
 
 // __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count is called by the module to
 // get the number of slices in the request body buffer. The function should return the number of

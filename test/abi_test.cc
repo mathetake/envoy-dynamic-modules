@@ -263,6 +263,125 @@ TEST(TestABIRoundTrip, GetBody) {
   EXPECT_EQ(result2, FilterDataStatus::Continue);
 }
 
+TEST(TestABI, SetHeader_Add) {
+  Http::TestRequestHeaderMapImpl request_headers{};
+  ABI::ResponseHeaderMapPtr headers = &request_headers;
+  const char key[] = "key";
+  const char value[] = "value";
+  ABI::InModuleBufferPtr key_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(key);
+  ABI::InModuleBufferLength key_length = strlen(key);
+  ABI::InModuleBufferPtr value_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(value);
+  ABI::InModuleBufferLength value_length = strlen(value);
+  ABI::__envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                                         value_length);
+  EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
+}
+
+TEST(TestABI, SetHeader_Add_empty_value) {
+  Http::TestRequestHeaderMapImpl request_headers{};
+  ABI::ResponseHeaderMapPtr headers = &request_headers;
+  const char key[] = "key";
+  const char value[] = "";
+  ABI::InModuleBufferPtr key_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(key);
+  ABI::InModuleBufferLength key_length = strlen(key);
+  ABI::InModuleBufferPtr value_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(value);
+  ABI::InModuleBufferLength value_length = strlen(value);
+  ABI::__envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                                         value_length);
+  EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
+}
+
+TEST(TestABI, SetHeader_Remove) {
+  Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
+  ABI::ResponseHeaderMapPtr headers = &request_headers;
+  const char key[] = "key";
+  ABI::InModuleBufferPtr key_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(key);
+  ABI::InModuleBufferLength key_length = strlen(key);
+  ABI::InModuleBufferPtr value_ptr = nullptr;
+  ABI::InModuleBufferLength value_length = 0;
+  ABI::__envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                                         value_length);
+  EXPECT_EQ(request_headers.size(), 0);
+}
+
+TEST(TestABI, SetHeader_Replaces) {
+  Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
+  ABI::ResponseHeaderMapPtr headers = &request_headers;
+  const char key[] = "key";
+  const char value[] = "new_value";
+  ABI::InModuleBufferPtr key_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(key);
+  ABI::InModuleBufferLength key_length = strlen(key);
+  ABI::InModuleBufferPtr value_ptr = reinterpret_cast<ABI::InModuleBufferPtr>(value);
+  ABI::InModuleBufferLength value_length = strlen(value);
+  ABI::__envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                                         value_length);
+  EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
+}
+
+TEST(TestABIRoundTrip, SetHeaders) {
+  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
+      "./test/test_programs/libset_headers.so", "config", "TestABIRoundTripSetHeaders");
+  auto filter = std::make_shared<HttpFilter>(module);
+
+  Http::TestRequestHeaderMapImpl request_headers{
+      {
+          "existing_key",
+          "old",
+      },
+      {
+          "existing_key_with_multiple_values",
+          "1",
+      },
+      {
+          "existing_key_with_multiple_values",
+          "2",
+      },
+      {
+          "to_delete",
+          "old",
+      },
+  };
+
+  const auto result = filter->decodeHeaders(request_headers, false);
+  EXPECT_EQ(result, FilterHeadersStatus::Continue);
+  Http::TestResponseHeaderMapImpl response_headers{
+      {
+          "existing_key",
+          "old",
+      },
+      {
+          "existing_key_with_multiple_values",
+          "1",
+      },
+      {
+          "existing_key_with_multiple_values",
+          "2",
+      },
+      {
+          "to_delete",
+          "old",
+      },
+  };
+  const auto result2 = filter->encodeHeaders(response_headers, false);
+  EXPECT_EQ(result2, FilterHeadersStatus::Continue);
+  // Print the headers to check the values.
+  response_headers.iterate([&](const Http::HeaderEntry& header) -> Http::HeaderMap::Iterate {
+    std::cout << header.key().getStringView() << ": " << header.value().getStringView()
+              << std::endl;
+    return Http::HeaderMap::Iterate::Continue;
+  });
+
+  EXPECT_EQ(response_headers.get(LowerCaseString("new_key"))[0]->value().getStringView(), "value");
+  EXPECT_EQ(response_headers.get(LowerCaseString("existing_key"))[0]->value().getStringView(),
+            "new_value");
+  EXPECT_EQ(response_headers.get(LowerCaseString("existing_key_with_multiple_values")).size(), 1);
+  EXPECT_EQ(response_headers.get(LowerCaseString("existing_key_with_multiple_values"))[0]
+                ->value()
+                .getStringView(),
+            "unique_value");
+  EXPECT_FALSE(response_headers.has(LowerCaseString("to_delete")));
+}
+
 } // namespace DynamicModule
 } // namespace Http
 } // namespace Envoy

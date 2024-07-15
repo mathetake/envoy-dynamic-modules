@@ -46,3 +46,10 @@ cc_library(
     linkopts = LINK_OPTS,
     linkstatic = False,
 )
+
+cc_library(
+    name = "set_headers",
+    srcs = ["set_headers.c"],
+    linkopts = LINK_OPTS,
+    linkstatic = False,
+)
