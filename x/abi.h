@@ -295,12 +295,10 @@ void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
 size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(
     __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer);
 
-#define UNUSED(x) (void)(x)
-
 // __envoy_dynamic_module_v1_http_get_response_body_buffer_slice is called by the module to get the
 // n-th slice of the response body buffer. The function should return the buffer and length of the
 // slice. If nth is out of bounds, this function returns nullptr and 0.
-void __attribute__((weak)) __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
     __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer, size_t nth,
     __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
     __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr);
