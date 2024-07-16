@@ -12,7 +12,7 @@ namespace DynamicModule {
 
 TEST(TestABI, GetRequestHeaderValueEmpty) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -28,7 +28,7 @@ TEST(TestABI, GetRequestHeaderValueEmpty) {
 
 TEST(TestABI, GetResponseHeaderValueEmpty) {
   Http::TestResponseHeaderMapImpl response_headers{};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &response_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -44,7 +44,7 @@ TEST(TestABI, GetResponseHeaderValueEmpty) {
 
 TEST(TestABI, GetRequestHeaderValue) {
   Http::TestRequestHeaderMapImpl request_headers{{":path", "/"}, {"key", "value"}};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
 
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
@@ -76,7 +76,7 @@ TEST(TestABI, GetRequestHeaderValue) {
 
 TEST(TestABI, GetResponseHeaderValue) {
   Http::TestResponseHeaderMapImpl response_headers{{"foo", "bar"}};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &response_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
   const char* key = "foo";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -108,7 +108,7 @@ TEST(TestABI, GetRequestHeaderValueNth) {
   Http::TestRequestHeaderMapImpl request_headers{};
   request_headers.addCopy(LowerCaseString("key"), "value1");
   request_headers.addCopy(LowerCaseString("key"), "value2");
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -126,7 +126,7 @@ TEST(TestABI, GetResponseHeaderValueNth) {
   Http::TestResponseHeaderMapImpl response_headers{};
   response_headers.addCopy(LowerCaseString("key"), "value1");
   response_headers.addCopy(LowerCaseString("key"), "value2");
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &response_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -143,7 +143,7 @@ TEST(TestABI, GetResponseHeaderValueNth) {
 TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
   Http::TestRequestHeaderMapImpl request_headers{};
   request_headers.addCopy(LowerCaseString("key"), "value1");
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -159,7 +159,7 @@ TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
 TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
   Http::TestResponseHeaderMapImpl response_headers{};
   response_headers.addCopy(LowerCaseString("key"), "value1");
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &response_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
   const char* key = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -275,7 +275,7 @@ TEST(TestABIRoundTrip, GetBody) {
 
 TEST(TestABI, SetHeader_Add) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char key[] = "key";
   const char value[] = "value";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
@@ -291,7 +291,7 @@ TEST(TestABI, SetHeader_Add) {
 
 TEST(TestABI, SetHeader_Add_empty_value) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char key[] = "key";
   const char value[] = "";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
@@ -307,7 +307,7 @@ TEST(TestABI, SetHeader_Add_empty_value) {
 
 TEST(TestABI, SetHeader_Remove) {
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char key[] = "key";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
@@ -321,7 +321,7 @@ TEST(TestABI, SetHeader_Remove) {
 
 TEST(TestABI, SetHeader_Replaces) {
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
-  __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers = &request_headers;
+  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
   const char key[] = "key";
   const char value[] = "new_value";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
@@ -420,14 +420,14 @@ TEST(TestABI, ResponseBodyAppendPrependDrain) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data);
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = strlen(data);
-  __envoy_dynamic_module_v1_http_get_response_body_append(&body, data_ptr, data_length);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_append(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   const char* data2 = "world";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2);
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = strlen(data2);
-  __envoy_dynamic_module_v1_http_get_response_body_prepend(&body, data_ptr2, data_length2);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_prepend(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
   __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(&body, 5);
@@ -445,14 +445,14 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data);
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = strlen(data);
-  __envoy_dynamic_module_v1_http_get_request_body_append(&body, data_ptr, data_length);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_append(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   const char* data2 = "world";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2);
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = strlen(data2);
-  __envoy_dynamic_module_v1_http_get_request_body_prepend(&body, data_ptr2, data_length2);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_prepend(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
   __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(&body, 5);
