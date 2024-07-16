@@ -2,6 +2,10 @@ LINK_OPTS = [
     "-ldl",
 ]
 
+COPTS = [
+    "-DENVOY_DYNAMIC_MODULE=1",
+]
+
 DEPS = [
     "@com_google_googletest//:gtest",
     "@com_google_googletest//:gtest_main",
@@ -13,6 +17,7 @@ DEPS = [
 cc_test(
     name = "dynamic_module_test",
     srcs = ["dynamic_module_test.cc"],
+    copts = COPTS,
     data = [
         "//test/test_programs:init",
         "//test/test_programs:init_fail",
@@ -28,6 +33,7 @@ cc_test(
 cc_test(
     name = "filter_test",
     srcs = ["filter_test.cc"],
+    copts = COPTS,
     data = [
         "//test/test_programs:init",
         "//test/test_programs:stream_init",
@@ -41,6 +47,7 @@ cc_test(
 cc_test(
     name = "abi_test",
     srcs = ["abi_test.cc"],
+    copts = COPTS,
     data = [
         "//test/test_programs:get_body",
         "//test/test_programs:get_headers",

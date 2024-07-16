@@ -12,6 +12,8 @@ api_proto_package(
     ],
 )
 
+COPTS = ["-DENVOY_DYNAMIC_MODULE=1"]
+
 envoy_cc_library(
     name = "dynamic_module_lib",
     srcs = ["dynamic_module.cc"],
@@ -19,6 +21,7 @@ envoy_cc_library(
         "abi.h",
         "dynamic_module.h",
     ],
+    copts = COPTS,
     repository = "@envoy",
     deps = [
         ":pkg_cc_proto",
@@ -32,6 +35,7 @@ envoy_cc_library(
     name = "filter_lib",
     srcs = ["filter.cc"],
     hdrs = ["filter.h"],
+    copts = COPTS,
     repository = "@envoy",
     deps = [
         ":dynamic_module_lib",
@@ -43,6 +47,7 @@ envoy_cc_library(
 envoy_cc_library(
     name = "abi_lib",
     srcs = ["abi.cc"],
+    copts = COPTS,
     # Make sure that the symbols are exported so that they can be found by the dynamic loader.
     linkopts = ["-Wl,--export-dynamic"],
     repository = "@envoy",
@@ -57,6 +62,7 @@ envoy_cc_library(
         "abi.h",
         "factory.cc",
     ],
+    copts = COPTS,
     repository = "@envoy",
     deps = [
         ":filter_lib",
