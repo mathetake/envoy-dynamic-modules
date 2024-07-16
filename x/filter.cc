@@ -13,11 +13,12 @@ namespace DynamicModule {
 
 HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module) : dynamic_module_(dynamic_module) {}
 
-HttpFilter::~HttpFilter() = default;
+HttpFilter::~HttpFilter() { this->onDestroy(); }
 
 void HttpFilter::onDestroy() {
   if (stream_context_) {
     dynamic_module_->envoyModuleHttpOnDestroy()(THIS_AS_VOID, stream_context_);
+    stream_context_ = nullptr;
   }
 };
 
