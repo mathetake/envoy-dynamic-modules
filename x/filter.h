@@ -22,6 +22,10 @@ public:
   HttpFilter(DynamicModuleSharedPtr);
   ~HttpFilter() override;
 
+  /**
+   * Get the stream context for testing.
+   * @return the stream context.
+   */
   void* streamContextForTesting() { return stream_context_; };
 
   /**
@@ -29,7 +33,9 @@ public:
    * the stream context is initialized before calling into the * dynamic module.
    * Note: this is made public for testing purposes.
    */
-  void ensureStreamContext() { stream_context_ = dynamic_module_->envoyModuleHttpContextInit()(); }
+  void ensureStreamContext() {
+    stream_context_ = dynamic_module_->__envoy_dynamic_module_v1_event_http_context_init_();
+  }
 
   // N.B. The event hooks inlined here are supported by the dynamic modules for now.
 

@@ -39,9 +39,9 @@ TEST(TestDynamicModule, ConstructorHappyPath) {
     modules.push_back(module);
   }
 
-  // Check handlers are different.
+  // Check handles are different.
   for (int i = 0; i < 9; i++) {
-    EXPECT_NE(modules[i]->handlerForTesting(), modules[i + 1]->handlerForTesting());
+    EXPECT_NE(modules[i]->handleForTesting(), modules[i + 1]->handleForTesting());
   }
 }
 
@@ -74,11 +74,11 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
 
   // Even after the file is deleted, the module should still be able to be loaded. Just make sure
   // that functions can be called.
-  module1->envoyModuleHttpContextInit()();
-  module2->envoyModuleHttpContextInit()();
+  module1->__envoy_dynamic_module_v1_event_http_context_init_();
+  module2->__envoy_dynamic_module_v1_event_http_context_init_();
 
-  // Check handlers are different because the uuid is different even when the file name is the same.
-  EXPECT_NE(module1->handlerForTesting(), module2->handlerForTesting());
+  // Check handles are different because the uuid is different even when the file name is the same.
+  EXPECT_NE(module1->handleForTesting(), module2->handleForTesting());
 
   std::filesystem::remove(path);
 }
