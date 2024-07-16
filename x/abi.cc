@@ -133,7 +133,7 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
   request_or_response##_headers->setCopy(Http::LowerCaseString(key_str), value_str);
 
 void __envoy_dynamic_module_v1_http_set_request_header(
-    __envoy_dynamic_module_v1_type_RequestHeadersPtr headers,
+    __envoy_dynamic_module_v1_type_RequestHeadersMapPtr headers,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
     __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr value,

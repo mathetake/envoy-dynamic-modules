@@ -1,55 +1,17 @@
+load("//test/test_programs:test_programs.bzl", "test_program")
+
 package(default_visibility = ["//visibility:public"])
 
-LINK_OPTS = [
-    "-shared",
-    "-fPIC",
-]
+test_program(name = "init")
 
-cc_library(
-    name = "init",
-    srcs = ["init.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "no_init")
 
-cc_library(
-    name = "no_init",
-    srcs = ["no_init.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "init_fail")
 
-cc_library(
-    name = "init_fail",
-    srcs = ["init_fail.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "stream_init")
 
-cc_library(
-    name = "stream_init",
-    srcs = ["stream_init.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "get_headers")
 
-cc_library(
-    name = "get_headers",
-    srcs = ["get_headers.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "get_body")
 
-cc_library(
-    name = "get_body",
-    srcs = ["get_body.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
-
-cc_library(
-    name = "set_headers",
-    srcs = ["set_headers.c"],
-    linkopts = LINK_OPTS,
-    linkstatic = False,
-)
+test_program(name = "set_headers")

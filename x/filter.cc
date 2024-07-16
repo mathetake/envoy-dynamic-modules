@@ -29,7 +29,7 @@ FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool en
     }
   }
   ASSERT(stream_context_);
-  const __envoy_dynamic_module_v1_type_OnRequestHeadersStatus result =
+  const __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus result =
       dynamic_module_->envoyModuleHttpOnRequestHeaders()(
           THIS_AS_VOID, stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   return static_cast<FilterHeadersStatus>(result);
@@ -37,7 +37,7 @@ FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool en
 
 FilterDataStatus HttpFilter::decodeData(Buffer::Instance& buffer, bool end_of_stream) {
   ASSERT(stream_context_);
-  const __envoy_dynamic_module_v1_type_OnRequestBodyStatus result =
+  const __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus result =
       dynamic_module_->envoyModuleHttpOnRequestBody()(THIS_AS_VOID, stream_context_,
                                                       STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   return static_cast<FilterDataStatus>(result);
@@ -45,7 +45,7 @@ FilterDataStatus HttpFilter::decodeData(Buffer::Instance& buffer, bool end_of_st
 
 FilterHeadersStatus HttpFilter::encodeHeaders(ResponseHeaderMap& headers, bool end_of_stream) {
   ASSERT(stream_context_);
-  const __envoy_dynamic_module_v1_type_OnResponseHeadersStatus result =
+  const __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus result =
       dynamic_module_->envoyModuleHttpOnResponseHeaders()(
           THIS_AS_VOID, stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   return static_cast<FilterHeadersStatus>(result);
@@ -53,7 +53,7 @@ FilterHeadersStatus HttpFilter::encodeHeaders(ResponseHeaderMap& headers, bool e
 
 FilterDataStatus HttpFilter::encodeData(Buffer::Instance& buffer, bool end_of_stream) {
   ASSERT(stream_context_);
-  const __envoy_dynamic_module_v1_type_OnResponseBodyStatus result =
+  const __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus result =
       dynamic_module_->envoyModuleHttpOnResponseBody()(THIS_AS_VOID, stream_context_,
                                                        STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   return static_cast<FilterDataStatus>(result);

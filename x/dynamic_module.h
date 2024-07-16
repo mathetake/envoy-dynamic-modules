@@ -38,46 +38,46 @@ public:
 
   /**
    * Get the function pointer to the module's http stream init function.
-   * @return the function pointer of __envoy_dynamic_module_v1_init.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_module_init.
    */
-  __envoy_dynamic_module_v1_http_context_init envoyModuleHttpContextInit() {
+  __envoy_dynamic_module_v1_event_http_context_init envoyModuleHttpContextInit() {
     ASSERT(envoy_dynamic_module_v1_http_context_init_ != nullptr);
     return envoy_dynamic_module_v1_http_context_init_;
   }
 
   /**
    * Get the function pointer to the module's http on request headers function.
-   * @return the function pointer of __envoy_dynamic_module_v1_http_on_request_headers.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_http_request_headers.
    */
-  __envoy_dynamic_module_v1_http_on_request_headers envoyModuleHttpOnRequestHeaders() {
+  __envoy_dynamic_module_v1_event_http_request_headers envoyModuleHttpOnRequestHeaders() {
     ASSERT(envoy_dynamic_module_v1_http_on_request_headers_ != nullptr);
     return envoy_dynamic_module_v1_http_on_request_headers_;
   }
 
   /**
    * Get the function pointer to the module's http on request body function.
-   * @return the function pointer of __envoy_dynamic_module_v1_http_on_request_body.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_http_request_body.
    */
-  __envoy_dynamic_module_v1_http_on_request_body envoyModuleHttpOnRequestBody() {
+  __envoy_dynamic_module_v1_event_http_request_body envoyModuleHttpOnRequestBody() {
     ASSERT(envoy_dynamic_module_v1_http_on_request_body_ != nullptr);
     return envoy_dynamic_module_v1_http_on_request_body_;
   }
 
   /**
    * Get the function pointer to the module's http on response headers function.
-   * @return the function pointer of __envoy_dynamic_module_v1_http_on_response_headers.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_http_response_headers.
    */
-  __envoy_dynamic_module_v1_http_on_response_headers envoyModuleHttpOnResponseHeaders() {
+  __envoy_dynamic_module_v1_event_http_response_headers envoyModuleHttpOnResponseHeaders() {
     ASSERT(envoy_dynamic_module_v1_http_on_response_headers_ != nullptr);
     return envoy_dynamic_module_v1_http_on_response_headers_;
   }
 
   /**
    * Get the function pointer to the module's http on response body function.
-   * @return the function pointer of __envoy_dynamic_module_v1_http_on_response_body.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_http_response_body.
    */
 
-  __envoy_dynamic_module_v1_http_on_response_body envoyModuleHttpOnResponseBody() {
+  __envoy_dynamic_module_v1_event_http_response_body envoyModuleHttpOnResponseBody() {
     ASSERT(envoy_dynamic_module_v1_http_on_response_body_ != nullptr);
     return envoy_dynamic_module_v1_http_on_response_body_;
   }
@@ -99,15 +99,16 @@ private:
   // The path to the copied object file.
   std::string copied_file_path_;
 
-  __envoy_dynamic_module_v1_http_context_init envoy_dynamic_module_v1_http_context_init_ = nullptr;
-  __envoy_dynamic_module_v1_http_on_request_headers
+  __envoy_dynamic_module_v1_event_http_context_init envoy_dynamic_module_v1_http_context_init_ =
+      nullptr;
+  __envoy_dynamic_module_v1_event_http_request_headers
       envoy_dynamic_module_v1_http_on_request_headers_ = nullptr;
-  __envoy_dynamic_module_v1_http_on_request_body envoy_dynamic_module_v1_http_on_request_body_ =
+  __envoy_dynamic_module_v1_event_http_request_body envoy_dynamic_module_v1_http_on_request_body_ =
       nullptr;
-  __envoy_dynamic_module_v1_http_on_response_headers
+  __envoy_dynamic_module_v1_event_http_response_headers
       envoy_dynamic_module_v1_http_on_response_headers_ = nullptr;
-  __envoy_dynamic_module_v1_http_on_response_body envoy_dynamic_module_v1_http_on_response_body_ =
-      nullptr;
+  __envoy_dynamic_module_v1_event_http_response_body
+      envoy_dynamic_module_v1_http_on_response_body_ = nullptr;
   __envoy_dynamic_module_v1_http_on_destroy envoy_dynamic_module_v1_http_on_destroy_ = nullptr;
 };
 

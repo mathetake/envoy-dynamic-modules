@@ -50,28 +50,29 @@ DynamicModule::DynamicModule(const std::string& file_path, const std::string& co
   }
 
 void DynamicModule::initModule(const std::string& config) {
-  __envoy_dynamic_module_v1_init init = nullptr;
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_init, "__envoy_dynamic_module_v1_init", init);
+  __envoy_dynamic_module_v1_event_module_init init = nullptr;
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_module_init,
+                          "__envoy_dynamic_module_v1_event_module_init", init);
   const int result = init(config.data(), config.size());
   if (result != 0) {
     throw EnvoyException(
         fmt::format("init function in {} failed with result {}", copied_file_path_, result));
   }
 
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_context_init,
-                          "__envoy_dynamic_module_v1_http_context_init",
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_context_init,
+                          "__envoy_dynamic_module_v1_event_http_context_init",
                           envoy_dynamic_module_v1_http_context_init_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_request_headers,
-                          "__envoy_dynamic_module_v1_http_on_request_headers",
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_headers,
+                          "__envoy_dynamic_module_v1_event_http_request_headers",
                           envoy_dynamic_module_v1_http_on_request_headers_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_request_body,
-                          "__envoy_dynamic_module_v1_http_on_request_body",
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_body,
+                          "__envoy_dynamic_module_v1_event_http_request_body",
                           envoy_dynamic_module_v1_http_on_request_body_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_response_headers,
-                          "__envoy_dynamic_module_v1_http_on_response_headers",
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_headers,
+                          "__envoy_dynamic_module_v1_event_http_response_headers",
                           envoy_dynamic_module_v1_http_on_response_headers_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_response_body,
-                          "__envoy_dynamic_module_v1_http_on_response_body",
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_body,
+                          "__envoy_dynamic_module_v1_event_http_response_body",
                           envoy_dynamic_module_v1_http_on_response_body_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_destroy,
                           "__envoy_dynamic_module_v1_http_on_destroy",

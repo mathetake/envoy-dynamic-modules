@@ -1,17 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "x/abi.h"
 
-extern size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(void* buffer);
-extern size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(void* buffer);
-
-extern void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
-    void* buffer, size_t nth, void** result_buffer_ptr, size_t* result_buffer_length_ptr);
-extern void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
-    void* buffer, size_t nth, void** result_buffer_ptr, size_t* result_buffer_length_ptr);
-
-int __envoy_dynamic_module_v1_http_on_request_body(void* envoy_filter_ptr, void* context_ptr,
-                                                   void* buffer, size_t end_of_stream) {
+__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus
+__envoy_dynamic_module_v1_event_http_request_body(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
 
   size_t slices_count = __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(buffer);
   if (slices_count != 2) {
@@ -20,8 +17,8 @@ int __envoy_dynamic_module_v1_http_on_request_body(void* envoy_filter_ptr, void*
   }
 
   for (size_t i = 0; i < slices_count; i++) {
-    void* result_buffer_ptr;
-    size_t result_buffer_length;
+    __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
+    __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
     __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(buffer, i, &result_buffer_ptr,
                                                                  &result_buffer_length);
     if (i == 0) {
@@ -42,8 +39,8 @@ int __envoy_dynamic_module_v1_http_on_request_body(void* envoy_filter_ptr, void*
   }
 
   // Invalid n-th slice.
-  void* result_buffer_ptr;
-  size_t result_buffer_length;
+  __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
+  __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
   __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(buffer, 2, &result_buffer_ptr,
                                                                &result_buffer_length);
   if (result_buffer_length != 0 || result_buffer_ptr != NULL) {
@@ -53,8 +50,12 @@ int __envoy_dynamic_module_v1_http_on_request_body(void* envoy_filter_ptr, void*
   return 0;
 }
 
-size_t __envoy_dynamic_module_v1_http_on_response_body(void* envoy_filter_ptr, void* context_ptr,
-                                                       void* buffer, size_t end_of_stream) {
+__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
+__envoy_dynamic_module_v1_event_http_response_body(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   size_t slices_count =
       __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(buffer);
   if (slices_count != 2) {
@@ -63,8 +64,8 @@ size_t __envoy_dynamic_module_v1_http_on_response_body(void* envoy_filter_ptr, v
   }
 
   for (size_t i = 0; i < slices_count; i++) {
-    void* result_buffer_ptr;
-    size_t result_buffer_length;
+    __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
+    __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
     __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(buffer, i, &result_buffer_ptr,
                                                                   &result_buffer_length);
     if (i == 0) {
@@ -85,8 +86,8 @@ size_t __envoy_dynamic_module_v1_http_on_response_body(void* envoy_filter_ptr, v
   }
 
   // Invalid n-th slice.
-  void* result_buffer_ptr;
-  size_t result_buffer_length;
+  __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
+  __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
   __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(buffer, 2, &result_buffer_ptr,
                                                                 &result_buffer_length);
   if (result_buffer_length != 0 || result_buffer_ptr != NULL) {
@@ -96,26 +97,37 @@ size_t __envoy_dynamic_module_v1_http_on_response_body(void* envoy_filter_ptr, v
   return 0;
 }
 
-size_t __envoy_dynamic_module_v1_init(char* config) { return 0; }
+size_t __envoy_dynamic_module_v1_event_module_init(
+    __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
+    __envoy_dynamic_module_v1_type_ModuleConfigSize config_size) {
+  return 0;
+}
 
 size_t context = 0;
 
-void* __envoy_dynamic_module_v1_http_context_init() {
+__envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init() {
   context = 999999;
   return &context;
 }
 
-size_t __envoy_dynamic_module_v1_http_on_request_headers(void* envoy_filter_ptr, void* context_ptr,
-                                                         void* headers, size_t end_of_stream) {
+__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
+__envoy_dynamic_module_v1_event_http_request_headers(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+    __envoy_dynamic_module_v1_type_RequestHeadersMapPtr request_headers_ptr,
+    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
-int __envoy_dynamic_module_v1_http_on_response_headers(void* envoy_filter_ptr, void* context_ptr,
-                                                       void* headers, size_t end_of_stream) {
+__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
+__envoy_dynamic_module_v1_event_http_response_headers(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+    __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr buffer,
+    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
-size_t __envoy_dynamic_module_v1_http_on_destroy(void* envoy_filter_ptr, void* context_ptr,
-                                                 void* buffer, size_t end_of_stream) {
-  return 0;
-}
+void __envoy_dynamic_module_v1_http_on_destroy(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr) {}
