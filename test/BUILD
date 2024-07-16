@@ -1,3 +1,8 @@
+load(
+    "@envoy//bazel:envoy_build_system.bzl",
+    "envoy_cc_test",
+)
+
 LINK_OPTS = [
     "-ldl",
 ]
@@ -58,4 +63,19 @@ cc_test(
     deps = [
         "//x:abi_lib",
     ] + DEPS,
+)
+
+envoy_cc_test(
+    name = "integration_test",
+    srcs = ["integration_test.cc"],
+    copts = COPTS,
+    data = [
+        "//test/test_programs:integration_test_headers",
+    ],
+    linkopts = LINK_OPTS,
+    repository = "@envoy",
+    deps = [
+        "//x:factory",
+        "@envoy//test/integration:http_integration_lib",
+    ],
 )

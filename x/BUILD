@@ -59,12 +59,12 @@ envoy_cc_library(
 envoy_cc_library(
     name = "factory",
     srcs = [
-        "abi.h",
         "factory.cc",
     ],
     copts = COPTS,
     repository = "@envoy",
     deps = [
+        ":abi_lib",
         ":filter_lib",
     ],
     alwayslink = True,

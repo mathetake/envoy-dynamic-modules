@@ -87,10 +87,8 @@ size_t __envoy_dynamic_module_v1_event_module_init(
   return 0;
 }
 
-size_t context = 0;
-
 __envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init() {
-  context = 999999;
+  static size_t context = 0;
   return &context;
 }
 
@@ -112,6 +110,6 @@ __envoy_dynamic_module_v1_event_http_response_headers(
   return 0;
 }
 
-void __envoy_dynamic_module_v1_http_on_destroy(
+void __envoy_dynamic_module_v1_event_http_destroy(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr) {}

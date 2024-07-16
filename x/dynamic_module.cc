@@ -61,22 +61,22 @@ void DynamicModule::initModule(const std::string& config) {
 
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_context_init,
                           "__envoy_dynamic_module_v1_event_http_context_init",
-                          envoy_dynamic_module_v1_http_context_init_);
+                          envoy_dynamic_module_v1_event_http_context_init_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_headers,
                           "__envoy_dynamic_module_v1_event_http_request_headers",
-                          envoy_dynamic_module_v1_http_on_request_headers_);
+                          envoy_dynamic_module_v1_event_http_request_headers_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_body,
                           "__envoy_dynamic_module_v1_event_http_request_body",
-                          envoy_dynamic_module_v1_http_on_request_body_);
+                          envoy_dynamic_module_v1_event_http_request_body_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_headers,
                           "__envoy_dynamic_module_v1_event_http_response_headers",
-                          envoy_dynamic_module_v1_http_on_response_headers_);
+                          envoy_dynamic_module_v1_event_http_response_headers_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_body,
                           "__envoy_dynamic_module_v1_event_http_response_body",
-                          envoy_dynamic_module_v1_http_on_response_body_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_http_on_destroy,
-                          "__envoy_dynamic_module_v1_http_on_destroy",
-                          envoy_dynamic_module_v1_http_on_destroy_);
+                          envoy_dynamic_module_v1_event_http_response_body_);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_destroy,
+                          "__envoy_dynamic_module_v1_event_http_destroy",
+                          envoy_dynamic_module_v1_event_http_destroy_);
 }
 
 } // namespace DynamicModule

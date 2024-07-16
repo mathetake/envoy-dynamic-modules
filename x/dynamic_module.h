@@ -41,8 +41,8 @@ public:
    * @return the function pointer of __envoy_dynamic_module_v1_event_module_init.
    */
   __envoy_dynamic_module_v1_event_http_context_init envoyModuleHttpContextInit() {
-    ASSERT(envoy_dynamic_module_v1_http_context_init_ != nullptr);
-    return envoy_dynamic_module_v1_http_context_init_;
+    ASSERT(envoy_dynamic_module_v1_event_http_context_init_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_context_init_;
   }
 
   /**
@@ -50,8 +50,8 @@ public:
    * @return the function pointer of __envoy_dynamic_module_v1_event_http_request_headers.
    */
   __envoy_dynamic_module_v1_event_http_request_headers envoyModuleHttpOnRequestHeaders() {
-    ASSERT(envoy_dynamic_module_v1_http_on_request_headers_ != nullptr);
-    return envoy_dynamic_module_v1_http_on_request_headers_;
+    ASSERT(envoy_dynamic_module_v1_event_http_request_headers_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_request_headers_;
   }
 
   /**
@@ -59,8 +59,8 @@ public:
    * @return the function pointer of __envoy_dynamic_module_v1_event_http_request_body.
    */
   __envoy_dynamic_module_v1_event_http_request_body envoyModuleHttpOnRequestBody() {
-    ASSERT(envoy_dynamic_module_v1_http_on_request_body_ != nullptr);
-    return envoy_dynamic_module_v1_http_on_request_body_;
+    ASSERT(envoy_dynamic_module_v1_event_http_request_body_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_request_body_;
   }
 
   /**
@@ -68,8 +68,8 @@ public:
    * @return the function pointer of __envoy_dynamic_module_v1_event_http_response_headers.
    */
   __envoy_dynamic_module_v1_event_http_response_headers envoyModuleHttpOnResponseHeaders() {
-    ASSERT(envoy_dynamic_module_v1_http_on_response_headers_ != nullptr);
-    return envoy_dynamic_module_v1_http_on_response_headers_;
+    ASSERT(envoy_dynamic_module_v1_event_http_response_headers_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_response_headers_;
   }
 
   /**
@@ -78,17 +78,17 @@ public:
    */
 
   __envoy_dynamic_module_v1_event_http_response_body envoyModuleHttpOnResponseBody() {
-    ASSERT(envoy_dynamic_module_v1_http_on_response_body_ != nullptr);
-    return envoy_dynamic_module_v1_http_on_response_body_;
+    ASSERT(envoy_dynamic_module_v1_event_http_response_body_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_response_body_;
   }
 
   /**
    * Get the function pointer to the module's http on destroy function.
-   * @return the function pointer of __envoy_dynamic_module_v1_http_on_destroy.
+   * @return the function pointer of __envoy_dynamic_module_v1_event_http_destroy.
    */
-  __envoy_dynamic_module_v1_http_on_destroy envoyModuleHttpOnDestroy() {
-    ASSERT(envoy_dynamic_module_v1_http_on_destroy_ != nullptr);
-    return envoy_dynamic_module_v1_http_on_destroy_;
+  __envoy_dynamic_module_v1_event_http_destroy envoyModuleHttpOnDestroy() {
+    ASSERT(envoy_dynamic_module_v1_event_http_destroy_ != nullptr);
+    return envoy_dynamic_module_v1_event_http_destroy_;
   }
 
   void* handlerForTesting() { return handler_; }
@@ -99,17 +99,18 @@ private:
   // The path to the copied object file.
   std::string copied_file_path_;
 
-  __envoy_dynamic_module_v1_event_http_context_init envoy_dynamic_module_v1_http_context_init_ =
-      nullptr;
+  __envoy_dynamic_module_v1_event_http_context_init
+      envoy_dynamic_module_v1_event_http_context_init_ = nullptr;
   __envoy_dynamic_module_v1_event_http_request_headers
-      envoy_dynamic_module_v1_http_on_request_headers_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_request_body envoy_dynamic_module_v1_http_on_request_body_ =
-      nullptr;
+      envoy_dynamic_module_v1_event_http_request_headers_ = nullptr;
+  __envoy_dynamic_module_v1_event_http_request_body
+      envoy_dynamic_module_v1_event_http_request_body_ = nullptr;
   __envoy_dynamic_module_v1_event_http_response_headers
-      envoy_dynamic_module_v1_http_on_response_headers_ = nullptr;
+      envoy_dynamic_module_v1_event_http_response_headers_ = nullptr;
   __envoy_dynamic_module_v1_event_http_response_body
-      envoy_dynamic_module_v1_http_on_response_body_ = nullptr;
-  __envoy_dynamic_module_v1_http_on_destroy envoy_dynamic_module_v1_http_on_destroy_ = nullptr;
+      envoy_dynamic_module_v1_event_http_response_body_ = nullptr;
+  __envoy_dynamic_module_v1_event_http_destroy envoy_dynamic_module_v1_event_http_destroy_ =
+      nullptr;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;

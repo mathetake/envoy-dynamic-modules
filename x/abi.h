@@ -128,7 +128,7 @@ typedef __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus (
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_HttpContextPtr,
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr,
     __envoy_dynamic_module_v1_type_EndOfStream);
-typedef void (*__envoy_dynamic_module_v1_http_on_destroy)(
+typedef void (*__envoy_dynamic_module_v1_event_http_destroy)(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr, __envoy_dynamic_module_v1_type_HttpContextPtr);
 
 #else // If this is the module code, all definitions are declared function prototypes.
@@ -179,8 +179,8 @@ __envoy_dynamic_module_v1_event_http_response_body(
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream);
 
-// __envoy_dynamic_module_v1_http_on_destroy is called when the stream is destroyed.
-void __envoy_dynamic_module_v1_http_on_destroy(
+// __envoy_dynamic_module_v1_event_http_destroy is called when the stream is destroyed.
+void __envoy_dynamic_module_v1_event_http_destroy(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr);
 #endif

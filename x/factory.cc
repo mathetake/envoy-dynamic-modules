@@ -36,13 +36,14 @@ private:
   Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config,
                                       FactoryContext& context) {
     Http::DynamicModule::DynamicModuleSharedPtr config =
-        std::make_shared<Http::DynamicModule::DynamicModule>(Http::DynamicModule::DynamicModule(
-            proto_config.file_path(), proto_config.module_config().value(),
-            std::move(context.serverFactoryContext().api().randomGenerator().uuid())));
+        std::make_shared<Http::DynamicModule::DynamicModule>(
+            proto_config.file_path(), proto_config.module_config(),
+            context.serverFactoryContext().api().randomGenerator().uuid());
 
     return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
       auto filter = std::make_shared<Http::DynamicModule::HttpFilter>(config);
       callbacks.addStreamDecoderFilter(filter);
+      callbacks.addStreamEncoderFilter(filter);
     };
   }
 };

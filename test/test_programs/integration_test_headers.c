@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,32 +10,6 @@ __envoy_dynamic_module_v1_event_http_request_headers(
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr request_headers_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
-  // Get the value of the header "key" from the headers.
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = 3;
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_request_header_value(
-      request_headers_ptr, key, key_length, &result_buffer_ptr, &result_buffer_length);
-  // Check if the header value is "value".
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value = "value";
-  if (result_buffer_length != 5 || strncmp(result_buffer_ptr, value, result_buffer_length) != 0) {
-    printf("result_buffer_length: %zu\n", result_buffer_length);
-    exit(9999);
-  }
-
-  // Get the non-existent header "non-existent-key" from the headers.
-  key = "non-existent-key";
-  key_length = 15;
-  __envoy_dynamic_module_v1_http_get_request_header_value(
-      request_headers_ptr, key, key_length, &result_buffer_ptr, &result_buffer_length);
-  // Check if the header value is NULL.
-  if (result_buffer_length != 0 || result_buffer_ptr != NULL) {
-    printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
-    exit(9999);
-  }
-
-  printf("OK\n");
   return 0;
 }
 
@@ -44,32 +19,24 @@ __envoy_dynamic_module_v1_event_http_response_headers(
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
-  // Get the value of the header "foo" from the headers.
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key = "foo";
-  size_t key_length = 3;
+
+  // Get the status code and assert it is 404.
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   size_t result_buffer_length;
   __envoy_dynamic_module_v1_http_get_response_header_value(
-      response_headers_map_ptr, key, key_length, &result_buffer_ptr, &result_buffer_length);
-  // Check if the header value is "value".
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value = "bar";
-  if (result_buffer_length != 3 || strncmp(result_buffer_ptr, value, result_buffer_length) != 0) {
-    printf("result_buffer_length: %zu\n", result_buffer_length);
+      response_headers_map_ptr, ":status", 7, &result_buffer_ptr, &result_buffer_length);
+
+  if (result_buffer_length != 3 || strncmp(result_buffer_ptr, "404", result_buffer_length) != 0) {
+    printf("status code is not 404: %s\n", strndup((char*)result_buffer_ptr, result_buffer_length));
     exit(9999);
   }
+  // Change the status code.
+  __envoy_dynamic_module_v1_http_set_response_header(response_headers_map_ptr, ":status", 7, "200",
+                                                     3);
 
-  // Get the non-existent header "non-existent-key" from the headers.
-  key = "non-existent-key";
-  key_length = 15;
-  __envoy_dynamic_module_v1_http_get_response_header_value(
-      response_headers_map_ptr, key, key_length, &result_buffer_ptr, &result_buffer_length);
-  // Check if the header value is NULL.
-  if (result_buffer_length != 0 || result_buffer_ptr != NULL) {
-    printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
-    exit(9999);
-  }
-
-  printf("OK\n");
+  // Add a new header.
+  __envoy_dynamic_module_v1_http_set_response_header(response_headers_map_ptr, "new_key", 7,
+                                                     "value", 5);
   return 0;
 }
 
