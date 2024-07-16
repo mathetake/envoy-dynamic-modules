@@ -399,6 +399,93 @@ TEST(TestABIRoundTrip, SetHeaders) {
   EXPECT_FALSE(response_headers.has(LowerCaseString("to_delete")));
 }
 
+TEST(TestABI, GetRequestBodyLength) {
+  Buffer::OwnedImpl body;
+  body.add("hello");
+  body.add("world");
+  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_request_body_buffer_length(&body), 10);
+}
+
+TEST(TestABI, GetResponseBodyLength) {
+  Buffer::OwnedImpl body;
+  body.add("a");
+  body.add("b");
+  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_response_body_buffer_length(&body), 2);
+}
+
+TEST(TestABI, ResponseBodyAppendPrependDrain) {
+  Buffer::OwnedImpl body;
+  body.add("[INITIAL_VALUE]");
+  const char* data = "hello";
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = strlen(data);
+  __envoy_dynamic_module_v1_http_get_response_body_append(&body, data_ptr, data_length);
+  EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
+
+  const char* data2 = "world";
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = strlen(data2);
+  __envoy_dynamic_module_v1_http_get_response_body_prepend(&body, data_ptr2, data_length2);
+  EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
+
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(&body, 5);
+  EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
+
+  // Drain the rest of the buffer.
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(&body, 20);
+  EXPECT_EQ(body.toString(), "");
+}
+
+TEST(TestABI, RequestBodyAppendPrependDrain) {
+  Buffer::OwnedImpl body;
+  body.add("[INITIAL_VALUE]");
+  const char* data = "hello";
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = strlen(data);
+  __envoy_dynamic_module_v1_http_get_request_body_append(&body, data_ptr, data_length);
+  EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
+
+  const char* data2 = "world";
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = strlen(data2);
+  __envoy_dynamic_module_v1_http_get_request_body_prepend(&body, data_ptr2, data_length2);
+  EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
+
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(&body, 5);
+  EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
+
+  // Drain the rest of the buffer.
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(&body, 20);
+  EXPECT_EQ(body.toString(), "");
+}
+
+TEST(TestABIRoundTrip, BodyManipulations) {
+  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
+      "./test/test_programs/libmanipulate_body.so", "config", "TestABIRoundTripBodyManipulations");
+  auto filter = std::make_shared<HttpFilter>(module);
+  filter->ensureStreamContext();
+
+  Buffer::OwnedImpl request_body;
+  request_body.add("hello");
+  request_body.add(" ");
+  request_body.add("world");
+  EXPECT_EQ(filter->decodeData(request_body, false), FilterDataStatus::Continue);
+  EXPECT_EQ(request_body.toString(), "EEEEEEEEEEE");
+  EXPECT_EQ(filter->decodeData(request_body, true), FilterDataStatus::Continue);
+  EXPECT_EQ(request_body.toString(), "EnvoyEEEEE!");
+
+  Buffer::OwnedImpl response_body;
+  response_body.add("hello world");
+  EXPECT_EQ(filter->encodeData(response_body, false), FilterDataStatus::Continue);
+  EXPECT_EQ(response_body.toString(), "EEEEEEEEEEE");
+  EXPECT_EQ(filter->encodeData(response_body, true), FilterDataStatus::Continue);
+  EXPECT_EQ(response_body.toString(), "EnvoyEEEEE!");
+}
+
 } // namespace DynamicModule
 } // namespace Http
 } // namespace Envoy

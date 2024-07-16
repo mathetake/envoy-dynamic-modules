@@ -131,7 +131,7 @@ typedef void (*__envoy_dynamic_module_v1_http_on_destroy)(
 #else // If this is the module code, all definitions are declared function prototypes.
 
 // __envoy_dynamic_module_v1_event_module_init is called by the main thread when the module is
-// loaded exactly once per module. The function should return 0 on success and non-zero on failure.
+// loaded exactly once per module. The function returns 0 on success and non-zero on failure.
 size_t __envoy_dynamic_module_v1_event_module_init(
     __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
     __envoy_dynamic_module_v1_type_ModuleConfigSize config_size);
@@ -139,7 +139,7 @@ size_t __envoy_dynamic_module_v1_event_module_init(
 // __envoy_dynamic_module_v1_event_http_context_init is called by any worker thread when a new
 // stream is created. That means that the function should be thread-safe.
 //
-// The function should return a pointer to a new instance of the context or nullptr on failure.
+// The function returns a pointer to a new instance of the context or nullptr on failure.
 // The lifetime of the returned pointer should be managed by the dynamic module.
 __envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init();
 
@@ -188,14 +188,14 @@ void __envoy_dynamic_module_v1_http_on_destroy(
 //
 // The following functions are called by the module to interact with Envoy.
 
-// ---------------- Header Manipulation ----------------
+// ---------------- Header API ----------------
 
 // __envoy_dynamic_module_v1_get_request_header is called by the module to get the value for a
 // request header key. headers is the one passed to the
 // __envoy_dynamic_module_v1_event_http_request_headers. key is the header key to look up.
 // result_buffer_ptr and result_buffer_length_ptr are direct references to the buffer and length of
-// the value. The function should return the number of values found. If the key is not found, this
-// function should return nullptr and 0.
+// the value. The function returns the number of values found. If the key is not found, this
+// function returns nullptr and 0.
 //
 // Basically, this acts as a fast zero-copy lookup for a single header value, which is almost always
 // guaranteed to be true. In case of multiple values, the module can access n-th value by calling
@@ -209,7 +209,7 @@ size_t __envoy_dynamic_module_v1_http_get_request_header_value(
 
 // __envoy_dynamic_module_v1_http_get_request_header_value_nth is almost the same as
 // __envoy_dynamic_module_v1_http_get_request_header_value, but it allows the module to access n-th
-// value of the header. The function should return the number of values found. If nth is out of
+// value of the header. The function returns the number of values found. If nth is out of
 // bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
     __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
@@ -222,8 +222,8 @@ void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
 // for a response header key. headers is the one passed to the
 // __envoy_dynamic_module_v1_event_http_response_headers. key is the header key to look up.
 // result_buffer_ptr and result_buffer_length_ptr are direct references to the buffer and length of
-// the value. The function should return the number of values found. If the key is not found, this
-// function should return nullptr and 0.
+// the value. The function returns the number of values found. If the key is not found, this
+// function returns nullptr and 0.
 //
 // Basically, this acts as a fast zero-copy lookup for a single header value, which is almost always
 // guaranteed to be true. In case of multiple values, the module can access n-th value by calling
@@ -237,7 +237,7 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
 
 // __envoy_dynamic_module_v1_http_get_response_header_value_nth is almost the same as
 // __envoy_dynamic_module_v1_http_get_response_header_value, but it allows the module to access n-th
-// value of the header. The function should return the number of values found. If nth is out of
+// value of the header. The function returns the number of values found. If nth is out of
 // bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
     __envoy_dynamic_module_v1_type_ResponseHeaderMapPtr headers,
@@ -273,35 +273,99 @@ void __envoy_dynamic_module_v1_http_set_response_header(
     __envoy_dynamic_module_v1_type_InModuleBufferPtr value,
     __envoy_dynamic_module_v1_type_InModuleBufferLength value_length);
 
-// ---------------- Buffer Manipulation ----------------
+// ---------------- Buffer API ----------------
+
+// __envoy_dynamic_module_v1_http_get_request_body_buffer_length is called by the module to get the
+// length (number of bytes) of the request body buffer. The function returns the length of the
+// buffer.
+size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_length(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer);
 
 // __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count is called by the module to
-// get the number of slices in the request body buffer. The function should return the number of
+// get the number of slices in the request body buffer. The function returns the number of
 // slices.
 size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(
     __envoy_dynamic_module_v1_type_RequestBufferPtr buffer);
 
 // __envoy_dynamic_module_v1_http_get_request_body_buffer_slice is called by the module to get the
-// n-th slice of the request body buffer. The function should return the buffer and length of the
+// n-th slice of the request body buffer. The function returns the buffer and length of the
 // slice. If nth is out of bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
     __envoy_dynamic_module_v1_type_RequestBufferPtr buffer, size_t nth,
     __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
     __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr);
 
+// __envoy_dynamic_module_v1_http_get_request_body_append is called by the module to append data to
+// the request body buffer. The function appends data to the end of the buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_request_body_append(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length);
+
+// __envoy_dynamic_module_v1_http_get_request_body_prepend is called by the module to prepend data
+// to the request body buffer. The function prepends data to the beginning of the buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_request_body_prepend(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length);
+
+// __envoy_dynamic_module_v1_http_get_request_body_buffer_drain is called by the module to drain
+// data from the request body buffer. The function drains length bytes from the beginning of the
+// buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer, size_t length);
+
+// __envoy_dynamic_module_v1_http_get_response_body_buffer_length is called by the module to get the
+// length (number of bytes) of the response body buffer. The function returns the length of the
+// buffer.
+size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_length(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer);
+
 // __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count is called by the module to
-// get the number of slices in the response body buffer. The function should return the number of
+// get the number of slices in the response body buffer. The function returns the number of
 // slices.
 size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(
     __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer);
 
 // __envoy_dynamic_module_v1_http_get_response_body_buffer_slice is called by the module to get the
-// n-th slice of the response body buffer. The function should return the buffer and length of the
+// n-th slice of the response body buffer. The function returns the buffer and length of the
 // slice. If nth is out of bounds, this function returns nullptr and 0.
 void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
     __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer, size_t nth,
     __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
     __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr);
+
+// __envoy_dynamic_module_v1_http_get_response_body_append is called by the module to append data to
+// the response body buffer. The function appends data to the end of the buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_response_body_append(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length);
+
+// __envoy_dynamic_module_v1_http_get_response_body_prepend is called by the module to prepend data
+// to the response body buffer. The function prepends data to the beginning of the buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_response_body_prepend(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length);
+
+// __envoy_dynamic_module_v1_http_get_response_body_buffer_drain is called by the module to drain
+// data from the response body buffer. The function drains length bytes from the beginning of the
+// buffer.
+//
+// After calling this function, the previously returned slices may be invalidated.
+void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer, size_t length);
 
 #ifdef __cplusplus
 }

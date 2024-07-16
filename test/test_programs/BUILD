@@ -15,3 +15,5 @@ test_program(name = "get_headers")
 test_program(name = "get_body")
 
 test_program(name = "set_headers")
+
+test_program(name = "manipulate_body")

@@ -51,6 +51,7 @@ cc_test(
     data = [
         "//test/test_programs:get_body",
         "//test/test_programs:get_headers",
+        "//test/test_programs:manipulate_body",
         "//test/test_programs:set_headers",
     ],
     linkopts = LINK_OPTS,

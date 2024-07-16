@@ -152,6 +152,84 @@ void __envoy_dynamic_module_v1_http_set_response_header(
   SET_HEADER_VALUE(ResponseHeaderMap, response);
 }
 
+size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_length(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  return _buffer->length();
+}
+
+void __envoy_dynamic_module_v1_http_get_request_body_append(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (data == nullptr || data_length == 0) {
+    return;
+  }
+  std::string_view data_view(static_cast<const char*>(data), data_length);
+  _buffer->add(data_view);
+}
+
+void __envoy_dynamic_module_v1_http_get_request_body_prepend(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (data == nullptr || data_length == 0) {
+    return;
+  }
+  std::string_view data_view(static_cast<const char*>(data), data_length);
+  _buffer->prepend(data_view);
+}
+
+void __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(
+    __envoy_dynamic_module_v1_type_RequestBufferPtr buffer, size_t length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (length == 0) {
+    return;
+  }
+  _buffer->drain(length);
+}
+
+size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_length(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  return _buffer->length();
+}
+
+void __envoy_dynamic_module_v1_http_get_response_body_append(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (data == nullptr || data_length == 0) {
+    return;
+  }
+  std::string_view data_view(static_cast<const char*>(data), data_length);
+  _buffer->add(data_view);
+}
+
+void __envoy_dynamic_module_v1_http_get_response_body_prepend(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (data == nullptr || data_length == 0) {
+    return;
+  }
+  std::string_view data_view(static_cast<const char*>(data), data_length);
+  _buffer->prepend(data_view);
+}
+
+void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
+    __envoy_dynamic_module_v1_type_ResponseBufferPtr buffer, size_t length) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (length == 0) {
+    return;
+  }
+  _buffer->drain(length);
+}
+
 } // extern "C"
 
 } // namespace DynamicModule
