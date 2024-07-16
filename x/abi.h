@@ -2,10 +2,10 @@
 #define ENVOY_DYNAMIC_MODULE_ABI_
 
 #ifdef __cplusplus
-#include <cstdlib>
+#include <cstddef>
 extern "C" {
 #else
-#include <stdlib.h>
+#include <stddef.h>
 #endif
 
 // -----------------------------------------------------------------------------
