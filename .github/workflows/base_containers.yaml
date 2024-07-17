@@ -6,6 +6,9 @@ on:
     - cron: "23 3 * * *"
   workflow_dispatch:  # Allows manual refresh
 
+permissions:
+  packages: write
+
 jobs:
   build_images:
     name: Build (${{ matrix.envoy_version }})
