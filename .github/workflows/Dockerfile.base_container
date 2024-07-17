@@ -1,0 +1,21 @@
+ARG BASE_CONTAINER_ARG
+FROM $BASE_CONTAINER_ARG
+
+ARG ENVOY_VERSION_ARG
+ARG GIT_SHA_ARG
+
+USER vscode
+RUN export HOME=/build
+
+WORKDIR /build/envoyx
+
+RUN git reset --hard
+RUN echo "Checking out ${GIT_SHA_ARG}"
+RUN git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${GIT_SHA_ARG}
+
+RUN export ENVOY_VERSION=${ENVOY_VERSION_ARG}
+RUN sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION='${ENVOY_VERSION_ARG}'/" bazel/repositories.bzl
+RUN cat bazel/repositories.bzl
+
+RUN bazel build //...
+RUN bazel test //...

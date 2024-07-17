@@ -21,14 +21,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO: automate the build of the latest images. Currently, they are built manually by spanning the devcontainer
-        # and run the bazel test command, then commit the image.
         envoy:
-        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.30-latest
+        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.30-latest # This is built in base_containers.yaml daily.
           name: Envoy v1.30
           version: 1.30.4-light
 
-        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.29-latest
+        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.29-latest # This is built in base_containers.yaml daily.
           name: Envoy v1.29
           version: 1.29.7-light
 
