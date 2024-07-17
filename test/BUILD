@@ -78,11 +78,9 @@ cc_test(
 envoy_cc_test(
     name = "integration_test",
     srcs = ["integration_test.cc"],
-    copts = COPTS,
     data = [
         "//test/test_programs:integration_test_headers",
     ],
-    linkopts = LINK_OPTS,
     repository = "@envoy",
     deps = [
         "//x:factory",

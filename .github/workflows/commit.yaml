@@ -1,4 +1,4 @@
-name: Tests and Formats
+name: Tests and Format
 
 on:
   pull_request:
