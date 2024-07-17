@@ -4,6 +4,7 @@
 
 #include "x/dynamic_module.h"
 
+#include "test/test_util.h"
 #include "test/test_common/utility.h"
 
 namespace Envoy {
@@ -11,20 +12,19 @@ namespace Http {
 namespace DynamicModule {
 
 TEST(TestDynamicModule, InvalidPath) {
-  EXPECT_THROW_WITH_REGEX(DynamicModule("./non_exist.so", "config", "aaaa"), std::exception,
+  EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("non_exist"), std::exception,
                           "filesystem error: in copy: No such file or directory");
 }
 
 TEST(TestDynamicModule, InitNonExist) {
-  EXPECT_THROW_WITH_REGEX(
-      DynamicModule("./test/test_programs/libno_init.so", "config", "InitNonExist"), EnvoyException,
-      "cannot resolve symbol: __envoy_dynamic_module_v1_event_module_init");
+  EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("no_init", "InitNonExist", "config"),
+                          EnvoyException,
+                          "cannot resolve symbol: __envoy_dynamic_module_v1_event_module_init");
 }
 
 TEST(TestDynamicModule, InitFail) {
-  EXPECT_THROW_WITH_REGEX(
-      DynamicModule("./test/test_programs/libinit_fail.so", "config", "InitFail"), EnvoyException,
-      "init function in .* failed with result 12345");
+  EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("init_fail", "InitFail"), EnvoyException,
+                          "init function in .* failed with result 12345");
 }
 
 TEST(TestDynamicModule, ConstructorHappyPath) {
@@ -32,8 +32,9 @@ TEST(TestDynamicModule, ConstructorHappyPath) {
   std::vector<DynamicModuleSharedPtr> modules;
   for (int i = 0; i < 10; i++) {
     std::string config = "config";
-    DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-        "./test/test_programs/libinit.so", config, "ConstructorHappyPath" + std::to_string(i));
+    DynamicModuleSharedPtr module =
+        loadTestDynamicModule("init", "ConstructorHappyPath" + std::to_string(i), config);
+
     // We intentionally set the config to "111111" in the init function, so check it.
     EXPECT_EQ(config, "111111");
     modules.push_back(module);
@@ -57,7 +58,7 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
   {
     const std::string file_path = "./test/test_programs/libinit.so";
     std::filesystem::copy(file_path, path, std::filesystem::copy_options::recursive);
-    module1 = std::make_shared<DynamicModule>(path.string(), config,
+    module1 = std::make_shared<DynamicModule>("", ObjectFileLocationFilePath{path.string()}, config,
                                               "TestDynamicModule_SameNameDifferentFile_old");
   }
 
@@ -68,7 +69,7 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
   {
     const std::string file_path = "./test/test_programs/libstream_init.so";
     std::filesystem::copy(file_path, path, std::filesystem::copy_options::recursive);
-    module2 = std::make_shared<DynamicModule>(path.string(), config,
+    module2 = std::make_shared<DynamicModule>("", ObjectFileLocationFilePath{path.string()}, config,
                                               "TestDynamicModule_SameNameDifferentFile_new");
   }
 
@@ -81,6 +82,41 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
   EXPECT_NE(module1->handleForTesting(), module2->handleForTesting());
 
   std::filesystem::remove(path);
+}
+
+TEST(TestDynamicModule, InlineBytes_OK) {
+  // Load the test program from test_programs/libinit.so.
+  const std::string config = "config";
+  const std::string uuid = "InlineBytes_OK";
+  constexpr auto path_fmt = "./test/test_programs/libinit.so";
+
+  // Read all bytes from the file.
+  std::ifstream file(path_fmt, std::ios::in | std::ios::binary | std::ios::ate);
+  ASSERT(file.is_open());
+  const auto size = file.tellg();
+  file.seekg(0, std::ios::beg);
+  std::vector<char> bytes(size);
+  file.read(bytes.data(), size);
+  file.close();
+
+  // Cast the bytes to a string.
+  const std::string bytes_str(bytes.begin(), bytes.end());
+
+  // Load the module from the bytes.
+  DynamicModuleSharedPtr module =
+      std::make_shared<DynamicModule>("", ObjectFileLocationInlineBytes{bytes_str}, config, uuid);
+
+  // We intentionally set the config to "111111" in the init function, so check it.
+  EXPECT_EQ(config, "111111");
+}
+
+TEST(TestDynamicModule, InlineBytes_Fail) {
+  const std::string bytes = "inline_bytes";
+  const std::string config = "config";
+  const std::string uuid = "InlineBytes_Fail";
+  EXPECT_THROW_WITH_REGEX(
+      DynamicModule module("", ObjectFileLocationInlineBytes{bytes}, config, uuid), EnvoyException,
+      "cannot load .* error: .*");
 }
 
 } // namespace DynamicModule

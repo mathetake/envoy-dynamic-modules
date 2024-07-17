@@ -15,25 +15,44 @@ namespace DynamicModule {
 DynamicModule::~DynamicModule() {
   ASSERT(handle_ != nullptr);
   dlclose(handle_);
-  std::filesystem::remove(copied_file_path_);
+  std::filesystem::remove(file_path_for_cleanup_);
 }
 
-DynamicModule::DynamicModule(const std::string& file_path, const std::string& config,
-                             const std::string&& uuid) {
-  // dlopen does only return a new handle if the file is not already loaded. If the inode
-  // of the file is the same as a file that is already loaded, dlopen will return the same one.
-  //
+void DynamicModule::initModuleOnLocal(const ObjectFileLocationFilePath& location,
+                                      const std::string& config, const std::string& uuid) {
   // To reload a module, we need to create a hard copy of the file and load that.
-  const std::filesystem::path file_path_absolute = std::filesystem::absolute(file_path);
-  copied_file_path_ = file_path_absolute.string() + "." + uuid;
+  const std::filesystem::path file_path_absolute = std::filesystem::absolute(location.file_path);
+  file_path_for_cleanup_ = file_path_absolute.string() + "." + uuid;
 
-  std::filesystem::copy(file_path_absolute, copied_file_path_,
+  std::filesystem::copy(file_path_absolute, file_path_for_cleanup_,
                         std::filesystem::copy_options::recursive);
 
   // Load the module with RTLD_LOCAL to avoid symbol conflicts with other modules.
-  handle_ = dlopen(copied_file_path_.c_str(), RTLD_LOCAL | RTLD_LAZY);
+  handle_ = dlopen(file_path_for_cleanup_.c_str(), RTLD_LOCAL | RTLD_LAZY);
   if (!handle_) {
-    throw EnvoyException(fmt::format("cannot load : {} error: {}", copied_file_path_, dlerror()));
+    throw EnvoyException(fmt::format("cannot load : {} error: {}", name_, dlerror()));
+  }
+
+  // Initialize the module.
+  initModule(config);
+}
+
+void DynamicModule::initModuleOnInlineBytes(const ObjectFileLocationInlineBytes& location,
+                                            const std::string& config, const std::string& uuid) {
+
+  // To load a module from inline bytes, we need to create a temporary file and load that.
+  const std::filesystem::path tmpdir = std::filesystem::temp_directory_path();
+  file_path_for_cleanup_ = tmpdir / ("lib" + uuid + ".so");
+
+  // Copy the bytes to the file.
+  std::ofstream file(file_path_for_cleanup_, std::ios::binary);
+  file.write(location.inline_bytes.data(), location.inline_bytes.size());
+  file.close();
+
+  // Load the module with RTLD_LOCAL to avoid symbol conflicts with other modules.
+  handle_ = dlopen(file_path_for_cleanup_.c_str(), RTLD_LOCAL | RTLD_LAZY);
+  if (!handle_) {
+    throw EnvoyException(fmt::format("cannot load : {} error: {}", name_, dlerror()));
   }
 
   // Initialize the module.
@@ -51,8 +70,7 @@ void DynamicModule::initModule(const std::string& config) {
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_module_init);
   const int result = __envoy_dynamic_module_v1_event_module_init_(config.data(), config.size());
   if (result != 0) {
-    throw EnvoyException(
-        fmt::format("init function in {} failed with result {}", copied_file_path_, result));
+    throw EnvoyException(fmt::format("init function in {} failed with result {}", name_, result));
   }
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_context_init);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_headers);

@@ -3,6 +3,7 @@ syntax = "proto3";
 package envoy.extensions.filters.http.dynamic_modules.v3;
 
 import "google/protobuf/any.proto";
+import "validate/validate.proto";
 
 option java_package = "io.envoyproxy.envoy.extensions.filters.http.dynamic_modules.v3";
 option java_outer_classname = "DynamicModulesProto";
@@ -10,8 +11,21 @@ option java_multiple_files = true;
 option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/dynamic_modules/v3;dynamic_modules";
 
 message DynamicModuleConfig {
-  string file_path = 1;
+  // The name of the module. This name is used for logging and debugging.
+  string name = 1;
+
+  // The location of the object file.
+  oneof location {
+    option (validate.required) = true;
+
+    // The object file's local path. It can be a relative path or an absolute path.
+    // E.g. /path/to/module.so or module.so
+    string file_path = 2;
+
+    // The object file's content. The content will be written to a temporary file and loaded.
+    bytes inline_bytes = 3;
+  }
 
   // Configuration for the module. This will be pased at the load time.
-  string module_config = 2;
+  string module_config = 4;
 }

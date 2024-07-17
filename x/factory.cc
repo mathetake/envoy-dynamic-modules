@@ -1,6 +1,8 @@
 #include <memory>
 #include <string>
+#include <string_view>
 
+#include "dynamic_module.h"
 #include "envoy/registry/registry.h"
 #include "envoy/server/filter_config.h"
 
@@ -35,10 +37,19 @@ public:
 private:
   Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config,
                                       FactoryContext& context) {
-    Http::DynamicModule::DynamicModuleSharedPtr config =
-        std::make_shared<Http::DynamicModule::DynamicModule>(
-            proto_config.file_path(), proto_config.module_config(),
-            context.serverFactoryContext().api().randomGenerator().uuid());
+
+    Http::DynamicModule::ObjectFileLocation location;
+    if (proto_config.has_file_path()) {
+      location = Http::DynamicModule::ObjectFileLocationFilePath{
+          std::string_view(proto_config.file_path())};
+    } else {
+      location = Http::DynamicModule::ObjectFileLocationInlineBytes{
+          std::string_view(proto_config.inline_bytes())};
+    }
+
+    auto config = std::make_shared<Http::DynamicModule::DynamicModule>(
+        proto_config.name(), location, proto_config.module_config(),
+        context.serverFactoryContext().api().randomGenerator().uuid());
 
     return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
       auto filter = std::make_shared<Http::DynamicModule::HttpFilter>(config);

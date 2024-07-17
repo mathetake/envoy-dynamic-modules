@@ -5,6 +5,7 @@
 #include "x/filter.h"
 
 #include "test/test_common/utility.h"
+#include "test/test_util.h"
 
 namespace Envoy {
 namespace Http {
@@ -173,8 +174,8 @@ TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
 }
 
 TEST(TestABIRoundTrip, GetHeaders) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libget_headers.so", "config", "TestABIRoundTripGetHeaders");
+  DynamicModuleSharedPtr module =
+      loadTestDynamicModule("get_headers", "TestABIRoundTripGetHeaders", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
@@ -255,8 +256,8 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 }
 
 TEST(TestABIRoundTrip, GetBody) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libget_body.so", "config", "TestABIRoundTripGetBody");
+  DynamicModuleSharedPtr module =
+      loadTestDynamicModule("get_body", "TestABIRoundTripGetBody", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureStreamContext();
 
@@ -336,8 +337,8 @@ TEST(TestABI, SetHeader_Replaces) {
 }
 
 TEST(TestABIRoundTrip, SetHeaders) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libset_headers.so", "config", "TestABIRoundTripSetHeaders");
+  DynamicModuleSharedPtr module =
+      loadTestDynamicModule("set_headers", "TestABIRoundTripSetHeaders", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{
@@ -464,8 +465,8 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
 }
 
 TEST(TestABIRoundTrip, BodyManipulations) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libmanipulate_body.so", "config", "TestABIRoundTripBodyManipulations");
+  DynamicModuleSharedPtr module =
+      loadTestDynamicModule("manipulate_body", "TestABIRoundTripBodyManipulations", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureStreamContext();
 

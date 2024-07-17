@@ -5,14 +5,14 @@
 #include "x/filter.h"
 
 #include "test/test_common/utility.h"
+#include "test/test_util.h"
 
 namespace Envoy {
 namespace Http {
 namespace DynamicModule {
 
 TEST(TestHttpFilter, StreamContextNull) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>("./test/test_programs/libinit.so",
-                                                                  "config", "StreamContextNull");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "StreamContextNull", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -20,8 +20,7 @@ TEST(TestHttpFilter, StreamContextNull) {
 }
 
 TEST(TestHttpFilter, StreamContextOK) {
-  DynamicModuleSharedPtr module = std::make_shared<DynamicModule>(
-      "./test/test_programs/libstream_init.so", "", "StreamContextOK");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "StreamContextOK", "");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);

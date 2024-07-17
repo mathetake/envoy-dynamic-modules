@@ -12,12 +12,22 @@ COPTS = [
 ]
 
 DEPS = [
+    "//test:test_util",
     "@com_google_googletest//:gtest",
     "@com_google_googletest//:gtest_main",
     "@envoy//test/test_common:test_version_linkstamp",
     # ^^ required by utility_lib.
     "@envoy//test/test_common:utility_lib",
 ]
+
+cc_library(
+    name = "test_util",
+    hdrs = ["test_util.h"],
+    copts = COPTS,
+    deps = [
+        "//x:dynamic_module_lib",
+    ],
+)
 
 cc_test(
     name = "dynamic_module_test",
