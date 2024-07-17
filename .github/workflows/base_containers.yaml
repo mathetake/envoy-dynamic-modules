@@ -11,6 +11,7 @@ jobs:
     name: Build (${{ matrix.envoy_version }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         # TODO: add build options for buildcontainers like debug, release, etc.
         include:
