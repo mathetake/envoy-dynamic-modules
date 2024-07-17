@@ -21,9 +21,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # TODO: automate the build of the latest images. Currently, they are built manually by spanning the devcontainer
+        # and run the bazel test command, then commit the image.
         envoy:
         - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.30-latest
-          name: Envoy 1.30
+          name: Envoy v1.30
+          version: 1.30.4-light
+
+        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.29-latest
+          name: Envoy v1.29
+          version: 1.29.7-light
 
     defaults:
       run:
@@ -35,8 +42,11 @@ jobs:
       options: --user vscode
 
     steps:
-    - name: Checkout the commit.
+    - name: Checkout the commit
       run: git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${{ github.sha }}
+
+    - name: Set version
+      run: sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/" bazel/repositories.bzl
 
     - name: Run build
       env:

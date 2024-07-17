@@ -1,6 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-ENVOY_VERSION = "1.30.4-light"  # Change this to the desired Envoy version.
+ENVOY_VERSION = "1.30.4-light"  # Change this to the desired Envoy version. -light is optional.
 
 ENVOY_VERSIONS = {
     "1.30.4": {
@@ -35,6 +35,7 @@ def repositories():
     values = ENVOY_VERSIONS[version]
 
     if is_light:
+        # Replace the default config by the light extensions build config repository for the given version.
         native.new_local_repository(
             name = "envoy_build_config",
             path = values["extensions_build_config_dir"],
