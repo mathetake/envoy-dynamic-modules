@@ -39,7 +39,11 @@ jobs:
       run: git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${{ github.sha }}
 
     - name: Run build
+      env:
+        HOME: /build
       run: bazel build //...
 
     - name: Run tests
+      env:
+        HOME: /build
       run: bazel test //...
