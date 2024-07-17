@@ -38,4 +38,4 @@ jobs:
              --build-arg GIT_SHA_ARG=${{ github.sha }}
 
       - name: Push ${{ matrix.image }}
-        run: docker push ${{ image }}
+        run: docker push ${{ matrix.image }}
