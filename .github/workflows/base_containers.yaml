@@ -1,4 +1,4 @@
-name: internal-images
+name: Base Containers
 
 # Refresh the tags once a day. This limits impact of rate-limited images. See RATIONALE.md
 on:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   build_images:
+    name: Build Base Containers (${{ matrix.name }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
