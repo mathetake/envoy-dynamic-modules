@@ -33,6 +33,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Frees up space # https://github.com/orgs/community/discussions/25678#discussioncomment-6533238
+        run: rm -rf /opt/hostedtoolcache
+
       - name: "Build ${{ matrix.image }}"
         run: |
           docker build -f .github/workflows/Dockerfile.base_container . -t ${{ matrix.image }} \
