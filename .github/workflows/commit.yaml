@@ -43,7 +43,9 @@ jobs:
 
     steps:
     - name: Checkout the commit
-      run: git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${{ github.sha }}
+      run: |
+        git reset --hard
+        git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${{ github.sha }}
 
     - name: Set version
       run: sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/" bazel/repositories.bzl
