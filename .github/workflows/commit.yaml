@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         envoy:
-        - image: ghcr.io/envoyproxyx/envoyx/testcontainer:v1.30-latest
+        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.30-latest
           name: Envoy 1.30
 
     defaults:
