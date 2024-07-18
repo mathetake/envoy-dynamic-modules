@@ -2,6 +2,7 @@ FROM gcr.io/envoy-ci/envoy-build:f94a38f62220a2b017878b790b6ea98a0f6c5f9c@sha256
 
 ARG ENVOY_VERSION_ARG
 ARG GIT_SHA_ARG
+ARG BAZEL_BUILD_OPTIONS=""
 
 ARG USERNAME=envoyxbuild
 ARG USER_UID=501
@@ -23,4 +24,7 @@ RUN .devcontainer/setup.sh || true
 RUN echo "Checking out ${GIT_SHA_ARG}" && git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${GIT_SHA_ARG}
 RUN sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION='${ENVOY_VERSION_ARG}'/" bazel/repositories.bzl && cat bazel/repositories.bzl
 
-RUN (bazel test //... && bazel build && bazel build --config=clang-tidy $(bazel query '//test:*') //x/...) || true
+# To have each layer smaller, we split the bazel build commands.
+RUN bazel build $BAZEL_BUILD_OPTIONS //x/...
+RUN bazel test  $BAZEL_BUILD_OPTIONS //test/...
+RUN bazel build  $BAZEL_BUILD_OPTIONS //...
