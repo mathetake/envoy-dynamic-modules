@@ -1,0 +1,26 @@
+FROM gcr.io/envoy-ci/envoy-build:f94a38f62220a2b017878b790b6ea98a0f6c5f9c@sha256:7adc40c09508f957624c4d2e0f5aeecb73a59207ee6ded53b107eac828c091b2
+
+ARG ENVOY_VERSION_ARG
+ARG GIT_SHA_ARG
+
+ARG USERNAME=envoyxbuild
+ARG USER_UID=501
+ARG USER_GID=$USER_UID
+ENV BUILD_DIR=/build
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME -G pcap -d $BUILD_DIR \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+USER $USERNAME
+ENV HOME=$BUILD_DIR
+
+RUN git clone https://github.com/envoyproxyx/envoyx.git $BUILD_DIR/envoyx
+
+WORKDIR $BUILD_DIR/envoyx
+RUN .devcontainer/setup.sh || true
+RUN echo "Checking out ${GIT_SHA_ARG}" && git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && git checkout --detach ${GIT_SHA_ARG}
+RUN sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION='${ENVOY_VERSION_ARG}'/" bazel/repositories.bzl && cat bazel/repositories.bzl
+
+RUN (bazel test //... && bazel build && bazel build --config=clang-tidy $(bazel query '//test:*') //x/...) || true
