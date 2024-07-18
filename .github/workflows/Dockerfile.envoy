@@ -1,5 +1,5 @@
-ARG ENVOY_VERSION_ARG
+ARG ENVOY_IMAGE_TAG
 
-FROM envoyproxy/envoy:v${ENVOY_VERSION_ARG}-latest
+FROM envoyproxy/envoy:${ENVOY_VERSION_ARG}
 
 COPY ./envoy /usr/local/bin/envoy

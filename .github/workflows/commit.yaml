@@ -65,10 +65,10 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and Push ghcr.io/envoyproxyx/envoyx:v${{ matrix.version }}-${{ github.sha }}
+    - name: Build and Push ghcr.io/envoyproxyx/envoyx:${{ matrix.envoy.envoy_image_tag }}-${{ github.sha }}
       if: github.event_name == 'push'
       run: |
-        IMAGE=ghcr.io/envoyproxyx/envoyx:v${{ matrix.version }}-${{ github.sha }}
+        IMAGE=ghcr.io/envoyproxyx/envoyx:${{ matrix.envoy.envoy_image_tag }}-${{ github.sha }}
         docker build -f .github/workflows/Dockerfile.envoy . \
-            -t $IMAGE --build-arg ENVOY_VERSION_ARG=${{ matrix.envoy_version }}
+            -t $IMAGE --build-arg ENVOY_IMAGE_TAG=${{ matrix.envoy.envoy_image_tag }}
         docker push $IMAGE
