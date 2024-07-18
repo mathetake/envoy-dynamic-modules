@@ -22,9 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         envoy:
+        # Images are built by the buildcontainers workflow.
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
           version: 1.30.4
-
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest
           version: 1.29.7
 
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.envoy.image }}
-      options: --user vscode
+      options: --user envoyxbuild
 
     steps:
     - name: Checkout the commit

@@ -1,10 +1,10 @@
 name: Buildcontainers
 
-# Refresh the tags once a day. This limits impact of rate-limited images. See RATIONALE.md
+# Refresh once a week.
 on:
   schedule:
-    - cron: "23 3 * * *"
-  workflow_dispatch:  # Allows manual refresh
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
 
 permissions:
   packages: write
