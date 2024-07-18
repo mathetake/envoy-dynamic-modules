@@ -33,17 +33,18 @@ jobs:
     # To extract the Envoy binary from the buildcontainer, we run docker run in a single step.
     - name: Run tests
       run: |
-        docker run --user envoyxbuild -v $(pwd):/gha ${{ matrix.envoy.image }} /bin/bash -c "\
+        mkdir -p /tmp/gha
+        docker run --user envoyxbuild -v /tmp/gha:/tmp/gha ${{ matrix.envoy.image }} /bin/bash -c "\
           git reset --hard && \
           git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && \
           git checkout --detach ${{ github.sha }} && \
           sed -i 's/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/' bazel/repositories.bzl && \
           bazel build //... && \
           bazel test //... && \
-          cp bazel-bin/envoy /gha/envoy"
+          cp bazel-bin/envoy /tmp/gha/envoy"
 
     - name: Check Envoy binary
       run: |
-        file envoy
-        ./envoy --version
-        ./envoy --help
+        file /tmp/gha/envoy
+        /tmp/gha/envoy/envoy --version
+        /tmp/gha/envoy/envoy --help
