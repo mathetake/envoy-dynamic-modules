@@ -30,6 +30,9 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+    - name: Frees up space # https://github.com/orgs/community/discussions/25678#discussioncomment-6533238
+      run: rm -rf /opt/hostedtoolcache
+
     # To extract the Envoy binary from the buildcontainer, we run docker run in a single step.
     - name: Run tests
       run: |
@@ -41,10 +44,9 @@ jobs:
           sed -i 's/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/' bazel/repositories.bzl && \
           bazel build //... && \
           bazel test //... && \
-          cp bazel-bin/envoy /tmp/gha/envoy"
+          sudo cp bazel-bin/envoy /tmp/gha/envoy"
 
     - name: Check Envoy binary
       run: |
         file /tmp/gha/envoy
-        /tmp/gha/envoy/envoy --version
-        /tmp/gha/envoy/envoy --help
+        /tmp/gha/envoy --version
