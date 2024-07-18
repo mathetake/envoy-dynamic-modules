@@ -1,0 +1,5 @@
+ARG ENVOY_VERSION_ARG
+
+FROM envoyproxy/envoy:v${ENVOY_VERSION_ARG}-latest
+
+COPY ./envoy /usr/local/bin/envoy
