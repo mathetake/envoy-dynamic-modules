@@ -22,10 +22,14 @@ jobs:
       fail-fast: false
       matrix:
         envoy:
-        # Images are built by the buildcontainers workflow.
+        # Build images are built by the buildcontainers workflow.
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
+          # The tag of the Envoy image to build the final image.
+          envoy_image_tag: v1.30-latest
           version: 1.30.4
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest
+          # The tag of the Envoy image to build the final image.
+          envoy_image_tag: v1.29-latest
           version: 1.29.7
 
     runs-on: ubuntu-latest
@@ -33,11 +37,13 @@ jobs:
     - name: Frees up space # https://github.com/orgs/community/discussions/25678#discussioncomment-6533238
       run: rm -rf /opt/hostedtoolcache
 
+    - uses: actions/checkout@v3
+
     # To extract the Envoy binary from the buildcontainer, we run docker run in a single step.
     - name: Run tests
       run: |
         mkdir -p /tmp/gha
-        docker run --user envoyxbuild -v /tmp/gha:/tmp/gha ${{ matrix.envoy.image }} /bin/bash -c "\
+        docker run --user envoyxbuild -v $(pwd):/tmp/gha ${{ matrix.envoy.image }} /bin/bash -c "\
           git reset --hard && \
           git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && \
           git checkout --detach ${{ github.sha }} && \
@@ -48,5 +54,21 @@ jobs:
 
     - name: Check Envoy binary
       run: |
-        file /tmp/gha/envoy
-        /tmp/gha/envoy --version
+        file ./envoy
+        ./envoy --version
+
+    - name: Login into GitHub Container Registry
+      if: github.event_name == 'push'
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Push ghcr.io/envoyproxyx/envoyx:v${{ matrix.version }}-${{ github.sha }}
+      if: github.event_name == 'push'
+      run: |
+        IMAGE=ghcr.io/envoyproxyx/envoyx:v${{ matrix.version }}-${{ github.sha }}
+        docker build -f .github/workflows/Dockerfile.envoy . \
+            -t $IMAGE --build-arg ENVOY_VERSION_ARG=${{ matrix.envoy_version }}
+        docker push $IMAGE

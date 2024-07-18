@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: "Login into GitHub Container Registry"
+      - name: Login into GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -38,7 +38,7 @@ jobs:
       - name: Frees up space # https://github.com/orgs/community/discussions/25678#discussioncomment-6533238
         run: rm -rf /opt/hostedtoolcache
 
-      - name: "Build ${{ matrix.image }}"
+      - name: Build ${{ matrix.image }}
         run: |
           docker build -f .github/workflows/Dockerfile.buildcontainer . -t ${{ matrix.image }} \
              --build-arg ENVOY_VERSION_ARG=${{ matrix.envoy_version }} \
