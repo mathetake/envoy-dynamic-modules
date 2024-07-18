@@ -13,15 +13,17 @@ namespace DynamicModule {
 
 HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module) : dynamic_module_(dynamic_module) {}
 
-HttpFilter::~HttpFilter() { this->onDestroy(); }
+HttpFilter::~HttpFilter() { this->destoryStreamContext(); }
 
-void HttpFilter::onDestroy() {
+void HttpFilter::onDestroy() { this->destoryStreamContext(); };
+
+void HttpFilter::destoryStreamContext() {
   ASSERT(dynamic_module_);
   if (stream_context_) {
     dynamic_module_->__envoy_dynamic_module_v1_event_http_destroy_(THIS_AS_VOID, stream_context_);
     stream_context_ = nullptr;
   }
-};
+}
 
 FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool end_of_stream) {
   ASSERT(dynamic_module_);

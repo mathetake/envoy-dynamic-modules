@@ -37,7 +37,14 @@ public:
     stream_context_ = dynamic_module_->__envoy_dynamic_module_v1_event_http_context_init_();
   }
 
-  // N.B. The event hooks inlined here are supported by the dynamic modules for now.
+  /**
+   * Destroy the stream context. This is called by onDestroy() and the destructor to ensure that the
+   * stream context is destroyed before the dynamic module is unloaded.
+   * Note: this is made public for testing purposes.
+   */
+  void destoryStreamContext();
+
+  // N.B. The event hooks inlined here are not supported by the dynamic modules for now.
 
   // ---------- Http::StreamFilterBase ------------
 
