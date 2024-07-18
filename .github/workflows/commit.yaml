@@ -17,18 +17,16 @@ concurrency:
 
 jobs:
   test:
-    name: Test (${{ matrix.envoy.name }})
+    name: Test on Envoy v${{ matrix.envoy.version }}
     strategy:
       fail-fast: false
       matrix:
         envoy:
-        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.30-latest # This is built in base_containers.yaml daily.
-          name: Envoy v1.30
-          version: 1.30.4-light
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest # This is built in base_containers.yaml daily.
+          version: 1.30.4
 
-        - image: ghcr.io/envoyproxyx/envoyx-testcontainer:v1.29-latest # This is built in base_containers.yaml daily.
-          name: Envoy v1.29
-          version: 1.29.7-light
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest # This is built in base_containers.yaml daily.
+          version: 1.29.7
 
     defaults:
       run:
