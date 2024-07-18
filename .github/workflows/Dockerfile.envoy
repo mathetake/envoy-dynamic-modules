@@ -1,5 +1,5 @@
 ARG ENVOY_IMAGE_TAG
 
-FROM envoyproxy/envoy:${ENVOY_VERSION_ARG}
+FROM envoyproxy/envoy:${ENVOY_IMAGE_TAG}
 
 COPY ./envoy /usr/local/bin/envoy
