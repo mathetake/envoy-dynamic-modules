@@ -97,6 +97,9 @@ public:
   __envoy_dynamic_module_v1_event_http_destroy __envoy_dynamic_module_v1_event_http_destroy_ =
       nullptr;
 
+  // The in-memory context for the module.
+  void* module_ctx_ = nullptr;
+
 private:
   const std::string name_;
   // The raw dlopen handle.

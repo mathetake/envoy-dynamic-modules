@@ -15,6 +15,11 @@ HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module) : dynamic_module_(
 
 HttpFilter::~HttpFilter() { this->destoryStreamContext(); }
 
+void HttpFilter::ensureStreamContext() {
+  stream_context_ = dynamic_module_->__envoy_dynamic_module_v1_event_http_context_init_(
+      THIS_AS_VOID, dynamic_module_->module_ctx_);
+}
+
 void HttpFilter::onDestroy() { this->destoryStreamContext(); };
 
 void HttpFilter::destoryStreamContext() {
