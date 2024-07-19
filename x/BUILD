@@ -17,10 +17,7 @@ COPTS = ["-DENVOY_DYNAMIC_MODULE=1"]
 envoy_cc_library(
     name = "dynamic_module_lib",
     srcs = ["dynamic_module.cc"],
-    hdrs = [
-        "abi.h",
-        "dynamic_module.h",
-    ],
+    hdrs = ["dynamic_module.h"],
     copts = COPTS,
     repository = "@envoy",
     deps = [
@@ -28,6 +25,7 @@ envoy_cc_library(
         "@envoy//envoy/common:exception_lib",
         "@envoy//envoy/server:filter_config_interface",
         "@envoy//source/extensions/filters/http/common:pass_through_filter_lib",
+        "@envoyx-abi//:abi_lib",
     ],
 )
 

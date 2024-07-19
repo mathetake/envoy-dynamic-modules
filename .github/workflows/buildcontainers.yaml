@@ -1,9 +1,9 @@
 name: Buildcontainers
 
-# Refresh once a week.
+# Refresh once a month.
 on:
   schedule:
-    - cron: "0 0 * * 1"
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 permissions:
@@ -13,8 +13,8 @@ jobs:
   build_images:
     name: Build (${{ matrix.envoy_version }})
     runs-on: ubuntu-latest
-    # Set 20 hours timeout for the job
-    timeout-minutes: 1200
+    # Set 6 hours timeout for the job
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:

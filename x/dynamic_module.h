@@ -9,7 +9,7 @@
 #include "envoy/server/filter_config.h"
 
 #include "x/config.pb.h"
-#include "x/abi.h"
+#include "abi.h"
 
 namespace Envoy {
 namespace Http {

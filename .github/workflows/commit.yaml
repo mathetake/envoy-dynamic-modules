@@ -3,11 +3,11 @@ name: Tests and Format
 on:
   pull_request:
     branches: [main]
-    paths-ignore:  # ignore docs as they are built with Netlify.
+    paths-ignore:
       - '**/*.md'
   push:
     branches: [main]
-    paths-ignore:  # ignore docs as they are built with Netlify.
+    paths-ignore:
       - '**/*.md'
 
 concurrency:
@@ -45,7 +45,7 @@ jobs:
         mkdir -p /tmp/gha
         docker run --user envoyxbuild -v $(pwd):/tmp/gha ${{ matrix.envoy.image }} /bin/bash -c "\
           git reset --hard && \
-          git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main && \
+          git fetch origin ${{ github.sha }} && \
           git checkout --detach ${{ github.sha }} && \
           sed -i 's/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/' bazel/repositories.bzl && \
           bazel build //... && \
