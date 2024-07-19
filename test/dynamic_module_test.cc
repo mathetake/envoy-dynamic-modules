@@ -24,8 +24,8 @@ TEST(TestDynamicModule, InitNonExist) {
 }
 
 TEST(TestDynamicModule, InitFail) {
-  EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("init_fail", "InitFail"), EnvoyException,
-                          "init function in .* failed with result 12345");
+  EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("init_fail", "InitFail", "", "fooooooooooo"),
+                          EnvoyException, "init function in fooooooooooo failed");
 }
 
 TEST(TestDynamicModule, ConstructorHappyPath) {
