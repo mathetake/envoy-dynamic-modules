@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths-ignore:
       - '**/*.md'
+    tags: 'v[0-9]+.[0-9]+.[0-9]+**'
 
 concurrency:
   # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-concurrency-to-cancel-any-in-progress-job-or-run
@@ -65,10 +66,19 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and Push ghcr.io/envoyproxyx/envoyx:${{ matrix.envoy.envoy_image_tag }}-${{ github.sha }}
+    - name: Build and Push ghcr.io/envoyproxyx/envoy:${{ matrix.envoy.envoy_image_tag }}-${{ github.sha }}
       if: github.event_name == 'push'
       run: |
-        IMAGE=ghcr.io/envoyproxyx/envoyx:${{ matrix.envoy.envoy_image_tag }}-${{ github.sha }}
+        IMAGE=ghcr.io/envoyproxyx/envoy:${{ matrix.envoy.envoy_image_tag }}-envoyx-${{ github.sha }}
         docker build -f .github/workflows/Dockerfile.envoy . \
             -t $IMAGE --build-arg ENVOY_IMAGE_TAG=${{ matrix.envoy.envoy_image_tag }}
         docker push $IMAGE
+
+    - name: Release the docker image
+      if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+      run: |
+        tag="${GITHUB_REF#refs/tags/}"
+        HASH_IMAGE_TAG=ghcr.io/envoyproxyx/envoy:${{ matrix.envoy.envoy_image_tag }}-envoyx-${{ github.sha }}
+        RELEASE_IMAGE_TAG=ghcr.io/envoyproxyx/envoy:${{ matrix.envoy.envoy_image_tag }}-envoyx-${tag}
+        docker tag $HASH_IMAGE_TAG $RELEASE_IMAGE_TAG
+        docker push $RELEASE_IMAGE_TAG
