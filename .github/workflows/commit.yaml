@@ -73,6 +73,9 @@ jobs:
         docker build -f .github/workflows/Dockerfile.envoy . \
             -t $IMAGE --build-arg ENVOY_IMAGE_TAG=${{ matrix.envoy.envoy_image_tag }}
         docker push $IMAGE
+        MAIN_IMAGE_TAG=ghcr.io/envoyproxyx/envoy:${{ matrix.envoy.envoy_image_tag }}-envoyx-main
+        docker tag $IMAGE $MAIN_IMAGE_TAG
+        docker push $MAIN_IMAGE_TAG
 
     - name: Release the docker image
       if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
