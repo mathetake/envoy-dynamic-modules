@@ -24,6 +24,11 @@ jobs:
       matrix:
         envoy:
         # Build images are built by the buildcontainers workflow.
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.31-latest
+          # The tag of the Envoy image to build the final image.
+          envoy_image_tag: v1.31-latest
+          version: 1.31.0
+        # Build images are built by the buildcontainers workflow.
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
           # The tag of the Envoy image to build the final image.
           envoy_image_tag: v1.30-latest
@@ -38,7 +43,7 @@ jobs:
     - name: Frees up space # https://github.com/orgs/community/discussions/25678#discussioncomment-6533238
       run: rm -rf /opt/hostedtoolcache
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # To extract the Envoy binary from the buildcontainer, we run docker run in a single step.
     - name: Run tests
