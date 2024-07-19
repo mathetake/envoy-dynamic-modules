@@ -24,3 +24,19 @@ def repositories():
         name = "envoy",
         **ENVOY_VERSIONS[ENVOY_VERSION]
     )
+
+    http_archive(
+        name = "envoyx-abi",
+        url = "https://github.com/envoyproxyx/abi/archive/e4a1dec1b754fedc869f4f6a3cbc59ff9cbab6b6.tar.gz",
+        sha256 = "684d39671c179e7e257b22c6f74d4e1760642ae00cd7267f89f8ad73871d5c40",
+        strip_prefix = "abi-e4a1dec1b754fedc869f4f6a3cbc59ff9cbab6b6",
+        build_file_content = """
+exports_files(["abi.h"])
+
+cc_library(
+    name = "abi_lib",
+    hdrs = ["abi.h"],
+    visibility = ["//visibility:public"],
+)
+""",
+    )

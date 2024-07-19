@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "x/abi.h"
+#include "abi.h"
 
 void* __envoy_dynamic_module_v1_event_http_context_init() {
   static size_t context = 999999;

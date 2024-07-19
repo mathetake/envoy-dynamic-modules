@@ -3,11 +3,11 @@ name: Tests and Format
 on:
   pull_request:
     branches: [main]
-    paths-ignore:  # ignore docs as they are built with Netlify.
+    paths-ignore:
       - '**/*.md'
   push:
     branches: [main]
-    paths-ignore:  # ignore docs as they are built with Netlify.
+    paths-ignore:
       - '**/*.md'
 
 concurrency:

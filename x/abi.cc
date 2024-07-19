@@ -4,7 +4,7 @@
 #include <dlfcn.h>
 
 #include "x/filter.h"
-#include "x/abi.h"
+#include "abi.h"
 
 #include "source/common/common/assert.h"
 #include "envoy/common/exception.h"
