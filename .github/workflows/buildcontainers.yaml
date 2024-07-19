@@ -20,6 +20,8 @@ jobs:
       matrix:
         # TODO: add build options for buildcontainers like debug, release, etc.
         include:
+          - envoy_version: 1.31.0
+            image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.31-latest
           - envoy_version: 1.30.4
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
           - envoy_version: 1.29.7
