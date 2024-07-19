@@ -33,9 +33,7 @@ public:
    * the stream context is initialized before calling into the * dynamic module.
    * Note: this is made public for testing purposes.
    */
-  void ensureStreamContext() {
-    stream_context_ = dynamic_module_->__envoy_dynamic_module_v1_event_http_context_init_();
-  }
+  void ensureStreamContext();
 
   /**
    * Destroy the stream context. This is called by onDestroy() and the destructor to ensure that the

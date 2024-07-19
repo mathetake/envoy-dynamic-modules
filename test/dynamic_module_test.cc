@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include <cstddef>
 #include <exception>
 #include <vector>
 
@@ -75,8 +76,8 @@ TEST(TestDynamicModule, SameNameDifferentFile) {
 
   // Even after the file is deleted, the module should still be able to be loaded. Just make sure
   // that functions can be called.
-  module1->__envoy_dynamic_module_v1_event_http_context_init_();
-  module2->__envoy_dynamic_module_v1_event_http_context_init_();
+  module1->__envoy_dynamic_module_v1_event_http_context_init_(nullptr, nullptr);
+  module2->__envoy_dynamic_module_v1_event_http_context_init_(nullptr, nullptr);
 
   // Check handles are different because the uuid is different even when the file name is the same.
   EXPECT_NE(module1->handleForTesting(), module2->handleForTesting());

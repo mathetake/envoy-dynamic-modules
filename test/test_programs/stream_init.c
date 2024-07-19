@@ -1,15 +1,18 @@
 #include <stdio.h>
 #include "abi.h"
 
-void* __envoy_dynamic_module_v1_event_http_context_init() {
+__envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_ModuleContextPtr module_ctx_ptr) {
   static size_t context = 999999;
   return &context;
 }
 
-size_t __envoy_dynamic_module_v1_event_module_init(
+__envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_module_init(
     __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
     __envoy_dynamic_module_v1_type_ModuleConfigSize config_size) {
-  return 0;
+  static size_t context = 0;
+  return &context;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus

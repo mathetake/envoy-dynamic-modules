@@ -5,37 +5,36 @@
 
 int already_called = 0;
 
-size_t __envoy_dynamic_module_v1_event_module_init(
+__envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_module_init(
     __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
     __envoy_dynamic_module_v1_type_ModuleConfigSize config_size) {
-  printf("\t\tinit called with config: %s and already_called_ptr: %p, already_called: %d\n",
-         config_ptr, &already_called, already_called);
   if (already_called == 1) {
     // This function should only be called once.
-    return 1;
+    return NULL;
   }
   already_called = 1;
 
-  printf("init called with config: %s and already_called_ptr: %p, already_called: %d\n", config_ptr,
-         &already_called, already_called);
-
   if (config_size != 6) {
-    return 1;
+    return NULL;
   }
 
   // Checks if the config is equals to "config"
   if (strcmp(config_ptr, "config") != 0) {
-    return 1;
+    return NULL;
   }
   // Replaces the config with "11111" via for loop.
   for (int i = 0; i < 6; i++) {
     // Cast the pointer to non-const to modify the value for testing.
     ((char*)config_ptr)[i] = '1';
   }
-  return 0;
+
+  static size_t context = 0;
+  return &context;
 }
 
-__envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init() {
+__envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
+    __envoy_dynamic_module_v1_type_ModuleContextPtr module_ctx_ptr) {
   return NULL;
 }
 

@@ -68,9 +68,9 @@ void DynamicModule::initModuleOnInlineBytes(const ObjectFileLocationInlineBytes&
 
 void DynamicModule::initModule(const std::string& config) {
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_module_init);
-  const int result = __envoy_dynamic_module_v1_event_module_init_(config.data(), config.size());
-  if (result != 0) {
-    throw EnvoyException(fmt::format("init function in {} failed with result {}", name_, result));
+  module_ctx_ = __envoy_dynamic_module_v1_event_module_init_(config.data(), config.size());
+  if (module_ctx_ == nullptr) {
+    throw EnvoyException(fmt::format("init function in {} failed", name_));
   }
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_context_init);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_headers);
