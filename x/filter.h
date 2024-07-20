@@ -23,12 +23,6 @@ public:
   ~HttpFilter() override;
 
   /**
-   * Get the stream context for testing.
-   * @return the stream context.
-   */
-  void* streamContextForTesting() { return stream_context_; };
-
-  /**
    * Ensure that the stream context is initialized. This is called by decodeHeaders() to ensure that
    * the stream context is initialized before calling into the * dynamic module.
    * Note: this is made public for testing purposes.
@@ -133,14 +127,15 @@ public:
 
   void encodeComplete() override{};
 
-private:
-  const DynamicModuleSharedPtr dynamic_module_ = nullptr;
+public:
   StreamDecoderFilterCallbacks* decoder_callbacks_ = nullptr;
   StreamEncoderFilterCallbacks* encoder_callbacks_ = nullptr;
 
-  // The in-module per-stream context for the module. This will be set to the return value by
-  // Symbols::__envoy_dynamic_module_v1_event_http_context_init.
+  // The in-module per-stream context for the module.
   void* stream_context_ = nullptr;
+
+private:
+  const DynamicModuleSharedPtr dynamic_module_ = nullptr;
 };
 
 } // namespace DynamicModule

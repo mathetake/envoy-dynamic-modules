@@ -32,9 +32,9 @@ def repositories():
 
     http_archive(
         name = "envoyx-abi",
-        url = "https://github.com/envoyproxyx/abi/archive/e96e8cec29a82da7717528afd7242cfdb69a4219.tar.gz",
-        sha256 = "de8f0332e350cf530a228b16bc58aa5f9a038bed320b2250f03c6c16fa48eb39",
-        strip_prefix = "abi-e96e8cec29a82da7717528afd7242cfdb69a4219",
+        url = "https://github.com/envoyproxyx/abi/archive/00983e9d0480d845ae462d5246efda2756830157.tar.gz",
+        sha256 = "5398e7a34977c0cc2edc07b6d02dcb66cccb354012b049a2254da7ec00c111d2",
+        strip_prefix = "abi-00983e9d0480d845ae462d5246efda2756830157",
         build_file_content = """
 cc_library(
     name = "abi_lib",
