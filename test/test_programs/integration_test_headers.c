@@ -1,8 +1,13 @@
 
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
 #include "abi.h"
+
+size_t should_wait = 0;
 
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
 __envoy_dynamic_module_v1_event_http_request_headers(
@@ -13,12 +18,27 @@ __envoy_dynamic_module_v1_event_http_request_headers(
   return 0;
 }
 
+void* sleep_thread(__envoy_dynamic_module_v1_type_EnvoyFilterPtr arg) {
+  printf("sleeping for 1 second\n");
+  sleep(1);
+  printf("continuing\n");
+  __envoy_dynamic_module_v1_http_continue_response(arg);
+  return NULL;
+}
+
 __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
 __envoy_dynamic_module_v1_event_http_response_headers(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+  if (should_wait) {
+    // Spwans a new thread and waits for 1 second.
+    pthread_t thread;
+    pthread_create(&thread, NULL, sleep_thread, envoy_filter_ptr);
+    printf("returning stop iteration\n");
+    return __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatusStopAllIterationAndBuffer;
+  }
 
   // Get the status code and assert it is 404.
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
@@ -52,6 +72,11 @@ __envoy_dynamic_module_v1_event_http_request_body(
 __envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_module_init(
     __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
     __envoy_dynamic_module_v1_type_ModuleConfigSize config_size) {
+  // Check if the config string equals "should_wait".
+  if (config_size == 11 && strncmp(config_ptr, "should_wait", 11) == 0) {
+    should_wait = 1;
+  }
+
   static size_t context = 0;
   return &context;
 }

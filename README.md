@@ -1,7 +1,7 @@
 # EnvoyX: Envoy Proxy meets Dynamically Loadable Modules
 
-This is the repository that host the custom C++ code that is compiled togather with the Envoy Proxy code to allow
-dynamically loadable modules to be loaded into the Envoy Proxy.
+This is the repository that hosts the custom C++ code that is compiled togather with the Envoy Proxy code to allow
+dynamically loadable modules to be loaded as HTTP filters.
 
 The ABI is hosted at [envoyproxyx/abi](https://github.com/envoyproxyx/abi).
 

@@ -236,6 +236,22 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
   _buffer->drain(length);
 }
 
+void __envoy_dynamic_module_v1_http_continue_request(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
+  HttpFilter* filter = static_cast<HttpFilter*>(envoy_filter_ptr);
+  auto decoder_callbacks = filter->decoder_callbacks_;
+  auto& dispatcher = decoder_callbacks->dispatcher();
+  dispatcher.post([decoder_callbacks] { decoder_callbacks->continueDecoding(); });
+}
+
+void __envoy_dynamic_module_v1_http_continue_response(
+    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
+  HttpFilter* filter = static_cast<HttpFilter*>(envoy_filter_ptr);
+  auto encoder_callbacks = filter->encoder_callbacks_;
+  auto& dispatcher = encoder_callbacks->dispatcher();
+  dispatcher.post([encoder_callbacks] { encoder_callbacks->continueEncoding(); });
+}
+
 } // extern "C"
 
 } // namespace DynamicModule

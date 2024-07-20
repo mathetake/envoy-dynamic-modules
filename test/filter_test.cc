@@ -26,7 +26,7 @@ TEST(TestHttpFilter, StreamContextOK) {
   const auto result = filter->decodeHeaders(request_headers, false);
   EXPECT_EQ(result, FilterHeadersStatus::Continue);
 
-  const void* context = filter->streamContextForTesting();
+  const void* context = filter->stream_context_;
   EXPECT_NE(context, nullptr);
   // Read the integer value from the context which is set in the
   // __envoy_dynamic_module_v1_event_http_context_init function.

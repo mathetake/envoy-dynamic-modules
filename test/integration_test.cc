@@ -48,4 +48,28 @@ TEST_P(HttpFilterIntegrationTest, Headers) {
   codec_client->close();
 }
 
+TEST_P(HttpFilterIntegrationTest, HeadersStopIteration) {
+  initializeDynamicFilter("./test/test_programs/libintegration_test_headers.so", "should_wait");
+
+  Http::TestRequestHeaderMapImpl headers{
+      {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
+  Http::TestRequestHeaderMapImpl response_headers{{":status", "404"}};
+
+  IntegrationCodecClientPtr codec_client;
+  FakeHttpConnectionPtr fake_upstream_connection;
+  FakeStreamPtr request_stream;
+
+  codec_client = makeHttpConnection(lookupPort("http"));
+  auto response = codec_client->makeHeaderOnlyRequest(headers);
+  ASSERT_TRUE(fake_upstreams_[0]->waitForHttpConnection(*dispatcher_, fake_upstream_connection));
+  ASSERT_TRUE(fake_upstream_connection->waitForNewStream(*dispatcher_, request_stream));
+  ASSERT_TRUE(request_stream->waitForEndStream(*dispatcher_));
+  request_stream->encodeHeaders(response_headers, false);
+  request_stream->encodeData(0, true);
+  ASSERT_TRUE(response->waitForEndStream(std::chrono::milliseconds(3000)));
+  EXPECT_EQ("404", response->headers().getStatusValue());
+
+  codec_client->close();
+}
+
 } // namespace Envoy
