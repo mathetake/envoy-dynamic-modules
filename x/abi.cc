@@ -24,8 +24,7 @@ extern "C" {
   } else {                                                                                         \
     const HeaderEntry* entry = header[0];                                                          \
     const auto entry_length = entry->value().size();                                               \
-    *result_buffer_ptr = static_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(            \
-        entry->value().getStringView().data());                                                    \
+    *result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                 \
     *result_buffer_length_ptr = entry_length;                                                      \
     return header.size();                                                                          \
   }
@@ -62,8 +61,7 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
   }                                                                                                \
   const HeaderEntry* entry = header[nth];                                                          \
   const auto entry_length = entry->value().size();                                                 \
-  *result_buffer_ptr = static_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(              \
-      entry->value().getStringView().data());                                                      \
+  *result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                   \
   *result_buffer_length_ptr = entry_length;
 
 void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
