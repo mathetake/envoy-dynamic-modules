@@ -70,8 +70,10 @@ public:
   // The in-memory context for the module.
   void* module_ctx_ = nullptr;
 
-private:
+  // The name of the module passed in the constructor.
   const std::string name_;
+
+private:
   // The raw dlopen handle.
   void* handle_ = nullptr;
   std::string file_path_for_cleanup_;
