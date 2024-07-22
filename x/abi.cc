@@ -236,18 +236,28 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
 
 void __envoy_dynamic_module_v1_http_continue_request(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
-  HttpFilter* filter = static_cast<HttpFilter*>(envoy_filter_ptr);
-  auto decoder_callbacks = filter->decoder_callbacks_;
-  auto& dispatcher = decoder_callbacks->dispatcher();
-  dispatcher.post([decoder_callbacks] { decoder_callbacks->continueDecoding(); });
+  auto filter = static_cast<HttpFilter*>(envoy_filter_ptr)->shared_from_this();
+  auto& dispatcher = filter->decoder_callbacks_->dispatcher();
+  dispatcher.post([filter] {
+    auto decoder_callbacks = filter->decoder_callbacks_;
+    if (decoder_callbacks && !filter->in_continue_) {
+      decoder_callbacks->continueDecoding();
+      filter->in_continue_ = true;
+    }
+  });
 }
 
 void __envoy_dynamic_module_v1_http_continue_response(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
-  HttpFilter* filter = static_cast<HttpFilter*>(envoy_filter_ptr);
-  auto encoder_callbacks = filter->encoder_callbacks_;
-  auto& dispatcher = encoder_callbacks->dispatcher();
-  dispatcher.post([encoder_callbacks] { encoder_callbacks->continueEncoding(); });
+  auto filter = static_cast<HttpFilter*>(envoy_filter_ptr)->shared_from_this();
+  auto& dispatcher = filter->encoder_callbacks_->dispatcher();
+  dispatcher.post([filter] {
+    auto encoder_callbacks = filter->encoder_callbacks_;
+    if (encoder_callbacks && !filter->in_continue_) {
+      encoder_callbacks->continueEncoding();
+      filter->in_continue_ = true;
+    }
+  });
 }
 
 } // extern "C"
