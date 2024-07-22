@@ -29,7 +29,7 @@ TEST(TestHttpFilter, StreamContextOK) {
   const void* context = filter->stream_context_;
   EXPECT_NE(context, nullptr);
   // Read the integer value from the context which is set in the
-  // __envoy_dynamic_module_v1_event_http_context_init function.
+  // __envoy_dynamic_module_v1_event_http_filter_instance_init function.
   const int* value = static_cast<const int*>(context);
   EXPECT_EQ(*value, 999999);
 }

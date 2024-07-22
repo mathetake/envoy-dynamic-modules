@@ -235,8 +235,8 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
 }
 
 void __envoy_dynamic_module_v1_http_continue_request(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
-  auto filter = static_cast<HttpFilter*>(envoy_filter_ptr)->shared_from_this();
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr) {
+  auto filter = static_cast<HttpFilter*>(envoy_filter_instance_ptr)->shared_from_this();
   auto& dispatcher = filter->decoder_callbacks_->dispatcher();
   dispatcher.post([filter] {
     auto decoder_callbacks = filter->decoder_callbacks_;
@@ -248,8 +248,8 @@ void __envoy_dynamic_module_v1_http_continue_request(
 }
 
 void __envoy_dynamic_module_v1_http_continue_response(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr) {
-  auto filter = static_cast<HttpFilter*>(envoy_filter_ptr)->shared_from_this();
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr) {
+  auto filter = static_cast<HttpFilter*>(envoy_filter_instance_ptr)->shared_from_this();
   auto& dispatcher = filter->encoder_callbacks_->dispatcher();
   dispatcher.post([filter] {
     auto encoder_callbacks = filter->encoder_callbacks_;

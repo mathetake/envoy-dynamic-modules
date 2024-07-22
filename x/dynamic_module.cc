@@ -13,6 +13,7 @@ namespace Http {
 namespace DynamicModule {
 
 DynamicModule::~DynamicModule() {
+  __envoy_dynamic_module_v1_event_http_filter_destroy_(module_ctx_);
   ASSERT(handle_ != nullptr);
   dlclose(handle_);
   std::filesystem::remove(file_path_for_cleanup_);
@@ -34,7 +35,7 @@ void DynamicModule::initModuleOnLocal(const ObjectFileLocationFilePath& location
   }
 
   // Initialize the module.
-  initModule(config);
+  initHttpFilter(config);
 }
 
 void DynamicModule::initModuleOnInlineBytes(const ObjectFileLocationInlineBytes& location,
@@ -56,7 +57,7 @@ void DynamicModule::initModuleOnInlineBytes(const ObjectFileLocationInlineBytes&
   }
 
   // Initialize the module.
-  initModule(config);
+  initHttpFilter(config);
 }
 
 #define RESOLVE_SYMBOL_OR_THROW(symbol_type)                                                       \
@@ -66,19 +67,20 @@ void DynamicModule::initModuleOnInlineBytes(const ObjectFileLocationInlineBytes&
         fmt::format("cannot resolve symbol: {} error: {}", #symbol_type, dlerror()));              \
   }
 
-void DynamicModule::initModule(const std::string& config) {
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_module_init);
-  module_ctx_ =
-      __envoy_dynamic_module_v1_event_module_init_(const_cast<char*>(config.data()), config.size());
+void DynamicModule::initHttpFilter(const std::string& config) {
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_init);
+  module_ctx_ = __envoy_dynamic_module_v1_event_http_filter_init_(const_cast<char*>(config.data()),
+                                                                  config.size());
   if (module_ctx_ == nullptr) {
     throw EnvoyException(fmt::format("init function in {} failed", name_));
   }
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_context_init);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_headers);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_request_body);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_headers);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_response_body);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_destroy);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_destroy);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_init);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_request_headers);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_request_body);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_response_headers);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_response_body);
+  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_destroy);
 }
 
 #undef RESOLVE_SYMBOL_OR_THROW

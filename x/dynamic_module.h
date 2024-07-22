@@ -74,7 +74,7 @@ public:
    * Initialize the module.
    * @param config the configuration for the module.
    */
-  void initModule(const std::string& config);
+  void initHttpFilter(const std::string& config);
 
   /**
    * Get the handle for testing.
@@ -82,20 +82,16 @@ public:
    */
   void* handleForTesting() { return handle_; }
 
-  __envoy_dynamic_module_v1_event_module_init __envoy_dynamic_module_v1_event_module_init_ =
-      nullptr;
-  __envoy_dynamic_module_v1_event_http_context_init
-      __envoy_dynamic_module_v1_event_http_context_init_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_request_headers
-      __envoy_dynamic_module_v1_event_http_request_headers_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_request_body
-      __envoy_dynamic_module_v1_event_http_request_body_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_response_headers
-      __envoy_dynamic_module_v1_event_http_response_headers_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_response_body
-      __envoy_dynamic_module_v1_event_http_response_body_ = nullptr;
-  __envoy_dynamic_module_v1_event_http_destroy __envoy_dynamic_module_v1_event_http_destroy_ =
-      nullptr;
+#define DECLARE_EVENT_HOOK(name) name name##_ = nullptr;
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_init)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_destroy)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_init)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_request_headers)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_request_body)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_response_headers)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_response_body)
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_destroy)
+#undef DECLARE_EVENT_HOOK
 
   // The in-memory context for the module.
   void* module_ctx_ = nullptr;
