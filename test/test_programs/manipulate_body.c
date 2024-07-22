@@ -5,7 +5,6 @@
 
 __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus
 __envoy_dynamic_module_v1_event_http_request_body(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -44,7 +43,6 @@ __envoy_dynamic_module_v1_event_http_request_body(
 
 __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
 __envoy_dynamic_module_v1_event_http_response_body(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -97,7 +95,6 @@ __envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_ht
 
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
 __envoy_dynamic_module_v1_event_http_request_headers(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr request_headers_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -106,7 +103,6 @@ __envoy_dynamic_module_v1_event_http_request_headers(
 
 __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
 __envoy_dynamic_module_v1_event_http_response_headers(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -114,5 +110,4 @@ __envoy_dynamic_module_v1_event_http_response_headers(
 }
 
 void __envoy_dynamic_module_v1_event_http_destroy(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr) {}

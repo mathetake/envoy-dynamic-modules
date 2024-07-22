@@ -1,5 +1,6 @@
 
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,9 +10,12 @@
 
 size_t should_wait = 0;
 
+struct httpContext {
+  __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr;
+};
+
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
 __envoy_dynamic_module_v1_event_http_request_headers(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr request_headers_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -28,14 +32,14 @@ void* sleep_thread(__envoy_dynamic_module_v1_type_EnvoyFilterPtr arg) {
 
 __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
 __envoy_dynamic_module_v1_event_http_response_headers(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+  struct httpContext* http_context = (struct httpContext*)http_context_ptr;
   if (should_wait) {
     // Spwans a new thread and waits for 1 second.
     pthread_t thread;
-    pthread_create(&thread, NULL, sleep_thread, envoy_filter_ptr);
+    pthread_create(&thread, NULL, sleep_thread, (void*)http_context->envoy_filter_ptr);
     printf("returning stop iteration\n");
     return __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatusStopAllIterationAndBuffer;
   }
@@ -62,7 +66,6 @@ __envoy_dynamic_module_v1_event_http_response_headers(
 
 __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus
 __envoy_dynamic_module_v1_event_http_request_body(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -78,19 +81,19 @@ __envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_
   }
 
   static size_t context = 0;
-  return &context;
+  return (uintptr_t)(&context);
 }
 
 __envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init(
     __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_ModuleContextPtr module_ctx_ptr) {
-  static size_t context = 0;
-  return &context;
+  struct httpContext* context = malloc(sizeof(struct httpContext));
+  context->envoy_filter_ptr = envoy_filter_ptr;
+  return (uintptr_t)context;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
 __envoy_dynamic_module_v1_event_http_response_body(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
@@ -98,5 +101,4 @@ __envoy_dynamic_module_v1_event_http_response_body(
 }
 
 void __envoy_dynamic_module_v1_event_http_destroy(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
     __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr) {}
