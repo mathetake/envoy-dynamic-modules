@@ -30,26 +30,12 @@ def repositories():
         **ENVOY_VERSIONS[ENVOY_VERSION]
     )
 
-    #     http_archive(
-    #         name = "envoyx-abi",
-    #         url = "https://github.com/envoyproxyx/abi/archive/511df259b121a0aae92c21311cafbf4cc311c9e9.tar.gz",
-    #         sha256 = "a53a44ebc1ec7b64fdbf88de5485fee1a82be906deb31e5bb04da9d4e4657a7c",
-    #         strip_prefix = "abi-511df259b121a0aae92c21311cafbf4cc311c9e9",
-    #         build_file_content = """
-    # cc_library(
-    #     name = "abi_lib",
-    #     hdrs = ["abi.h"],
-    #     visibility = ["//visibility:public"],
-    # )
-    # """,
-    #     )
-
-    native.new_local_repository(
+    http_archive(
         name = "envoyx-abi",
-        path = "/home/mathetake/envoyxabi",
+        url = "https://github.com/envoyproxyx/abi/archive/4474e4e14e8427a7a4a4d085b724523970d64680.tar.gz",
+        sha256 = "25b71067b5f0f1cea3425acdf4087dd43263ffa8c859fa329ccc4812d597bec8",
+        strip_prefix = "abi-4474e4e14e8427a7a4a4d085b724523970d64680",
         build_file_content = """
-exports_files(["abi.h"])
-
 cc_library(
     name = "abi_lib",
     hdrs = ["abi.h"],
