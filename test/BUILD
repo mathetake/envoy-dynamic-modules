@@ -34,9 +34,10 @@ cc_test(
     srcs = ["dynamic_module_test.cc"],
     copts = COPTS,
     data = [
+        "//test/test_programs:http_filter_init_fail",
         "//test/test_programs:init",
-        "//test/test_programs:init_fail",
         "//test/test_programs:no_init",
+        "//test/test_programs:program_init_fail",
         "//test/test_programs:stream_init",
     ],
     linkopts = LINK_OPTS,

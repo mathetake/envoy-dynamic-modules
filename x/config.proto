@@ -20,12 +20,12 @@ message DynamicModuleConfig {
 
     // The object file's local path. It can be a relative path or an absolute path.
     // E.g. /path/to/module.so or module.so
+    //
+    // The program is loaded exactly once on the first creation of the filter chain.
+    // After that, the program will be reused for other filter chains.
     string file_path = 2;
-
-    // The object file's content. The content will be written to a temporary file and loaded.
-    bytes inline_bytes = 3;
   }
 
-  // Configuration for the module. This will be pased at the load time.
+  // Configuration for the module. This will be pased at the http filter initialization.
   string module_config = 4;
 }

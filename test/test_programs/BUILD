@@ -6,7 +6,9 @@ test_program(name = "init")
 
 test_program(name = "no_init")
 
-test_program(name = "init_fail")
+test_program(name = "http_filter_init_fail")
+
+test_program(name = "program_init_fail")
 
 test_program(name = "stream_init")
 

@@ -5,22 +5,25 @@
 
 int already_called = 0;
 
-__envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_module_init(
-    __envoy_dynamic_module_v1_type_ModuleConfigPtr config_ptr,
-    __envoy_dynamic_module_v1_type_ModuleConfigSize config_size) {
+size_t __envoy_dynamic_module_v1_event_program_init() {
   if (already_called == 1) {
     // This function should only be called once.
-    return NULL;
+    return 0;
   }
   already_called = 1;
+  return 0;
+}
 
+__envoy_dynamic_module_v1_type_HttpFilterPtr __envoy_dynamic_module_v1_event_http_filter_init(
+    __envoy_dynamic_module_v1_type_HttpFilterConfigPtr config_ptr,
+    __envoy_dynamic_module_v1_type_HttpFilterConfigSize config_size) {
   if (config_size != 6) {
-    return NULL;
+    return 0;
   }
 
   // Checks if the config is equals to "config"
-  if (strcmp(config_ptr, "config") != 0) {
-    return NULL;
+  if (strcmp((char*)config_ptr, "config") != 0) {
+    return 0;
   }
   // Replaces the config with "11111" via for loop.
   for (int i = 0; i < 6; i++) {
@@ -29,46 +32,52 @@ __envoy_dynamic_module_v1_type_ModuleContextPtr __envoy_dynamic_module_v1_event_
   }
 
   static size_t context = 0;
-  return &context;
+  return (uintptr_t)&context;
 }
 
-__envoy_dynamic_module_v1_type_HttpContextPtr __envoy_dynamic_module_v1_event_http_context_init(
-    __envoy_dynamic_module_v1_type_EnvoyFilterPtr envoy_filter_ptr,
-    __envoy_dynamic_module_v1_type_ModuleContextPtr module_ctx_ptr) {
-  return NULL;
+__envoy_dynamic_module_v1_type_HttpFilterInstancePtr
+__envoy_dynamic_module_v1_event_http_filter_instance_init(
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
+    __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {
+  return 0;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
-__envoy_dynamic_module_v1_event_http_request_headers(
-    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+__envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
+    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr request_headers_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus
-__envoy_dynamic_module_v1_event_http_request_body(
-    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+__envoy_dynamic_module_v1_event_http_filter_instance_request_body(
+    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
-__envoy_dynamic_module_v1_event_http_response_headers(
-    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+__envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
+    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
-__envoy_dynamic_module_v1_event_http_response_body(
-    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr,
+__envoy_dynamic_module_v1_event_http_filter_instance_response_body(
+    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   return 0;
 }
 
-void __envoy_dynamic_module_v1_event_http_destroy(
-    __envoy_dynamic_module_v1_type_HttpContextPtr http_context_ptr) {}
+void __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
+    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr) {}
+
+void __envoy_dynamic_module_v1_event_http_filter_destroy(
+    __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {
+  printf("OK\n");
+}

@@ -12,7 +12,7 @@ namespace Http {
 namespace DynamicModule {
 
 TEST(TestHttpFilter, StreamContextNull) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "StreamContextNull", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -20,7 +20,7 @@ TEST(TestHttpFilter, StreamContextNull) {
 }
 
 TEST(TestHttpFilter, StreamContextOK) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "StreamContextOK", "");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -29,7 +29,7 @@ TEST(TestHttpFilter, StreamContextOK) {
   const void* context = filter->stream_context_;
   EXPECT_NE(context, nullptr);
   // Read the integer value from the context which is set in the
-  // __envoy_dynamic_module_v1_event_http_context_init function.
+  // __envoy_dynamic_module_v1_event_http_filter_instance_init function.
   const int* value = static_cast<const int*>(context);
   EXPECT_EQ(*value, 999999);
 }
