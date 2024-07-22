@@ -17,7 +17,7 @@ using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
 /**
  * A filter that uses a dynamic module and corresponds to a single filter instance.
  */
-class HttpFilter : public Http::StreamFilter {
+class HttpFilter : public Http::StreamFilter, public std::enable_shared_from_this<HttpFilter> {
 public:
   HttpFilter(DynamicModuleSharedPtr);
   ~HttpFilter() override;
@@ -128,11 +128,16 @@ public:
   void encodeComplete() override{};
 
 public:
+  // The callbacks for the filter. They are only valid until onDestroy() is called.
   StreamDecoderFilterCallbacks* decoder_callbacks_ = nullptr;
   StreamEncoderFilterCallbacks* encoder_callbacks_ = nullptr;
 
   // The in-module per-stream context for the module.
   void* stream_context_ = nullptr;
+
+  // If the filter is in the continue state. This is to avoid assertion failure on prohitbiting
+  // calling coninueDecoding() or continueEncoding() multiple times.
+  bool in_continue_ = false;
 
 private:
   const DynamicModuleSharedPtr dynamic_module_ = nullptr;
