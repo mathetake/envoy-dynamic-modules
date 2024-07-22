@@ -132,3 +132,5 @@ void __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
 
 void __envoy_dynamic_module_v1_event_http_filter_destroy(
     __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {}
+
+size_t __envoy_dynamic_module_v1_event_program_init() { return 0; }

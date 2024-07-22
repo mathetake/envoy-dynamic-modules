@@ -15,18 +15,6 @@ namespace Envoy {
 namespace Http {
 namespace DynamicModule {
 
-struct ObjectFileLocationFilePath {
-  std::string_view file_path;
-};
-struct ObjectFileLocationInlineBytes {
-  std::string_view inline_bytes;
-};
-/**
- * The location of the object file.
- * This can be a file path or inline bytes.
- */
-using ObjectFileLocation = std::variant<ObjectFileLocationFilePath, ObjectFileLocationInlineBytes>;
-
 /**
  * A class to manage a dynamic module. This will be owned by multiple filters.
  */
@@ -39,15 +27,10 @@ public:
    * @param config the configuration for the module.
    * @param uuid a random uuid to avoid conflicts with other modules.
    */
-  DynamicModule(const std::string& name, const ObjectFileLocation& object_file_location,
-                const std::string& config, const std::string& uuid)
+  DynamicModule(const std::string& name, const std::string_view object_file_location,
+                const std::string& config)
       : name_(name) {
-    if (std::holds_alternative<ObjectFileLocationFilePath>(object_file_location)) {
-      initModuleOnLocal(std::get<ObjectFileLocationFilePath>(object_file_location), config, uuid);
-    } else {
-      initModuleOnInlineBytes(std::get<ObjectFileLocationInlineBytes>(object_file_location), config,
-                              uuid);
-    }
+    initModuleOnLocal(object_file_location, config);
   }
 
   ~DynamicModule();
@@ -58,17 +41,7 @@ public:
    * @param config the configuration for the module.
    * @param uuid a random uuid to avoid conflicts with other modules.
    */
-  void initModuleOnLocal(const ObjectFileLocationFilePath& location, const std::string& config,
-                         const std::string& uuid);
-
-  /**
-   * Initialize the module on the remote http uri.
-   * @param bytes the bytes of the object file.
-   * @param config the configuration for the module.
-   * @param uuid a random uuid to avoid conflicts with other modules.
-   */
-  void initModuleOnInlineBytes(const ObjectFileLocationInlineBytes& bytes,
-                               const std::string& config, const std::string& uuid);
+  void initModuleOnLocal(const std::string_view object_file_location, const std::string& config);
 
   /**
    * Initialize the module.
@@ -83,6 +56,7 @@ public:
   void* handleForTesting() { return handle_; }
 
 #define DECLARE_EVENT_HOOK(name) name name##_ = nullptr;
+  DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_program_init)
   DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_init)
   DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_destroy)
   DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_init)
@@ -100,7 +74,6 @@ private:
   const std::string name_;
   // The raw dlopen handle.
   void* handle_ = nullptr;
-  // The path to clean up.
   std::string file_path_for_cleanup_;
 };
 

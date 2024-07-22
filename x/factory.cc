@@ -35,21 +35,9 @@ public:
   std::string name() const override { return "envoy.http.dynamic_modules"; }
 
 private:
-  Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config,
-                                      FactoryContext& context) {
-
-    Http::DynamicModule::ObjectFileLocation location;
-    if (proto_config.has_file_path()) {
-      location = Http::DynamicModule::ObjectFileLocationFilePath{
-          std::string_view(proto_config.file_path())};
-    } else {
-      location = Http::DynamicModule::ObjectFileLocationInlineBytes{
-          std::string_view(proto_config.inline_bytes())};
-    }
-
+  Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config, FactoryContext&) {
     auto config = std::make_shared<Http::DynamicModule::DynamicModule>(
-        proto_config.name(), location, proto_config.module_config(),
-        context.serverFactoryContext().api().randomGenerator().uuid());
+        proto_config.name(), proto_config.file_path(), proto_config.module_config());
 
     return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
       auto filter = std::make_shared<Http::DynamicModule::HttpFilter>(config);

@@ -175,8 +175,7 @@ TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
 }
 
 TEST(TestABIRoundTrip, GetHeaders) {
-  DynamicModuleSharedPtr module =
-      loadTestDynamicModule("get_headers", "TestABIRoundTripGetHeaders", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("get_headers", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
@@ -257,8 +256,7 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 }
 
 TEST(TestABIRoundTrip, GetBody) {
-  DynamicModuleSharedPtr module =
-      loadTestDynamicModule("get_body", "TestABIRoundTripGetBody", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("get_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureStreamContext();
 
@@ -338,8 +336,7 @@ TEST(TestABI, SetHeader_Replaces) {
 }
 
 TEST(TestABIRoundTrip, SetHeaders) {
-  DynamicModuleSharedPtr module =
-      loadTestDynamicModule("set_headers", "TestABIRoundTripSetHeaders", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("set_headers", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{
@@ -466,8 +463,7 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
 }
 
 TEST(TestABIRoundTrip, BodyManipulations) {
-  DynamicModuleSharedPtr module =
-      loadTestDynamicModule("manipulate_body", "TestABIRoundTripBodyManipulations", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("manipulate_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureStreamContext();
 

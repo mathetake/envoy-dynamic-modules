@@ -12,7 +12,7 @@ namespace Http {
 namespace DynamicModule {
 
 TEST(TestHttpFilter, StreamContextNull) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "StreamContextNull", "config");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -20,7 +20,7 @@ TEST(TestHttpFilter, StreamContextNull) {
 }
 
 TEST(TestHttpFilter, StreamContextOK) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "StreamContextOK", "");
+  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
