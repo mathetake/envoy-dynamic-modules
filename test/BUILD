@@ -34,6 +34,7 @@ cc_test(
     srcs = ["dynamic_module_test.cc"],
     copts = COPTS,
     data = [
+        "//test/test_programs:do_not_close",
         "//test/test_programs:http_filter_init_fail",
         "//test/test_programs:init",
         "//test/test_programs:no_init",

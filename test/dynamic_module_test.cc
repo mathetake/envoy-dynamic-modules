@@ -32,6 +32,18 @@ TEST(TestDynamicModule, HttpFilterInitFail) {
                           EnvoyException, "http filter init in baaaaaaaaaa failed");
 }
 
+TEST(TestDynamicModule, DoNotClose) {
+  size_t* in_module_ptr = nullptr;
+  {
+    DynamicModuleSharedPtr module = loadTestDynamicModule("do_not_close", "", "", true);
+    in_module_ptr = (size_t*)module->__envoy_dynamic_module_v1_event_http_filter_init_(nullptr, 0);
+    module.reset();
+  }
+
+  // The module is not closed, so the pointer is still valid.
+  EXPECT_EQ(999999, *in_module_ptr);
+}
+
 TEST(TestDynamicModule, ConstructorHappyPath) {
   // Ensures that the module can be loaded multiple times independently but only program init is
   // called once.

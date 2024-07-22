@@ -25,12 +25,12 @@ public:
    * @param name the name of the module for debugging and logging purposes.
    * @param object_file_location the location of the object file.
    * @param config the configuration for the module.
-   * @param uuid a random uuid to avoid conflicts with other modules.
+   * @param do_not_close if true, the module will not be closed when the object is destroyed.
    */
   DynamicModule(const std::string& name, const std::string_view object_file_location,
-                const std::string& config)
+                const std::string& config, const bool do_not_close)
       : name_(name) {
-    initModuleOnLocal(object_file_location, config);
+    initModule(object_file_location, config, do_not_close);
   }
 
   ~DynamicModule();
@@ -39,9 +39,10 @@ public:
    * Initialize the module on the local path.
    * @param location the location of the object file.
    * @param config the configuration for the module.
-   * @param uuid a random uuid to avoid conflicts with other modules.
+   * @param do_not_close if true, the module will not be closed when the object is destroyed.
    */
-  void initModuleOnLocal(const std::string_view object_file_location, const std::string& config);
+  void initModule(const std::string_view object_file_location, const std::string& config,
+                  const bool do_not_close);
 
   /**
    * Initialize the module.
