@@ -39,7 +39,6 @@ public:
    * Initialize the module on the local path.
    * @param location the location of the object file.
    * @param config the configuration for the module.
-   * @param uuid a random uuid to avoid conflicts with other modules.
    * @param do_not_close if true, the module will not be closed when the object is destroyed.
    */
   void initModule(const std::string_view object_file_location, const std::string& config,
