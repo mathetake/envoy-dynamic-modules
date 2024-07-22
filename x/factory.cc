@@ -37,7 +37,8 @@ public:
 private:
   Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config, FactoryContext&) {
     auto config = std::make_shared<Http::DynamicModule::DynamicModule>(
-        proto_config.name(), proto_config.file_path(), proto_config.module_config());
+        proto_config.name(), proto_config.file_path(), proto_config.filter_config(),
+        proto_config.do_not_dlclose());
 
     return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
       auto filter = std::make_shared<Http::DynamicModule::HttpFilter>(config);

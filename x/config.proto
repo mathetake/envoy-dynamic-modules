@@ -21,11 +21,17 @@ message DynamicModuleConfig {
     // The object file's local path. It can be a relative path or an absolute path.
     // E.g. /path/to/module.so or module.so
     //
-    // The program is loaded exactly once on the first creation of the filter chain.
-    // After that, the program will be reused for other filter chains.
+    // The program is loaded with dlopen exactly once on the first creation of the filter chain
+    // for the same shared object file. After that, the program will be reused for other filter chains.
     string file_path = 2;
   }
 
-  // Configuration for the module. This will be pased at the http filter initialization.
-  string module_config = 4;
+  // Set true to prevent the module from being unloaded with dlclose.
+  // This is useful for modules that have global state that should not be unloaded,
+  // for examle, c-shared modules by the Go compiler toolchain do not support dlclose.
+  // https://github.com/golang/go/issues/11100
+  bool do_not_dlclose = 3;
+
+  // Configuration for this filter. This will be pased at the http filter initialization.
+  string filter_config = 4;
 }

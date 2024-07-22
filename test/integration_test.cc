@@ -12,7 +12,7 @@ name: envoy.http.dynamic_modules
 typed_config:
   "@type": type.googleapis.com/envoy.extensions.filters.http.dynamic_modules.v3.DynamicModuleConfig
   file_path: {}
-  module_config: "{}"
+  filter_config: "{}"
 )EOF";
     config_helper_.prependFilter(fmt::format(format, filter_name, config));
     initialize();

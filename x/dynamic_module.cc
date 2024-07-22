@@ -31,7 +31,8 @@ DynamicModule::~DynamicModule() {
     }                                                                                              \
   } while (0)
 
-void DynamicModule::initModuleOnLocal(const std::string_view location, const std::string& config) {
+void DynamicModule::initModule(const std::string_view location, const std::string& config,
+                               const bool do_not_close) {
   const std::filesystem::path file_path_absolute = std::filesystem::absolute(location);
   ENVOY_LOG_MISC(info, "[{}] checking the shared library {} is opened", name_,
                  file_path_absolute.string());
@@ -41,8 +42,12 @@ void DynamicModule::initModuleOnLocal(const std::string_view location, const std
   if (!handle_) {
     ENVOY_LOG_MISC(info, "[{}] the shared library {} is not opened yet. Opening...", name_,
                    file_path_absolute.string());
+    int mode = RTLD_LOCAL | RTLD_LAZY;
+    if (do_not_close) {
+      mode |= RTLD_NODELETE;
+    }
     // If the shared object is not opened, open it. Note that this runs on main thread.
-    handle_ = dlopen(file_path_absolute.c_str(), RTLD_LOCAL | RTLD_LAZY);
+    handle_ = dlopen(file_path_absolute.c_str(), mode);
     if (!handle_) {
       throw EnvoyException(fmt::format("cannot load : {} error: {}", name_, dlerror()));
     }
