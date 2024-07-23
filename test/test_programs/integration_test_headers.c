@@ -49,8 +49,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   size_t result_buffer_length;
   __envoy_dynamic_module_v1_http_get_response_header_value(
-      response_headers_map_ptr, (uintptr_t) ":status", 7, &result_buffer_ptr,
-      &result_buffer_length);
+      response_headers_map_ptr, (uintptr_t) ":status", 7,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
 
   if (result_buffer_length != 3 ||
       strncmp((char*)result_buffer_ptr, "404", result_buffer_length) != 0) {
