@@ -72,4 +72,31 @@ TEST_P(HttpFilterIntegrationTest, HeadersStopIteration) {
   codec_client->close();
 }
 
+TEST_P(HttpFilterIntegrationTest, Bodies) {
+  initializeDynamicFilter("./test/test_programs/libintegration_test_bodies.so", "");
+
+  Http::TestRequestHeaderMapImpl headers{
+      {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
+  Http::TestRequestHeaderMapImpl response_headers{{":status", "200"}};
+
+  IntegrationCodecClientPtr codec_client;
+  FakeHttpConnectionPtr fake_upstream_connection;
+  FakeStreamPtr request_stream;
+
+  codec_client = makeHttpConnection(lookupPort("http"));
+  auto response = codec_client->makeRequestWithBody(headers, "aloha", true);
+  ASSERT_TRUE(fake_upstreams_[0]->waitForHttpConnection(*dispatcher_, fake_upstream_connection));
+  ASSERT_TRUE(fake_upstream_connection->waitForNewStream(*dispatcher_, request_stream));
+  ASSERT_TRUE(request_stream->waitForEndStream(*dispatcher_));
+  ASSERT_TRUE(request_stream->waitForData(*dispatcher_, "AAAAA"));
+  request_stream->encodeHeaders(response_headers, false);
+  request_stream->encodeData("from", false);
+  request_stream->encodeData("upstream", true);
+  ASSERT_TRUE(response->waitForEndStream(std::chrono::milliseconds(3000)));
+  EXPECT_EQ("BBBBBBBBBBBB", response->body());
+
+  EXPECT_EQ("200", response->headers().getStatusValue());
+  codec_client->close();
+}
+
 } // namespace Envoy

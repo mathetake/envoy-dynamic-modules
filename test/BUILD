@@ -81,6 +81,7 @@ envoy_cc_test(
     name = "integration_test",
     srcs = ["integration_test.cc"],
     data = [
+        "//test/test_programs:integration_test_bodies",
         "//test/test_programs:integration_test_headers",
     ],
     repository = "@envoy",

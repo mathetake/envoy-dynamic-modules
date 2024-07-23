@@ -304,6 +304,28 @@ void __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(
   _buffer->copyOut(offset, length, result_buffer_ptr);
 }
 
+__envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr
+__envoy_dynamic_module_v1_http_get_request_body_buffer(
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr) {
+  auto filter = static_cast<HttpFilter*>(envoy_filter_instance_ptr);
+  if (filter->decoder_callbacks_) {
+    auto buf = const_cast<Buffer::Instance*>(filter->decoder_callbacks_->decodingBuffer());
+    return static_cast<__envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr>(buf);
+  }
+  return nullptr;
+}
+
+__envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr
+__envoy_dynamic_module_v1_http_get_response_body_buffer(
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr) {
+  auto filter = static_cast<HttpFilter*>(envoy_filter_instance_ptr);
+  if (filter->encoder_callbacks_) {
+    auto buf = const_cast<Buffer::Instance*>(filter->encoder_callbacks_->encodingBuffer());
+    return static_cast<__envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr>(buf);
+  }
+  return nullptr;
+}
+
 } // extern "C"
 
 } // namespace DynamicModule
