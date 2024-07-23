@@ -18,14 +18,14 @@ extern "C" {
   const std::string key_str(static_cast<const char*>(key), key_length);                            \
   const auto header = request_or_response##_headers->get(Http::LowerCaseString(key_str));          \
   if (header.empty()) {                                                                            \
-    *result_buffer_ptr = nullptr;                                                                  \
-    *result_buffer_length_ptr = 0;                                                                 \
+    *_result_buffer_ptr = nullptr;                                                                 \
+    *_result_buffer_length_ptr = 0;                                                                \
     return 0;                                                                                      \
   } else {                                                                                         \
     const HeaderEntry* entry = header[0];                                                          \
     const auto entry_length = entry->value().size();                                               \
-    *result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                 \
-    *result_buffer_length_ptr = entry_length;                                                      \
+    *_result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                \
+    *_result_buffer_length_ptr = entry_length;                                                     \
     return header.size();                                                                          \
   }
 
@@ -33,9 +33,14 @@ size_t __envoy_dynamic_module_v1_http_get_request_header_value(
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
     __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
-    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr) {
   RequestHeaderMap* request_headers = static_cast<RequestHeaderMap*>(headers);
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
+
   GET_HEADER_VALUE(RequestHeaderMap, request);
 }
 
@@ -43,11 +48,13 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
     __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
-    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr) {
   ResponseHeaderMap* response_headers = static_cast<ResponseHeaderMap*>(headers);
-  printf("__envoy_dynamic_module_v1_http_get_response_header_value: key: %s\n",
-         static_cast<const char*>(key));
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
   GET_HEADER_VALUE(ResponseHeaderMap, response);
 }
 
@@ -55,22 +62,26 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
   const std::string key_str(static_cast<const char*>(key), key_length);                            \
   const auto header = request_or_response##_headers->get(Http::LowerCaseString(key_str));          \
   if (nth < 0 || nth >= header.size()) {                                                           \
-    *result_buffer_ptr = nullptr;                                                                  \
-    *result_buffer_length_ptr = 0;                                                                 \
+    *_result_buffer_ptr = nullptr;                                                                 \
+    *_result_buffer_length_ptr = 0;                                                                \
     return;                                                                                        \
   }                                                                                                \
   const HeaderEntry* entry = header[nth];                                                          \
   const auto entry_length = entry->value().size();                                                 \
-  *result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                   \
-  *result_buffer_length_ptr = entry_length;
+  *_result_buffer_ptr = const_cast<char*>(entry->value().getStringView().data());                  \
+  *_result_buffer_length_ptr = entry_length;
 
 void __envoy_dynamic_module_v1_http_get_request_header_value_nth(
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
     __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
-    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr, size_t nth) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr, size_t nth) {
   RequestHeaderMap* request_headers = static_cast<RequestHeaderMap*>(headers);
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
   GET_HEADER_VALUE_NTH(RequestHeaderMap, request);
 }
 
@@ -78,9 +89,13 @@ void __envoy_dynamic_module_v1_http_get_response_header_value_nth(
     __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr key,
     __envoy_dynamic_module_v1_type_InModuleBufferLength key_length,
-    __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr, size_t nth) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr, size_t nth) {
   ResponseHeaderMap* response_headers = static_cast<ResponseHeaderMap*>(headers);
+  __envoy_dynamic_module_v1_type_InModuleBufferPtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_InModuleBufferLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
   GET_HEADER_VALUE_NTH(ResponseHeaderMap, response);
 }
 
@@ -102,24 +117,33 @@ size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(
   Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer_ptr);                          \
   const auto slices = _buffer->getRawSlices(std::nullopt);                                         \
   if (nth < 0 || nth >= slices.size()) {                                                           \
-    *result_buffer_ptr = nullptr;                                                                  \
-    *result_buffer_length_ptr = 0;                                                                 \
+    *_result_buffer_ptr = nullptr;                                                                 \
+    *_result_buffer_length_ptr = 0;                                                                \
     return;                                                                                        \
   }                                                                                                \
-  *result_buffer_ptr = static_cast<__envoy_dynamic_module_v1_type_DataSlicePtr>(slices[nth].mem_); \
-  *result_buffer_length_ptr = slices[nth].len_;
+  *_result_buffer_ptr =                                                                            \
+      static_cast<__envoy_dynamic_module_v1_type_DataSlicePtr>(slices[nth].mem_);                  \
+  *_result_buffer_length_ptr = slices[nth].len_;
 
 void __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer, size_t nth,
-    __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr) {
+  __envoy_dynamic_module_v1_type_DataSlicePtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_DataSliceLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
   GET_BUFFER_SLICE(buffer, nth);
 }
 
 void __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer, size_t nth,
-    __envoy_dynamic_module_v1_type_DataSlicePtr* result_buffer_ptr,
-    __envoy_dynamic_module_v1_type_DataSliceLength* result_buffer_length_ptr) {
+    __envoy_dynamic_module_v1_type_DataSlicePtrResult result_buffer_ptr,
+    __envoy_dynamic_module_v1_type_DataSliceLengthResult result_buffer_length_ptr) {
+  __envoy_dynamic_module_v1_type_DataSlicePtr* _result_buffer_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSlicePtr*>(result_buffer_ptr);
+  __envoy_dynamic_module_v1_type_DataSliceLength* _result_buffer_length_ptr =
+      reinterpret_cast<__envoy_dynamic_module_v1_type_DataSliceLength*>(result_buffer_length_ptr);
   GET_BUFFER_SLICE(buffer, nth);
 }
 
