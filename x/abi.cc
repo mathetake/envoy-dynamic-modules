@@ -46,8 +46,6 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
     __envoy_dynamic_module_v1_type_InModuleBufferPtr* result_buffer_ptr,
     __envoy_dynamic_module_v1_type_InModuleBufferLength* result_buffer_length_ptr) {
   ResponseHeaderMap* response_headers = static_cast<ResponseHeaderMap*>(headers);
-  printf("__envoy_dynamic_module_v1_http_get_response_header_value: key: %s\n",
-         static_cast<const char*>(key));
   GET_HEADER_VALUE(ResponseHeaderMap, response);
 }
 
