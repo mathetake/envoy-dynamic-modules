@@ -11,13 +11,13 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   if (end_of_stream) {
     // Append "!" to the buffer.
-    __envoy_dynamic_module_v1_http_get_request_body_buffer_append(buffer, (uintptr_t) "!", 1);
+    __envoy_dynamic_module_v1_http_append_request_body_buffer(buffer, (uintptr_t) "!", 1);
 
     // Drain "hello ".
-    __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(buffer, 6);
+    __envoy_dynamic_module_v1_http_drain_request_body_buffer(buffer, 6);
 
     // Prepend "Envoy" to the buffer.
-    __envoy_dynamic_module_v1_http_get_request_body_buffer_prepend(buffer, (uintptr_t) "Envoy", 5);
+    __envoy_dynamic_module_v1_http_prepend_request_body_buffer(buffer, (uintptr_t) "Envoy", 5);
   } else {
     // Expect the initial buffer to be hello world.
     size_t size = __envoy_dynamic_module_v1_http_get_request_body_buffer_length(buffer);
@@ -32,8 +32,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
     for (size_t i = 0; i < slices_count; i++) {
       __envoy_dynamic_module_v1_type_DataSlicePtr slice;
       __envoy_dynamic_module_v1_type_DataSliceLength slice_length;
-      __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(buffer, i, &slice,
-                                                                   &slice_length);
+      __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+          buffer, i, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&slice,
+          (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&slice_length);
       for (size_t j = 0; j < slice_length; j++) {
         ((char*)slice)[j] = 'E';
       }
@@ -49,13 +50,13 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
     __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
   if (end_of_stream) {
     // Append "!" to the buffer.
-    __envoy_dynamic_module_v1_http_get_response_body_buffer_append(buffer, (uintptr_t) "!", 1);
+    __envoy_dynamic_module_v1_http_append_response_body_buffer(buffer, (uintptr_t) "!", 1);
 
     // Drain "hello ".
-    __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(buffer, 6);
+    __envoy_dynamic_module_v1_http_drain_response_body_buffer(buffer, 6);
 
     // Prepend "Envoy" to the buffer.
-    __envoy_dynamic_module_v1_http_get_response_body_buffer_prepend(buffer, (uintptr_t) "Envoy", 5);
+    __envoy_dynamic_module_v1_http_prepend_response_body_buffer(buffer, (uintptr_t) "Envoy", 5);
   } else {
     // Expect the initial buffer to be hello world.
     size_t size = __envoy_dynamic_module_v1_http_get_response_body_buffer_length(buffer);
@@ -70,8 +71,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
     for (size_t i = 0; i < slices_count; i++) {
       __envoy_dynamic_module_v1_type_DataSlicePtr slice;
       __envoy_dynamic_module_v1_type_DataSliceLength slice_length;
-      __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(buffer, i, &slice,
-                                                                    &slice_length);
+      __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+          buffer, i, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&slice,
+          (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&slice_length);
       for (size_t j = 0; j < slice_length; j++) {
         ((char*)slice)[j] = 'E';
       }

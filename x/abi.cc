@@ -186,7 +186,7 @@ size_t __envoy_dynamic_module_v1_http_get_request_body_buffer_length(
   return _buffer->length();
 }
 
-void __envoy_dynamic_module_v1_http_get_request_body_buffer_append(
+void __envoy_dynamic_module_v1_http_append_request_body_buffer(
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
     __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
@@ -198,7 +198,7 @@ void __envoy_dynamic_module_v1_http_get_request_body_buffer_append(
   _buffer->add(data_view);
 }
 
-void __envoy_dynamic_module_v1_http_get_request_body_buffer_prepend(
+void __envoy_dynamic_module_v1_http_prepend_request_body_buffer(
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
     __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
@@ -210,7 +210,7 @@ void __envoy_dynamic_module_v1_http_get_request_body_buffer_prepend(
   _buffer->prepend(data_view);
 }
 
-void __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(
+void __envoy_dynamic_module_v1_http_drain_request_body_buffer(
     __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer, size_t length) {
   Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
   if (length == 0) {
@@ -225,7 +225,7 @@ size_t __envoy_dynamic_module_v1_http_get_response_body_buffer_length(
   return _buffer->length();
 }
 
-void __envoy_dynamic_module_v1_http_get_response_body_buffer_append(
+void __envoy_dynamic_module_v1_http_append_response_body_buffer(
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
     __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
@@ -237,7 +237,7 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_append(
   _buffer->add(data_view);
 }
 
-void __envoy_dynamic_module_v1_http_get_response_body_buffer_prepend(
+void __envoy_dynamic_module_v1_http_prepend_response_body_buffer(
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
     __envoy_dynamic_module_v1_type_InModuleBufferPtr data,
     __envoy_dynamic_module_v1_type_InModuleBufferLength data_length) {
@@ -249,7 +249,7 @@ void __envoy_dynamic_module_v1_http_get_response_body_buffer_prepend(
   _buffer->prepend(data_view);
 }
 
-void __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(
+void __envoy_dynamic_module_v1_http_drain_response_body_buffer(
     __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer, size_t length) {
   Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
   if (length == 0) {
@@ -282,6 +282,26 @@ void __envoy_dynamic_module_v1_http_continue_response(
       filter->in_continue_ = true;
     }
   });
+}
+
+void __envoy_dynamic_module_v1_http_copy_out_request_body_buffer(
+    __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer, size_t offset, size_t length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (length == 0) {
+    return;
+  }
+  _buffer->copyOut(offset, length, result_buffer_ptr);
+}
+
+void __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(
+    __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer, size_t offset, size_t length,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr) {
+  Buffer::Instance* _buffer = static_cast<Buffer::Instance*>(buffer);
+  if (length == 0) {
+    return;
+  }
+  _buffer->copyOut(offset, length, result_buffer_ptr);
 }
 
 } // extern "C"

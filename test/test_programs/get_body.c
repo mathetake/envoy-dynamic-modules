@@ -19,8 +19,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
   for (size_t i = 0; i < slices_count; i++) {
     __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
     __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
-    __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(buffer, i, &result_buffer_ptr,
-                                                                 &result_buffer_length);
+    __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+        buffer, i, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+        (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
     if (i == 0) {
       if (result_buffer_length != 5 ||
           strncmp((char*)result_buffer_ptr, "hello", result_buffer_length) != 0) {
@@ -41,8 +42,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
   // Invalid n-th slice.
   __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(buffer, 2, &result_buffer_ptr,
-                                                               &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+      buffer, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
     exit(9999);
@@ -65,8 +67,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
   for (size_t i = 0; i < slices_count; i++) {
     __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
     __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
-    __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(buffer, i, &result_buffer_ptr,
-                                                                  &result_buffer_length);
+    __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+        buffer, i, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+        (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
     if (i == 0) {
       if (result_buffer_length != 2 ||
           strncmp((char*)result_buffer_ptr, "Go", result_buffer_length) != 0) {
@@ -87,8 +90,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
   // Invalid n-th slice.
   __envoy_dynamic_module_v1_type_DataSlicePtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_DataSliceLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(buffer, 2, &result_buffer_ptr,
-                                                                &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+      buffer, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
     exit(9999);

@@ -446,21 +446,21 @@ TEST(TestABI, ResponseBodyAppendPrependDrain) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data.data());
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = data.size();
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_append(&body, data_ptr, data_length);
+  __envoy_dynamic_module_v1_http_append_response_body_buffer(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   std::string data2 = "world";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2.data());
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = data2.size();
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_prepend(&body, data_ptr2, data_length2);
+  __envoy_dynamic_module_v1_http_prepend_response_body_buffer(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(&body, 5);
+  __envoy_dynamic_module_v1_http_drain_response_body_buffer(&body, 5);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   // Drain the rest of the buffer.
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_drain(&body, 20);
+  __envoy_dynamic_module_v1_http_drain_response_body_buffer(&body, 20);
   EXPECT_EQ(body.toString(), "");
 }
 
@@ -471,21 +471,21 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data.data());
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = data.size();
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_append(&body, data_ptr, data_length);
+  __envoy_dynamic_module_v1_http_append_request_body_buffer(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   std::string data2 = "world";
   __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
       reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2.data());
   __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = data2.size();
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_prepend(&body, data_ptr2, data_length2);
+  __envoy_dynamic_module_v1_http_prepend_request_body_buffer(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(&body, 5);
+  __envoy_dynamic_module_v1_http_drain_request_body_buffer(&body, 5);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   // Drain the rest of the buffer.
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_drain(&body, 20);
+  __envoy_dynamic_module_v1_http_drain_request_body_buffer(&body, 20);
   EXPECT_EQ(body.toString(), "");
 }
 
@@ -509,6 +509,36 @@ TEST(TestABIRoundTrip, BodyManipulations) {
   EXPECT_EQ(response_body.toString(), "EEEEEEEEEEE");
   EXPECT_EQ(filter->encodeData(response_body, true), FilterDataStatus::Continue);
   EXPECT_EQ(response_body.toString(), "EnvoyEEEEE!");
+}
+
+TEST(TestABI, BufferCopyOut) {
+  Buffer::OwnedImpl buffer;
+  buffer.add("hello");
+  buffer.add("world");
+  {
+    std::vector<char> result_buffer(10);
+    __envoy_dynamic_module_v1_http_copy_out_request_body_buffer(&buffer, 0, 10,
+                                                                result_buffer.data());
+    EXPECT_EQ(std::string(result_buffer.data(), result_buffer.size()), "helloworld");
+  }
+  {
+    std::vector<char> result_buffer(1000);
+    __envoy_dynamic_module_v1_http_copy_out_request_body_buffer(&buffer, 5, 5,
+                                                                result_buffer.data());
+    EXPECT_EQ(std::string(result_buffer.data(), 5), "world");
+  }
+  {
+    std::vector<char> result_buffer(10);
+    __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(&buffer, 0, 10,
+                                                                 result_buffer.data());
+    EXPECT_EQ(std::string(result_buffer.data(), result_buffer.size()), "helloworld");
+  }
+  {
+    std::vector<char> result_buffer(1000);
+    __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(&buffer, 5, 5,
+                                                                 result_buffer.data());
+    EXPECT_EQ(std::string(result_buffer.data(), 5), "world");
+  }
 }
 
 } // namespace DynamicModule
