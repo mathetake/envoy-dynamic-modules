@@ -20,6 +20,8 @@ test_program(name = "set_headers")
 
 test_program(name = "manipulate_body")
 
+test_program(name = "do_not_close")
+
 test_program(name = "integration_test_headers")
 
-test_program(name = "do_not_close")
+test_program(name = "integration_test_bodies")
