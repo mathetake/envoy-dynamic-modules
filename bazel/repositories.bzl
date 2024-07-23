@@ -18,6 +18,11 @@ ENVOY_VERSIONS = {
         "url": "https://github.com/envoyproxy/envoy/archive/v1.29.7.tar.gz",
         "strip_prefix": "envoy-1.29.7",
     },
+    "1.28.5": {
+        "sha256": "f6af6b5bbdfc4ee5a0f1f7da4a554dae09ad0763508e128a7036046e764d8b3e",
+        "url": "https://github.com/envoyproxy/envoy/archive/v1.28.5.tar.gz",
+        "strip_prefix": "envoy-1.28.5",
+    },
 }
 
 def repositories():
