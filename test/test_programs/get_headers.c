@@ -15,7 +15,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
   __envoy_dynamic_module_v1_http_get_request_header_value(
-      request_headers_ptr, (uintptr_t)key, key_length, &result_buffer_ptr, &result_buffer_length);
+      request_headers_ptr, (uintptr_t)key, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is "value".
   char* value = "value";
   if (result_buffer_length != 5 ||
@@ -28,7 +30,9 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
   key = "non-existent-key";
   key_length = 15;
   __envoy_dynamic_module_v1_http_get_request_header_value(
-      request_headers_ptr, (uintptr_t)key, key_length, &result_buffer_ptr, &result_buffer_length);
+      request_headers_ptr, (uintptr_t)key, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is NULL.
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
@@ -49,9 +53,10 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
   size_t key_length = 3;
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   size_t result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_response_header_value(response_headers_map_ptr, (uintptr_t)key,
-                                                           key_length, &result_buffer_ptr,
-                                                           &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_header_value(
+      response_headers_map_ptr, (uintptr_t)key, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is "value".
   char* value = "bar";
   if (result_buffer_length != 3 ||
@@ -63,9 +68,10 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
   // Get the non-existent header "non-existent-key" from the headers.
   key = "non-existent-key";
   key_length = 15;
-  __envoy_dynamic_module_v1_http_get_response_header_value(response_headers_map_ptr, (uintptr_t)key,
-                                                           key_length, &result_buffer_ptr,
-                                                           &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_header_value(
+      response_headers_map_ptr, (uintptr_t)key, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is NULL.
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);

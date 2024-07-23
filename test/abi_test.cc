@@ -21,7 +21,10 @@ TEST(TestABI, GetRequestHeaderValueEmpty) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   int num_values = __envoy_dynamic_module_v1_http_get_request_header_value(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)(__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
+
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
@@ -37,7 +40,9 @@ TEST(TestABI, GetResponseHeaderValueEmpty) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   int num_values = __envoy_dynamic_module_v1_http_get_response_header_value(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
@@ -54,7 +59,9 @@ TEST(TestABI, GetRequestHeaderValue) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   int num_values = __envoy_dynamic_module_v1_http_get_request_header_value(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
@@ -68,7 +75,8 @@ TEST(TestABI, GetRequestHeaderValue) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr2;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr2;
   int num_values2 = __envoy_dynamic_module_v1_http_get_request_header_value(
-      headers, key_ptr2, key_length2, &result_buffer_ptr2, &result_buffer_length_ptr2);
+      headers, key_ptr2, key_length2, &result_buffer_ptr2,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 1);
   // Read the value from the buffer.
   std::string result2 =
@@ -86,7 +94,9 @@ TEST(TestABI, GetResponseHeaderValue) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   int num_values = __envoy_dynamic_module_v1_http_get_response_header_value(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
@@ -100,7 +110,8 @@ TEST(TestABI, GetResponseHeaderValue) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr2;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr2;
   int num_values2 = __envoy_dynamic_module_v1_http_get_response_header_value(
-      headers, key_ptr2, key_length2, &result_buffer_ptr2, &result_buffer_length_ptr2);
+      headers, key_ptr2, key_length2, &result_buffer_ptr2,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 0);
   EXPECT_EQ(result_buffer_ptr2, nullptr);
   EXPECT_EQ(result_buffer_length_ptr2, 0);
@@ -118,7 +129,9 @@ TEST(TestABI, GetRequestHeaderValueNth) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   __envoy_dynamic_module_v1_http_get_request_header_value_nth(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
   EXPECT_EQ(result, "value2");
@@ -136,7 +149,9 @@ TEST(TestABI, GetResponseHeaderValueNth) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   __envoy_dynamic_module_v1_http_get_response_header_value_nth(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
   EXPECT_EQ(result, "value2");
@@ -153,7 +168,9 @@ TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   __envoy_dynamic_module_v1_http_get_request_header_value_nth(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
 }
@@ -169,7 +186,9 @@ TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
   __envoy_dynamic_module_v1_http_get_response_header_value_nth(
-      headers, key_ptr, key_length, &result_buffer_ptr, &result_buffer_length_ptr, 1);
+      headers, key_ptr, key_length,
+      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
 }
@@ -216,18 +235,22 @@ TEST(TestABI, GetRequestBodyBufferSlice) {
 
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 0, &result_buffer_ptr,
-                                                               &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+      &body, 0, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 1, &result_buffer_ptr,
-                                                               &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+      &body, 1, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   std::string result2 = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(&body, 2, &result_buffer_ptr,
-                                                               &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+      &body, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
 }
@@ -239,18 +262,22 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 
   __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
   __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 0, &result_buffer_ptr,
-                                                                &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+      &body, 0, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 1, &result_buffer_ptr,
-                                                                &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+      &body, 1, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
   std::string result2 = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(&body, 2, &result_buffer_ptr,
-                                                                &result_buffer_length);
+  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+      &body, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
+      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
 }
