@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build_images:
-    name: Build (${{ matrix.envoy_version }})
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     # Set 6 hours timeout for the job
     timeout-minutes: 360
@@ -22,21 +22,27 @@ jobs:
           - envoy_version: 1.31.0
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.31-latest
             bazel_build_options: "-c opt"
+            name: Release build Envoy v1.31
           - envoy_version: 1.30.4
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
             bazel_build_options: "-c opt"
+            name: Release build Envoy v1.30
           - envoy_version: 1.29.7
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest
             bazel_build_options: "-c opt"
+            name: Release build Envoy v1.29
           - envoy_version: 1.31.0
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.31-latest
             bazel_build_options: ""
+            name: Debug build Envoy v1.31
           - envoy_version: 1.30.4
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.30-latest
             bazel_build_options: ""
+            name: Debug build Envoy v1.30
           - envoy_version: 1.29.7
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.29-latest
             bazel_build_options: ""
+            name: Debug build Envoy v1.29
 
     steps:
       - uses: actions/checkout@v4
