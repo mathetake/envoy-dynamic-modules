@@ -559,6 +559,8 @@ common:debug --config=debug-sandbox
 common:debug --config=debug-coverage
 common:debug --config=debug-tests
 
+build --workspace_status_command="bash bazel/workspace_status_command.sh"
+
 try-import %workspace%/clang.bazelrc
 try-import %workspace%/user.bazelrc
 try-import %workspace%/local_tsan.bazelrc
