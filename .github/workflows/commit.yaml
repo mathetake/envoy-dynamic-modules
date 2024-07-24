@@ -70,8 +70,8 @@ jobs:
           git fetch origin ${{ github.sha }} && \
           git checkout --detach ${{ github.sha }} && \
           sed -i 's/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/' bazel/repositories.bzl && \
-          bazel build "${{ matrix.envoy.bazel_build_options }}" //... && \
-          bazel test "${{ matrix.envoy.bazel_build_options }}" //... && \
+          bazel build \"${{ matrix.envoy.bazel_build_options }}\" //... && \
+          bazel test \"${{ matrix.envoy.bazel_build_options }}\" //... && \
           sudo cp bazel-bin/envoy /tmp/gha/envoy"
 
     - name: Check Envoy binary
