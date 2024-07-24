@@ -60,7 +60,7 @@ jobs:
       - name: Build ${{ matrix.image }}
         run: |
           docker build -f .github/workflows/Dockerfile.buildcontainer . -t ${{ matrix.image }} \
-             --build-arg BAZEL_BUILD_OPTIONS_ARG=${{ matrix.bazel_build_options }} \
+             --build-arg BAZEL_BUILD_OPTIONS_ARG="${{ matrix.bazel_build_options }}" \
              --build-arg ENVOY_VERSION_ARG=${{ matrix.envoy_version }} \
              --build-arg GIT_SHA_ARG=${{ github.sha }}
 
