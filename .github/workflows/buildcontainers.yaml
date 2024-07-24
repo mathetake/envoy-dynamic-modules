@@ -18,14 +18,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO: add build options for buildcontainers like debug, release, etc.
         include:
           - envoy_version: 1.31.0
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.31-latest
+            bazel_build_options: "-c opt"
           - envoy_version: 1.30.4
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
+            bazel_build_options: "-c opt"
           - envoy_version: 1.29.7
             image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest
+            bazel_build_options: "-c opt"
+          - envoy_version: 1.31.0
+            image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.31-latest
+            bazel_build_options: ""
+          - envoy_version: 1.30.4
+            image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.30-latest
+            bazel_build_options: ""
+          - envoy_version: 1.29.7
+            image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.29-latest
+            bazel_build_options: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +54,7 @@ jobs:
       - name: Build ${{ matrix.image }}
         run: |
           docker build -f .github/workflows/Dockerfile.buildcontainer . -t ${{ matrix.image }} \
+             --build-arg BAZEL_BUILD_OPTIONS_ARG=${{ matrix.bazel_build_options }} \
              --build-arg ENVOY_VERSION_ARG=${{ matrix.envoy_version }} \
              --build-arg GIT_SHA_ARG=${{ github.sha }}
 
