@@ -1,4 +1,4 @@
-name: Tests and Format
+name: Commit
 
 on:
   pull_request:
@@ -18,25 +18,41 @@ concurrency:
 
 jobs:
   test:
-    name: Build & Test on Envoy v${{ matrix.envoy.version }}
+    name: Build & Test (${{ matrix.envoy.name }})
     strategy:
       fail-fast: false
       matrix:
         envoy:
-        # Build images are built by the buildcontainers workflow.
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.31-latest
-          # The tag of the Envoy image to build the final image.
           envoy_image_tag: v1.31-latest
+          bazel_build_options: "-c opt"
           version: 1.31.0
-        # Build images are built by the buildcontainers workflow.
+          name: Release build Envoy v1.31
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.30-latest
-          # The tag of the Envoy image to build the final image.
           envoy_image_tag: v1.30-latest
+          bazel_build_options: "-c opt"
           version: 1.30.4
+          name: Release build Envoy v1.30
         - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:v1.29-latest
-          # The tag of the Envoy image to build the final image.
           envoy_image_tag: v1.29-latest
+          bazel_build_options: "-c opt"
           version: 1.29.7
+          name: Release build Envoy v1.29
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.31-latest
+          envoy_image_tag: debug-v1.31-latest
+          bazel_build_options: ""
+          version: 1.31.0
+          name: Debug build Envoy v1.31
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.30-latest
+          envoy_image_tag: debug-v1.30-latest
+          bazel_build_options: ""
+          version: 1.30.4
+          name: Debug build Envoy v1.30
+        - image: ghcr.io/envoyproxyx/envoyx-buildcontainer:debug-v1.29-latest
+          envoy_image_tag: debug-v1.29-latest
+          bazel_build_options: ""
+          version: 1.29.7
+          name: Debug build Envoy v1.29
 
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +70,8 @@ jobs:
           git fetch origin ${{ github.sha }} && \
           git checkout --detach ${{ github.sha }} && \
           sed -i 's/ENVOY_VERSION\s=\s.*/ENVOY_VERSION=\"${{ matrix.envoy.version }}\"/' bazel/repositories.bzl && \
-          bazel build //... && \
-          bazel test //... && \
+          bazel build ${{ matrix.envoy.bazel_build_options }} //... && \
+          bazel test ${{ matrix.envoy.bazel_build_options }} //... && \
           sudo cp bazel-bin/envoy /tmp/gha/envoy"
 
     - name: Check Envoy binary
