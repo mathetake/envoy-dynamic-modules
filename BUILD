@@ -8,6 +8,7 @@ package(default_visibility = ["//visibility:public"])
 envoy_cc_binary(
     name = "envoy",
     repository = "@envoy",
+    stamped = True,
     deps = [
         "//x:factory",
         "@envoy//source/exe:envoy_main_entry_lib",
