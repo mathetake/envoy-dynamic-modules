@@ -1,24 +1,10 @@
-# EnvoyX: Envoy Proxy meets Dynamically Loadable Modules
+# Envoy + dynamic modules 
 
-This is the repository that hosts the custom C++ code that is compiled togather with the Envoy Proxy code to allow
-dynamically loadable modules to be loaded as HTTP filters.
+This is the repository that hosts the custom C++ code that is compiled togather with the Envoy Proxy code to allow dynamically loadable modules to be loaded as HTTP filters.
 
-The ABI is hosted at [envoyproxyx/abi](https://github.com/envoyproxyx/abi).
+## Links
 
-## Development
-
-This repository comes with the devcontainer configuration that allows you to develop in a containerized environment.
-
-```bash
-# Build Envoy Proxy b
-bazel build //:envoy
-
-# Formatting.
-clang-format -i x/*.cc x/*.h test/*.cc test/*.h
-
-# clang-tidy.
-bazel build --config=clang-tidy $(bazel query '//test:*') //x/...
-
-# Test.
-bazel test //...
-```
+- [mathetake/envoy-dynamic-modules-abi](https://github.com/mathetake/envoy-dynamic-modules-abi): The repository for the ABI definitions of the dynamic modules.
+- [mathetake/envoy-dynamic-modules-go-sdk](https://github.com/mathetake/envoy-dynamic-modules-go-sdk): The Go SDK for the dynamic modules.
+- [mathetake/envoy-dynamic-modules-rust-sdk](https://github.com/mathetake/envoy-dynamic-modules-rust-sdk): The Rust SDK for the dynamic modules.
+- [mathetake/envoy-dynamic-modules-sdk-conformance-tests](https://github.com/mathetake/envoy-dynamic-modules-sdk-conformance-tests): The Rust SDK for the dynamic modules.

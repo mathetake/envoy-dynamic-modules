@@ -22,10 +22,10 @@ envoy_cc_library(
     repository = "@envoy",
     deps = [
         ":pkg_cc_proto",
+        "@envoy-dynamic-modules-abi//:abi_lib",
         "@envoy//envoy/common:exception_lib",
         "@envoy//envoy/server:filter_config_interface",
         "@envoy//source/extensions/filters/http/common:pass_through_filter_lib",
-        "@envoyx-abi//:abi_lib",
     ],
 )
 
