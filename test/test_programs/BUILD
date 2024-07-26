@@ -25,3 +25,5 @@ test_program(name = "do_not_close")
 test_program(name = "integration_test_headers")
 
 test_program(name = "integration_test_bodies")
+
+test_program(name = "integration_test_local_response")

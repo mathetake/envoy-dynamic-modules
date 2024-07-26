@@ -83,6 +83,7 @@ envoy_cc_test(
     data = [
         "//test/test_programs:integration_test_bodies",
         "//test/test_programs:integration_test_headers",
+        "//test/test_programs:integration_test_local_response",
     ],
     repository = "@envoy",
     deps = [

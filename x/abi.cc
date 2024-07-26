@@ -322,6 +322,47 @@ __envoy_dynamic_module_v1_http_get_response_body_buffer(
   return nullptr;
 }
 
+void ___envoy_dynamic_module_v1_http_send_response(
+    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
+    uint32_t status_code, __envoy_dynamic_module_v1_type_InModuleHeadersPtr headers_vector,
+    __envoy_dynamic_module_v1_type_InModuleHeadersSize headers_vector_size,
+    __envoy_dynamic_module_v1_type_InModuleBufferPtr body_ptr,
+    __envoy_dynamic_module_v1_type_InModuleBufferLength body_length) {
+  auto filter = static_cast<HttpFilter*>(envoy_filter_instance_ptr);
+
+  std::function<void(ResponseHeaderMap & headers)> modify_headers = nullptr;
+  if (headers_vector != 0 && headers_vector_size != 0) {
+    modify_headers = [headers_vector, headers_vector_size](ResponseHeaderMap& headers) {
+      auto headers_ptr =
+          reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleHeader*>(headers_vector);
+
+      for (size_t i = 0; i < headers_vector_size; i++) {
+        const auto& header = &headers_ptr[i];
+        const std::string_view key(static_cast<const char*>(header->header_key),
+                                   header->header_key_length);
+        const std::string_view value(static_cast<const char*>(header->header_value),
+                                     header->header_value_length);
+        ENVOY_LOG_MISC(error, "sendLocalReply: {}={}", key, value);
+        headers.setCopy(Http::LowerCaseString(key), std::string(value));
+      }
+    };
+  }
+  ENVOY_LOG_MISC(error, "sendLocalReply........");
+
+  const std::string_view body =
+      body_ptr ? std::string_view(static_cast<const char*>(body_ptr), body_length) : "";
+
+  if (filter->decoder_callbacks_) {
+    ENVOY_LOG_MISC(error, "sendLocalReply: {}", body);
+    filter->decoder_callbacks_->sendLocalReply(static_cast<Http::Code>(status_code), body,
+                                               modify_headers, 0, "dynamic_module");
+  } else if (filter->encoder_callbacks_) {
+    ENVOY_LOG_MISC(error, "sendLocalReply: {}", body);
+    filter->encoder_callbacks_->sendLocalReply(static_cast<Http::Code>(status_code), body,
+                                               modify_headers, 0, "dynamic_module");
+  }
+}
+
 } // extern "C"
 
 } // namespace DynamicModule

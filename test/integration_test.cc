@@ -99,4 +99,51 @@ TEST_P(HttpFilterIntegrationTest, Bodies) {
   codec_client->close();
 }
 
+TEST_P(HttpFilterIntegrationTest, LocalResponse_OnRequest) {
+  initializeDynamicFilter("./test/test_programs/libintegration_test_local_response.so",
+                          "on_request");
+
+  Http::TestRequestHeaderMapImpl headers{
+      {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
+  Http::TestRequestHeaderMapImpl response_headers{{":status", "200"}};
+
+  IntegrationCodecClientPtr codec_client;
+  FakeHttpConnectionPtr fake_upstream_connection;
+  FakeStreamPtr request_stream;
+
+  codec_client = makeHttpConnection(lookupPort("http"));
+  auto response = codec_client->makeRequestWithBody(headers, "aloha", true);
+  ASSERT_TRUE(response->waitForEndStream(std::chrono::milliseconds(3000)));
+
+  auto foo = response->headers().get(Http::LowerCaseString("foo"));
+  EXPECT_EQ("bar", foo.empty() ? "" : foo[0]->value().getStringView());
+  EXPECT_EQ("500", response->headers().getStatusValue());
+  codec_client->close();
+}
+
+TEST_P(HttpFilterIntegrationTest, LocalResponse_OnRespnose) {
+  initializeDynamicFilter("./test/test_programs/libintegration_test_local_response.so",
+                          "on_response");
+
+  Http::TestRequestHeaderMapImpl headers{
+      {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
+  Http::TestRequestHeaderMapImpl response_headers{{":status", "200"}};
+
+  IntegrationCodecClientPtr codec_client;
+  FakeHttpConnectionPtr fake_upstream_connection;
+  FakeStreamPtr request_stream;
+
+  codec_client = makeHttpConnection(lookupPort("http"));
+  auto response = codec_client->makeRequestWithBody(headers, "aloha", true);
+  ASSERT_TRUE(fake_upstreams_[0]->waitForHttpConnection(*dispatcher_, fake_upstream_connection));
+  ASSERT_TRUE(fake_upstream_connection->waitForNewStream(*dispatcher_, request_stream));
+  request_stream->encodeHeaders(response_headers, false);
+  ASSERT_TRUE(response->waitForEndStream(std::chrono::milliseconds(3000)));
+
+  auto cat = response->headers().get(Http::LowerCaseString("cat"));
+  EXPECT_EQ("dog", cat.empty() ? "" : cat[0]->value().getStringView());
+  EXPECT_EQ("504", response->headers().getStatusValue());
+  codec_client->close();
+}
+
 } // namespace Envoy

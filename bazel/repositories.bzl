@@ -32,9 +32,9 @@ def repositories():
 
     http_archive(
         name = "envoy-dynamic-modules-abi",
-        url = "https://github.com/mathetake/envoy-dynamic-modules-abi/archive/618a71f810df568cd24bab6df8583bd6c9f28be2.tar.gz",
-        sha256 = "fbbacc69b5301611a0ee161be5869fa459be59c195c05bfbac291e233841e8c0",
-        strip_prefix = "envoy-dynamic-modules-abi-618a71f810df568cd24bab6df8583bd6c9f28be2",
+        url = "https://github.com/mathetake/envoy-dynamic-modules-abi/archive/e988fbc2300fb45d4627fb24472fe5e699c3ae2b.tar.gz",
+        sha256 = "ca88183f1a851273a484eacfc631aba5da1152ef47554878d154c730915a9161",
+        strip_prefix = "envoy-dynamic-modules-abi-e988fbc2300fb45d4627fb24472fe5e699c3ae2b",
         build_file_content = """
 cc_library(
     name = "abi_lib",
