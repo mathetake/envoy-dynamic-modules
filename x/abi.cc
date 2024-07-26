@@ -342,22 +342,17 @@ void __envoy_dynamic_module_v1_http_send_response(
                                    header->header_key_length);
         const std::string_view value(static_cast<const char*>(header->header_value),
                                      header->header_value_length);
-        ENVOY_LOG_MISC(error, "sendLocalReply: {}={}", key, value);
         headers.setCopy(Http::LowerCaseString(key), std::string(value));
       }
     };
   }
-  ENVOY_LOG_MISC(error, "sendLocalReply........");
-
   const std::string_view body =
       body_ptr ? std::string_view(static_cast<const char*>(body_ptr), body_length) : "";
 
   if (filter->decoder_callbacks_) {
-    ENVOY_LOG_MISC(error, "sendLocalReply: {}", body);
     filter->decoder_callbacks_->sendLocalReply(static_cast<Http::Code>(status_code), body,
                                                modify_headers, 0, "dynamic_module");
   } else if (filter->encoder_callbacks_) {
-    ENVOY_LOG_MISC(error, "sendLocalReply: {}", body);
     filter->encoder_callbacks_->sendLocalReply(static_cast<Http::Code>(status_code), body,
                                                modify_headers, 0, "dynamic_module");
   }
