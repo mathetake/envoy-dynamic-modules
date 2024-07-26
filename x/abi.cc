@@ -322,7 +322,7 @@ __envoy_dynamic_module_v1_http_get_response_body_buffer(
   return nullptr;
 }
 
-void ___envoy_dynamic_module_v1_http_send_response(
+void __envoy_dynamic_module_v1_http_send_response(
     __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
     uint32_t status_code, __envoy_dynamic_module_v1_type_InModuleHeadersPtr headers_vector,
     __envoy_dynamic_module_v1_type_InModuleHeadersSize headers_vector_size,
