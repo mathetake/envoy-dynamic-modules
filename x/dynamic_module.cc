@@ -17,9 +17,6 @@ DynamicModule::~DynamicModule() {
   __envoy_dynamic_module_v1_event_http_filter_destroy_(module_ctx_);
   ASSERT(handle_ != nullptr);
   dlclose(handle_);
-  if (!file_path_for_cleanup_.empty()) {
-    std::filesystem::remove(file_path_for_cleanup_);
-  }
 }
 
 #define RESOLVE_SYMBOL_OR_THROW(symbol_type)                                                       \

@@ -16,7 +16,7 @@ namespace Http {
 namespace DynamicModule {
 
 /**
- * A class to manage a dynamic module. This will be owned by multiple filters.
+ * A class to manage a dynamic module. This will be owned by multiple filter instances.
  */
 class DynamicModule {
 public:
@@ -77,7 +77,6 @@ public:
 private:
   // The raw dlopen handle.
   void* handle_ = nullptr;
-  std::string file_path_for_cleanup_;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
