@@ -285,7 +285,7 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 TEST(TestABIRoundTrip, GetBody) {
   DynamicModuleSharedPtr module = loadTestDynamicModule("get_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
-  filter->ensureStreamContext();
+  filter->ensureHttpFilterInstance();
 
   Buffer::OwnedImpl request_body;
   request_body.appendSliceForTest("hello");
@@ -492,7 +492,7 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
 TEST(TestABIRoundTrip, BodyManipulations) {
   DynamicModuleSharedPtr module = loadTestDynamicModule("manipulate_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
-  filter->ensureStreamContext();
+  filter->ensureHttpFilterInstance();
 
   Buffer::OwnedImpl request_body;
   request_body.add("hello");

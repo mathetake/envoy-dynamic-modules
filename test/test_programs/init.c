@@ -31,8 +31,8 @@ __envoy_dynamic_module_v1_type_HttpFilterPtr __envoy_dynamic_module_v1_event_htt
     ((char*)config_ptr)[i] = '1';
   }
 
-  static size_t context = 0;
-  return (uintptr_t)&context;
+  static size_t obj = 0;
+  return (uintptr_t)&obj;
 }
 
 __envoy_dynamic_module_v1_type_HttpFilterInstancePtr

@@ -14,7 +14,7 @@ namespace DynamicModule {
 
 DynamicModule::~DynamicModule() {
   ENVOY_LOG_MISC(info, "Destroying module: {}", name_);
-  __envoy_dynamic_module_v1_event_http_filter_destroy_(module_ctx_);
+  __envoy_dynamic_module_v1_event_http_filter_destroy_(http_filter_);
   ASSERT(handle_ != nullptr);
   dlclose(handle_);
 }
@@ -70,13 +70,13 @@ void DynamicModule::initHttpFilter(const std::string& config) {
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_init);
   ENVOY_LOG_MISC(info, "[{}] -> __envoy_dynamic_module_v1_event_http_filter_init ({}, {})", name_,
                  const_cast<char*>(config.data()), config.size());
-  module_ctx_ = __envoy_dynamic_module_v1_event_http_filter_init_(const_cast<char*>(config.data()),
-                                                                  config.size());
-  if (module_ctx_ == nullptr) {
+  http_filter_ = __envoy_dynamic_module_v1_event_http_filter_init_(const_cast<char*>(config.data()),
+                                                                   config.size());
+  if (http_filter_ == nullptr) {
     throw EnvoyException(fmt::format("http filter init in {} failed", name_));
   }
   ENVOY_LOG_MISC(info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_init: {}", name_,
-                 module_ctx_);
+                 http_filter_);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_destroy);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_init);
   RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_request_headers);

@@ -23,18 +23,18 @@ public:
   ~HttpFilter() override;
 
   /**
-   * Ensure that the stream context is initialized. This is called by decodeHeaders() to ensure that
-   * the stream context is initialized before calling into the * dynamic module.
+   * Ensure that the in-module http filter instance is initialized. This is called by
+   * decodeHeaders() to ensure that it is initialized before calling into the * dynamic module.
    * Note: this is made public for testing purposes.
    */
-  void ensureStreamContext();
+  void ensureHttpFilterInstance();
 
   /**
-   * Destroy the stream context. This is called by onDestroy() and the destructor to ensure that the
-   * stream context is destroyed before the dynamic module is unloaded.
-   * Note: this is made public for testing purposes.
+   * Destroy the in-module http filter. This is called by onDestroy() and the destructor to ensure
+   * that the it is destroyed before the dynamic module is unloaded. Note: this is made public for
+   * testing purposes.
    */
-  void destoryStreamContext();
+  void destoryHttpFilterInstance();
 
   // N.B. The event hooks inlined here are not supported by the dynamic modules for now.
 
@@ -132,8 +132,8 @@ public:
   StreamDecoderFilterCallbacks* decoder_callbacks_ = nullptr;
   StreamEncoderFilterCallbacks* encoder_callbacks_ = nullptr;
 
-  // The in-module per-stream context for the module.
-  void* stream_context_ = nullptr;
+  // The in-module per-stream http filter instance for the module.
+  void* http_filter_instance_ = nullptr;
 
   // If the filter is in the continue state. This is to avoid assertion failure on prohitbiting
   // calling coninueDecoding() or continueEncoding() multiple times.

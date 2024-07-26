@@ -68,8 +68,8 @@ public:
   DECLARE_EVENT_HOOK(__envoy_dynamic_module_v1_event_http_filter_instance_destroy)
 #undef DECLARE_EVENT_HOOK
 
-  // The in-memory context for the module.
-  void* module_ctx_ = nullptr;
+  // The in-module http filter for the module.
+  void* http_filter_ = nullptr;
 
   // The name of the module passed in the constructor.
   const std::string name_;

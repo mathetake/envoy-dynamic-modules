@@ -26,11 +26,11 @@ TEST(TestHttpFilter, StreamContextOK) {
   const auto result = filter->decodeHeaders(request_headers, false);
   EXPECT_EQ(result, FilterHeadersStatus::Continue);
 
-  const void* context = filter->stream_context_;
-  EXPECT_NE(context, nullptr);
-  // Read the integer value from the context which is set in the
+  const void* instance = filter->http_filter_instance_;
+  EXPECT_NE(instance, nullptr);
+  // Read the integer value from the instance which is set in the
   // __envoy_dynamic_module_v1_event_http_filter_instance_init function.
-  const int* value = static_cast<const int*>(context);
+  const int* value = static_cast<const int*>(instance);
   EXPECT_EQ(*value, 999999);
 }
 

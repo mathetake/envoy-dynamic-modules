@@ -13,51 +13,53 @@ namespace DynamicModule {
 
 HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module) : dynamic_module_(dynamic_module) {}
 
-HttpFilter::~HttpFilter() { this->destoryStreamContext(); }
+HttpFilter::~HttpFilter() { this->destoryHttpFilterInstance(); }
 
-void HttpFilter::ensureStreamContext() {
+void HttpFilter::ensureHttpFilterInstance() {
   ENVOY_LOG_MISC(info,
                  "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_init_ ({}, {})",
-                 dynamic_module_->name_, THIS_AS_VOID, dynamic_module_->module_ctx_);
-  stream_context_ = dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_init_(
-      THIS_AS_VOID, dynamic_module_->module_ctx_);
+                 dynamic_module_->name_, THIS_AS_VOID, dynamic_module_->http_filter_);
+  http_filter_instance_ =
+      dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_init_(
+          THIS_AS_VOID, dynamic_module_->http_filter_);
   ENVOY_LOG_MISC(info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_init_: {}",
-                 dynamic_module_->name_, stream_context_);
+                 dynamic_module_->name_, http_filter_instance_);
 }
 
-void HttpFilter::onDestroy() { this->destoryStreamContext(); };
+void HttpFilter::onDestroy() { this->destoryHttpFilterInstance(); };
 
-void HttpFilter::destoryStreamContext() {
+void HttpFilter::destoryHttpFilterInstance() {
   this->encoder_callbacks_ = nullptr;
   this->decoder_callbacks_ = nullptr;
   ASSERT(dynamic_module_);
-  if (stream_context_) {
+  if (http_filter_instance_) {
     ENVOY_LOG_MISC(info,
                    "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_destroy_ ({})",
-                   dynamic_module_->name_, stream_context_);
-    dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_destroy_(stream_context_);
+                   dynamic_module_->name_, http_filter_instance_);
+    dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_destroy_(
+        http_filter_instance_);
     ENVOY_LOG_MISC(info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_destroy_",
                    dynamic_module_->name_);
-    stream_context_ = nullptr;
+    http_filter_instance_ = nullptr;
   }
 }
 
 FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool end_of_stream) {
   ASSERT(dynamic_module_);
-  if (!stream_context_) {
-    this->ensureStreamContext();
-    if (!stream_context_) {
+  if (!http_filter_instance_) {
+    this->ensureHttpFilterInstance();
+    if (!http_filter_instance_) {
       return FilterHeadersStatus::StopIteration;
     }
   }
-  ASSERT(stream_context_);
+  ASSERT(http_filter_instance_);
   ENVOY_LOG_MISC(
       info,
       "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_request_headers_ ({}, {}, {})",
-      dynamic_module_->name_, stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
+      dynamic_module_->name_, http_filter_instance_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   const __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus result =
       dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_request_headers_(
-          stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
+          http_filter_instance_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   ENVOY_LOG_MISC(
       info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_request_headers_: {}",
       dynamic_module_->name_, result);
@@ -68,14 +70,14 @@ FilterHeadersStatus HttpFilter::decodeHeaders(RequestHeaderMap& headers, bool en
 
 FilterDataStatus HttpFilter::decodeData(Buffer::Instance& buffer, bool end_of_stream) {
   ASSERT(dynamic_module_);
-  ASSERT(stream_context_);
+  ASSERT(http_filter_instance_);
   ENVOY_LOG_MISC(
       info,
       "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_request_body_ ({}, {}, {})",
-      dynamic_module_->name_, stream_context_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
+      dynamic_module_->name_, http_filter_instance_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   const __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus result =
       dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_request_body_(
-          stream_context_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
+          http_filter_instance_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   ENVOY_LOG_MISC(info,
                  "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_request_body_: {}",
                  dynamic_module_->name_, result);
@@ -85,14 +87,14 @@ FilterDataStatus HttpFilter::decodeData(Buffer::Instance& buffer, bool end_of_st
 
 FilterHeadersStatus HttpFilter::encodeHeaders(ResponseHeaderMap& headers, bool end_of_stream) {
   ASSERT(dynamic_module_);
-  ASSERT(stream_context_);
+  ASSERT(http_filter_instance_);
   ENVOY_LOG_MISC(
       info,
       "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_response_headers_ ({}, {}, {})",
-      dynamic_module_->name_, stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
+      dynamic_module_->name_, http_filter_instance_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   const __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus result =
       dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_response_headers_(
-          stream_context_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
+          http_filter_instance_, STATIC_CAST_AS_VOID(&headers), end_of_stream);
   ENVOY_LOG_MISC(
       info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_response_headers_: {}",
       dynamic_module_->name_, result);
@@ -103,14 +105,14 @@ FilterHeadersStatus HttpFilter::encodeHeaders(ResponseHeaderMap& headers, bool e
 
 FilterDataStatus HttpFilter::encodeData(Buffer::Instance& buffer, bool end_of_stream) {
   ASSERT(dynamic_module_);
-  ASSERT(stream_context_);
+  ASSERT(http_filter_instance_);
   ENVOY_LOG_MISC(
       info,
       "[{}] -> __envoy_dynamic_module_v1_event_http_filter_instance_response_body_ ({}, {}, {})",
-      dynamic_module_->name_, stream_context_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
+      dynamic_module_->name_, http_filter_instance_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   const __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus result =
       dynamic_module_->__envoy_dynamic_module_v1_event_http_filter_instance_response_body_(
-          stream_context_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
+          http_filter_instance_, STATIC_CAST_AS_VOID(&buffer), end_of_stream);
   ENVOY_LOG_MISC(info,
                  "[{}] <- __envoy_dynamic_module_v1_event_http_filter_instance_response_body_: {}",
                  dynamic_module_->name_, result);

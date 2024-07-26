@@ -93,16 +93,16 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
 __envoy_dynamic_module_v1_type_HttpFilterPtr __envoy_dynamic_module_v1_event_http_filter_init(
     __envoy_dynamic_module_v1_type_HttpFilterConfigPtr config_ptr,
     __envoy_dynamic_module_v1_type_HttpFilterConfigSize config_size) {
-  static size_t context = 0;
-  return (uintptr_t)&context;
+  static size_t obj = 0;
+  return (uintptr_t)&obj;
 }
 
 __envoy_dynamic_module_v1_type_HttpFilterInstancePtr
 __envoy_dynamic_module_v1_event_http_filter_instance_init(
     __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
     __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {
-  static size_t context = 0;
-  return (uintptr_t)&context;
+  static size_t obj = 0;
+  return (uintptr_t)&obj;
 }
 
 __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
