@@ -15,7 +15,7 @@ namespace DynamicModule {
 extern "C" {
 
 #define GET_HEADER_VALUE(header_map_type, request_or_response)                                     \
-  const std::string key_str(static_cast<const char*>(key), key_length);                            \
+  const std::string_view key_str(static_cast<const char*>(key), key_length);                       \
   const auto header = request_or_response##_headers->get(Http::LowerCaseString(key_str));          \
   if (header.empty()) {                                                                            \
     *_result_buffer_ptr = nullptr;                                                                 \
@@ -59,7 +59,7 @@ size_t __envoy_dynamic_module_v1_http_get_response_header_value(
 }
 
 #define GET_HEADER_VALUE_NTH(header_map_type, request_or_response)                                 \
-  const std::string key_str(static_cast<const char*>(key), key_length);                            \
+  const std::string_view key_str(static_cast<const char*>(key), key_length);                       \
   const auto header = request_or_response##_headers->get(Http::LowerCaseString(key_str));          \
   if (nth < 0 || nth >= header.size()) {                                                           \
     *_result_buffer_ptr = nullptr;                                                                 \
