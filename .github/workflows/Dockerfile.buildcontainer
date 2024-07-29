@@ -22,7 +22,6 @@ RUN git clone https://github.com/mathetake/envoyx.git $BUILD_DIR/envoyx
 WORKDIR $BUILD_DIR/envoyx
 RUN .devcontainer/setup.sh || true
 RUN echo "Checking out ${GIT_SHA_ARG}" && git checkout --detach ${GIT_SHA_ARG} && git checkout --detach ${GIT_SHA_ARG}
-RUN sed -i "s/ENVOY_VERSION\s=\s.*/ENVOY_VERSION='${ENVOY_VERSION_ARG}'/" bazel/repositories.bzl && cat bazel/repositories.bzl
 
 # To have each layer smaller, we split the bazel build commands.
 RUN bazel build $BAZEL_BUILD_OPTIONS_ARG //x/...
