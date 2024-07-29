@@ -1,0 +1,21 @@
+[package]
+name = "envoy-dynamic-modules-rust-sdk"
+version = "0.1.0"
+edition = "2021"
+authors = ["Takeshi Yoneda <t.y.mathetake@gmail.com>"]
+description = "Envoy Dynamic Modules Rust SDK"
+readme = "README.md"
+license = "Apache-2.0"
+repository = "https://github.com/mathetake/envoy-dynamic-modules-rust-sdk"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.65.1"
+
+[lib]
+
+[[example]]
+crate-type = ["cdylib"]
+name = "example"
+path = "example/example.rs"

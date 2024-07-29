@@ -52,6 +52,49 @@ jobs:
         ./envoy --version
         cp ./envoy /usr/local/bin/envoy
 
+    # TODO: Following should be a part of bazel build / test process.
+    - uses: actions/setup-go@v4
+      with:
+        cache: false
+        go-version: 1.22
+
+    - name: Install conformance tests
+      run: |
+        cd ./sdks/conformance-test
+        go install .
+
+    - name: Go SDK check
+      run: |
+        cd ./sdks/go
+        make all
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        components: rustfmt, clippy
+
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-registry-
+
+    - name: Cache cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-index-
+
+    - name: Rust SDK check
+      run: |
+        cd ./sdks/rust
+        make all
+
     - name: Login into GitHub Container Registry
       if: github.event_name == 'push'
       uses: docker/login-action@v2
@@ -70,19 +113,3 @@ jobs:
         MAIN_IMAGE_TAG=ghcr.io/mathetake/envoy:${{ matrix.envoy.envoy_image_tag }}
         docker tag $IMAGE $MAIN_IMAGE_TAG
         docker push $MAIN_IMAGE_TAG
-
-    # TODO: Following should be a part of bazel build / test process.
-    - uses: actions/setup-go@v4
-      with:
-        cache: false
-        go-version: 1.22
-
-    - name: Install conformance tests
-      run: |
-        cd ./sdks/conformance-test
-        go install .
-
-    - name: Go SDK check
-      run: |
-        cd ./sdks/go
-        make all

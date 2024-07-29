@@ -8,9 +8,4 @@ We are in the process of upstreaming the work here to the main Envoy Proxy repos
 * [x](./x/) directory contains the extension code, that will be compiled into the final Envoy binary.
 * [sdks/conformance-test](./sdks/conformance-test) directory contains the conformance tests for the SDKs.
 * [sdks/go](./sdks/go/) directory contains the Go SDK for the dynamic modules.
-
-TODO: SDKs and conformance tests will be soon merged into this repository.
-
-## Links
-
-- [mathetake/envoy-dynamic-modules-rust-sdk](https://github.com/mathetake/envoy-dynamic-modules-rust-sdk): The Rust SDK for the dynamic modules.
+* [sdks/rust](./sdks/rust/) directory contains the Rust SDK for the dynamic modules.
