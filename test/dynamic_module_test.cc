@@ -22,7 +22,7 @@ TEST(TestDynamicModule, InitNonExist) {
                           "cannot resolve symbol: __envoy_dynamic_module_v1_event_program_init");
 }
 
-TEST(TestDynamicModule, ProgramInitFail) {
+TEST(TestDynamicModule, ProgramIwnitFail) {
   EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("program_init_fail", "", "fooooooooooo"),
                           EnvoyException, "program init in fooooooooooo failed");
 }

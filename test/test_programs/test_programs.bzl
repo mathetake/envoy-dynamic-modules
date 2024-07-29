@@ -9,7 +9,7 @@ def test_program(name):
             "-fPIC",
         ],
         deps = [
-            "@envoy-dynamic-modules-abi//:abi_lib",
+            "//abi:abi_definition",
         ],
         linkstatic = False,
     )

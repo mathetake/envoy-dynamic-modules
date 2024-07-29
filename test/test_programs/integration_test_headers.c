@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "abi.h"
+#include "abi/abi.h"
 
 size_t should_wait = 0;
 

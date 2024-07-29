@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "abi.h"
+#include "abi/abi.h"
 
 __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
 __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(

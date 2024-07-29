@@ -1,0 +1,1 @@
+ The ABI is defined in a single C header file, abi.h, which is will be used in the Envoy source code as well as SDKs.
