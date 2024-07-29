@@ -71,20 +71,18 @@ jobs:
         docker tag $IMAGE $MAIN_IMAGE_TAG
         docker push $MAIN_IMAGE_TAG
 
+    # TODO: Following should be a part of bazel build / test process.
+    - uses: actions/setup-go@v4
+      with:
+        cache: false
+        go-version: ${{ env.GO_VERSION }}
 
-      # TODO: Following should be a part of bazel build / test process.
+    - name: Install conformance tests
+      run: |
+        cd ./sdks/conformance-test
+        go install .
 
-      - uses: actions/setup-go@v4
-        with:
-          cache: false
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Install conformance tests
-        run: |
-          cd ./sdks/conformance-test
-          go install .
-
-      - name: Go SDK check
-        run: |
-          cd ./sdks/go
-          make all
+    - name: Go SDK check
+      run: |
+        cd ./sdks/go
+        make all
