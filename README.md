@@ -3,7 +3,7 @@
 This is the repository that hosts the custom C++ code that is compiled togather with the Envoy Proxy code to allow dynamically loadable modules to be loaded as HTTP filters.
 
 * `abi` directory contains the ABI definitions for the dynamic modules, which is a single plain C header with zero dependency.
-* `x` directory contains the extension code.
+* `x` directory contains the extension code, that will be compiled into the final Envoy binary.
 
 TODO: SDKs and conformance tests will be soon merged into this repository.
 
