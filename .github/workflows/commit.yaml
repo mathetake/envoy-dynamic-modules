@@ -50,6 +50,7 @@ jobs:
       run: |
         file ./envoy
         ./envoy --version
+        cp ./envoy /usr/local/bin/envoy
 
     - name: Login into GitHub Container Registry
       if: github.event_name == 'push'
@@ -69,3 +70,21 @@ jobs:
         MAIN_IMAGE_TAG=ghcr.io/mathetake/envoy:${{ matrix.envoy.envoy_image_tag }}
         docker tag $IMAGE $MAIN_IMAGE_TAG
         docker push $MAIN_IMAGE_TAG
+
+
+      # TODO: Following should be a part of bazel build / test process.
+
+      - uses: actions/setup-go@v4
+        with:
+          cache: false
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Install conformance tests
+        run: |
+          cd ./sdks/conformance-test
+          go install .
+
+      - name: Go SDK check
+        run: |
+          cd ./sdks/go
+          make all
