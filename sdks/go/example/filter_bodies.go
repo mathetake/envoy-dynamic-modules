@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
 )
@@ -42,6 +43,7 @@ func (h *bodiesHttpFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, en
 
 	// Now we can read the entire body.
 	entireBody := h.envoyFilter.GetRequestBodyBuffer()
+	l := entireBody.Length()
 
 	// This copies the entire body into a single contiguous buffer in Go.
 	fmt.Printf("entire request body: %s", string(entireBody.Copy()))
@@ -62,6 +64,15 @@ func (h *bodiesHttpFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, en
 			view[i] = 'X'
 		}
 	})
+
+	// This demonstrates how to get Reader from the buffer and read the entire body.
+	reader := entireBody.NewReader()
+	readBody, err := io.ReadAll(reader)
+	if err != nil {
+		panic(err)
+	} else if string(readBody) != strings.Repeat("X", l) {
+		panic("request body is not replaced with 'X'")
+	}
 	return envoy.RequestBodyStatusContinue
 }
 
@@ -80,6 +91,7 @@ func (h *bodiesHttpFilterInstance) ResponseBody(frame envoy.ResponseBodyBuffer, 
 
 	// Now we can read the entire body.
 	entireBody := h.envoyFilter.GetResponseBodyBuffer()
+	l := entireBody.Length()
 
 	// This copies the entire body into a single contiguous buffer in Go.
 	fmt.Printf("entire response body: %s", string(entireBody.Copy()))
@@ -100,6 +112,15 @@ func (h *bodiesHttpFilterInstance) ResponseBody(frame envoy.ResponseBodyBuffer, 
 			view[i] = 'Y'
 		}
 	})
+
+	// This demonstrates how to get Reader from the buffer and read the entire body.
+	reader := entireBody.NewReader()
+	readBody, err := io.ReadAll(reader)
+	if err != nil {
+		panic(err)
+	} else if string(readBody) != strings.Repeat("Y", l) {
+		panic("response body is not replaced with 'Y'")
+	}
 	return envoy.ResponseBodyStatusContinue
 }
 

@@ -79,6 +79,8 @@ type RequestBodyBuffer interface {
 	// Replace replaces the buffer with the given data. This doesn't take the ownership of the data.
 	// Therefore, data will be copied to the buffer internally.
 	Replace(data []byte)
+	// NewReader returns an io.Reader for the buffer.
+	NewReader() io.Reader
 }
 
 // ResponseBodyBuffer is an opaque object that represents the underlying Envoy Http response body buffer.
@@ -107,4 +109,6 @@ type ResponseBodyBuffer interface {
 	// Replace replaces the buffer with the given data. This doesn't take the ownership of the data.
 	// Therefore, data will be copied to the buffer internally.
 	Replace(data []byte)
+	// NewReader returns an io.Reader for the buffer.
+	NewReader() io.Reader
 }

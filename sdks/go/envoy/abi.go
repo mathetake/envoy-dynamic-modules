@@ -337,17 +337,25 @@ func (r RequestBodyBuffer) Length() int {
 
 // Slice implements RequestBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
 func (r RequestBodyBuffer) Slices(iter func(view []byte)) {
-	sliceCount := C.__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(r.raw)
-	for i := C.size_t(0); i < sliceCount; i++ {
-		var ptr *byte
-		var size int
-		C.__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(r.raw,
-			i,
-			C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&ptr))),
-			C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&size))),
-		)
-		iter(unsafe.Slice(ptr, size))
+	sliceCount := r.slicesCount()
+	for i := 0; i < sliceCount; i++ {
+		iter(r.sliceAt(i))
 	}
+}
+
+func (r RequestBodyBuffer) slicesCount() int {
+	return int(C.__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(r.raw))
+}
+
+func (r RequestBodyBuffer) sliceAt(index int) []byte {
+	var ptr *byte
+	var size int
+	C.__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(r.raw,
+		C.size_t(index),
+		C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&ptr))),
+		C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&size))),
+	)
+	return unsafe.Slice(ptr, size)
 }
 
 // Copy implements RequestBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
@@ -379,6 +387,45 @@ func (r RequestBodyBuffer) ReadAt(p []byte, off int64) (n int, err error) {
 	return len(p), err
 }
 
+// Reader implements RequestBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
+func (r RequestBodyBuffer) NewReader() io.Reader {
+	return &requestBufferReader{buffer: r}
+}
+
+// requestBufferReader implements io.Reader for the RequestBodyBuffer.
+type requestBufferReader struct {
+	buffer             RequestBodyBuffer
+	currentSliceIndex  int
+	currentSliceOffset int
+}
+
+// Read implements io.Reader for the RequestBodyBuffer.
+func (r *requestBufferReader) Read(buf []byte) (int, error) {
+	totalRead := 0
+	slicesCount := r.buffer.slicesCount()
+	// TODO: below obviously can be optimized. But for now, this is fine for the PoC.
+	for totalRead < len(buf) {
+		if r.currentSliceIndex >= slicesCount {
+			return totalRead, io.EOF
+		}
+		currentSlice := r.buffer.sliceAt(r.currentSliceIndex)
+		currentSliceLen := len(currentSlice)
+		if r.currentSliceOffset >= currentSliceLen {
+			r.currentSliceOffset = 0
+			r.currentSliceIndex++
+			continue
+		}
+
+		remaining := len(buf) - totalRead
+		remainingSlice := currentSliceLen - r.currentSliceOffset
+		readSize := min(remaining, remainingSlice)
+		copy(buf[totalRead:totalRead+readSize], currentSlice[r.currentSliceOffset:r.currentSliceOffset+readSize])
+		r.currentSliceOffset += readSize
+		totalRead += readSize
+	}
+	return totalRead, nil
+}
+
 // Length implements ResponseBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
 func (r ResponseBodyBuffer) Length() int {
 	return int(C.__envoy_dynamic_module_v1_http_get_response_body_buffer_length(r.raw))
@@ -386,17 +433,25 @@ func (r ResponseBodyBuffer) Length() int {
 
 // Slice implements ResponseBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
 func (r ResponseBodyBuffer) Slices(iter func(view []byte)) {
-	sliceCount := C.__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(r.raw)
-	for i := C.size_t(0); i < sliceCount; i++ {
-		var ptr *byte
-		var size int
-		C.__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(r.raw,
-			i,
-			C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&ptr))),
-			C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&size))),
-		)
-		iter(unsafe.Slice(ptr, size))
+	sliceCount := r.slicesCount()
+	for i := 0; i < sliceCount; i++ {
+		iter(r.sliceAt(i))
 	}
+}
+
+func (r ResponseBodyBuffer) slicesCount() int {
+	return int(C.__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(r.raw))
+}
+
+func (r ResponseBodyBuffer) sliceAt(index int) []byte {
+	var ptr *byte
+	var size int
+	C.__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(r.raw,
+		C.size_t(index),
+		C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&ptr))),
+		C.__envoy_dynamic_module_v1_type_DataSliceLengthResult(uintptr(unsafe.Pointer(&size))),
+	)
+	return unsafe.Slice(ptr, size)
 }
 
 // Copy implements ResponseBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
@@ -488,4 +543,43 @@ func (r ResponseBodyBuffer) Drain(length int) {
 func (r ResponseBodyBuffer) Replace(data []byte) {
 	r.Drain(r.Length())
 	r.Append(data)
+}
+
+// Reader implements RequestBodyBuffer interface in abi_nocgo.go which is not included in the shared library.
+func (r ResponseBodyBuffer) NewReader() io.Reader {
+	return &responseBufferReader{buffer: r}
+}
+
+// responseBufferReader implements io.Reader for the ResponseBodyBuffer.
+type responseBufferReader struct {
+	buffer             ResponseBodyBuffer
+	currentSliceIndex  int
+	currentSliceOffset int
+}
+
+// Read implements io.Reader for the ResponseBodyBuffer.
+func (r *responseBufferReader) Read(buf []byte) (int, error) {
+	totalRead := 0
+	slicesCount := r.buffer.slicesCount()
+	// TODO: below obviously can be optimized. But for now, this is fine for the PoC.
+	for totalRead < len(buf) {
+		if r.currentSliceIndex >= slicesCount {
+			return totalRead, io.EOF
+		}
+		currentSlice := r.buffer.sliceAt(r.currentSliceIndex)
+		currentSliceLen := len(currentSlice)
+		if r.currentSliceOffset >= currentSliceLen {
+			r.currentSliceOffset = 0
+			r.currentSliceIndex++
+			continue
+		}
+
+		remaining := len(buf) - totalRead
+		remainingSlice := currentSliceLen - r.currentSliceOffset
+		readSize := min(remaining, remainingSlice)
+		copy(buf[totalRead:totalRead+readSize], currentSlice[r.currentSliceOffset:r.currentSliceOffset+readSize])
+		r.currentSliceOffset += readSize
+		totalRead += readSize
+	}
+	return totalRead, nil
 }
