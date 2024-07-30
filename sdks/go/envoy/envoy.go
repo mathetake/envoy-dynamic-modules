@@ -43,25 +43,25 @@ type HttpFilterInstance interface {
 	//
 	//  * `requestHeaders` is the pointer to the request headers map.
 	//  * `endOfStream` is a boolean that indicates if this is the headers-only request.
-	RequestHeaders(RequestHeaders, bool) RequestHeadersStatus
+	RequestHeaders(requestHeaders RequestHeaders, endOfStream bool) RequestHeadersStatus
 	// RequestBody is called when request body data is received.
 	// The function should return the status of the operation.
 	//
-	//  * `requestBody` is the pointer to the newly arrived request body buffer.
+	//  * `frame` is the pointer to the newly arrived request body frame.
 	//  * `endOfStream` is a boolean that indicates if this is the last data frame.
-	RequestBody(RequestBodyBuffer, bool) RequestBodyStatus
+	RequestBody(frame RequestBodyBuffer, endOfStream bool) RequestBodyStatus
 	// ResponseHeaders is called when response headers are received.
 	// The function should return the status of the operation.
 	//
 	//  * `responseHeaders` is the pointer to the response headers map.
 	//  * `endOfStream` is a boolean that indicates if this is the headers-only response.
-	ResponseHeaders(ResponseHeaders, bool) ResponseHeadersStatus
+	ResponseHeaders(responseHeaders ResponseHeaders, endOfStream bool) ResponseHeadersStatus
 	// ResponseBody is called when response body data is received.
 	// The function should return the status of the operation.
 	//
-	//  * `responseBody` is the pointer to the newly arrived response body buffer.
+	//  * `frame` is the pointer to the newly arrived response body frame.
 	//  * `endOfStream` is a boolean that indicates if this is the last data frame.
-	ResponseBody(ResponseBodyBuffer, bool) ResponseBodyStatus
+	ResponseBody(frame ResponseBodyBuffer, endOfStream bool) ResponseBodyStatus
 
 	// Destroy is called when the stream is destroyed.
 	// This is called when the stream is completed or when the stream is reset.

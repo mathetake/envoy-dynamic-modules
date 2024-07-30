@@ -47,7 +47,7 @@ func (h *bodiesReplaceHttpFilterInstance) RequestHeaders(headers envoy.RequestHe
 }
 
 // RequestBody implements envoy.HttpFilterInstance.
-func (h *bodiesReplaceHttpFilterInstance) RequestBody(body envoy.RequestBodyBuffer, endOfStream bool) envoy.RequestBodyStatus {
+func (h *bodiesReplaceHttpFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, endOfStream bool) envoy.RequestBodyStatus {
 	if !endOfStream {
 		// Wait for the end of the stream to see the full body.
 		return envoy.RequestBodyStatusStopIterationAndBuffer
@@ -85,8 +85,8 @@ func (h *bodiesReplaceHttpFilterInstance) ResponseHeaders(headers envoy.Response
 }
 
 // ResponseBody implements envoy.HttpFilterInstance.
-func (h *bodiesReplaceHttpFilterInstance) ResponseBody(body envoy.ResponseBodyBuffer, endOfStream bool) envoy.ResponseBodyStatus {
-	fmt.Printf("new request body frame: %s\n", string(body.Copy()))
+func (h *bodiesReplaceHttpFilterInstance) ResponseBody(frame envoy.ResponseBodyBuffer, endOfStream bool) envoy.ResponseBodyStatus {
+	fmt.Printf("new request body frame: %s\n", string(frame.Copy()))
 	if !endOfStream {
 		// Wait for the end of the stream to see the full body.
 		return envoy.ResponseBodyStatusStopIterationAndBuffer
