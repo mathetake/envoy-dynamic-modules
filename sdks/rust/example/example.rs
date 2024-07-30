@@ -115,24 +115,27 @@ impl HttpFilterInstance for HeadersFilterInstance {
         request_headers: &RequestHeaders,
         _end_of_stream: bool,
     ) -> RequestHeadersStatus {
-        if let Some(value) = request_headers.get("foo") {
-            if value != "value" {
-                panic!("expected this-is to be \"value\", got {:?}", value);
+        if let Some(value) = request_headers.get(b"foo") {
+            if value != b"value" {
+                panic!(
+                    "expected this-is to be \"value\", got {:?}",
+                    std::str::from_utf8(value).unwrap()
+                );
             } else {
-                println!("foo: {}", value);
+                println!("foo: {}", std::str::from_utf8(value).unwrap());
             }
         }
 
         request_headers
-            .values("multiple-values")
+            .values(b"multiple-values")
             .iter()
             .for_each(|value| {
-                println!("multiple-values: {}", value);
+                println!("multiple-values: {}", std::str::from_utf8(value).unwrap());
             });
 
-        request_headers.remove("multiple-values");
-        request_headers.set("foo", "yes");
-        request_headers.set("multiple-values-to-be-single", "single");
+        request_headers.remove(b"multiple-values");
+        request_headers.set(b"foo", b"yes");
+        request_headers.set(b"multiple-values-to-be-single", b"single");
         RequestHeadersStatus::Continue
     }
 
@@ -141,27 +144,27 @@ impl HttpFilterInstance for HeadersFilterInstance {
         response_headers: &ResponseHeaders,
         _end_of_stream: bool,
     ) -> ResponseHeadersStatus {
-        if let Some(value) = response_headers.get("this-is") {
-            if value != "response-header" {
+        if let Some(value) = response_headers.get(b"this-is") {
+            if value != b"response-header" {
                 panic!(
                     "expected this-is to be \"response-header\", got {:?}",
                     value
                 );
             } else {
-                println!("this-is: {}", value);
+                println!("this-is: {}", std::str::from_utf8(value).unwrap());
             }
         }
 
         response_headers
-            .values("this-is-2")
+            .values(b"this-is-2")
             .iter()
             .for_each(|value| {
-                println!("this-is-2: {}", value);
+                println!("this-is-2: {}", std::str::from_utf8(value).unwrap());
             });
 
-        response_headers.remove("this-is-2");
-        response_headers.set("this-is", "response-header");
-        response_headers.set("multiple-values-res-to-be-single", "single");
+        response_headers.remove(b"this-is-2");
+        response_headers.set(b"this-is", b"response-header");
+        response_headers.set(b"multiple-values-res-to-be-single", b"single");
 
         ResponseHeadersStatus::Continue
     }
@@ -483,16 +486,16 @@ impl HttpFilterInstance for BodiesReplaceInstance {
         request_headers: &RequestHeaders,
         _end_of_stream: bool,
     ) -> RequestHeadersStatus {
-        if let Some(value) = request_headers.get("append") {
-            self.request_append = value.to_string();
+        if let Some(value) = request_headers.get(b"append") {
+            self.request_append = std::str::from_utf8(value).unwrap().to_string();
         }
-        if let Some(value) = request_headers.get("prepend") {
-            self.request_prepend = value.to_string();
+        if let Some(value) = request_headers.get(b"prepend") {
+            self.request_prepend = std::str::from_utf8(value).unwrap().to_string();
         }
-        if let Some(value) = request_headers.get("replace") {
-            self.request_replace = value.to_string();
+        if let Some(value) = request_headers.get(b"replace") {
+            self.request_replace = std::str::from_utf8(value).unwrap().to_string();
         }
-        request_headers.remove("content-length"); // Remove content-length header to avoid mismatch.
+        request_headers.remove(b"content-length"); // Remove content-length header to avoid mismatch.
         RequestHeadersStatus::Continue
     }
 
@@ -524,16 +527,16 @@ impl HttpFilterInstance for BodiesReplaceInstance {
         response_headers: &ResponseHeaders,
         _end_of_stream: bool,
     ) -> ResponseHeadersStatus {
-        if let Some(value) = response_headers.get("append") {
-            self.response_append = value.to_string();
+        if let Some(value) = response_headers.get(b"append") {
+            self.response_append = std::str::from_utf8(value).unwrap().to_string();
         }
-        if let Some(value) = response_headers.get("prepend") {
-            self.response_prepend = value.to_string();
+        if let Some(value) = response_headers.get(b"prepend") {
+            self.response_prepend = std::str::from_utf8(value).unwrap().to_string();
         }
-        if let Some(value) = response_headers.get("replace") {
-            self.response_replace = value.to_string();
+        if let Some(value) = response_headers.get(b"replace") {
+            self.response_replace = std::str::from_utf8(value).unwrap().to_string();
         }
-        response_headers.remove("content-length"); // Remove content-length header to avoid mismatch.
+        response_headers.remove(b"content-length"); // Remove content-length header to avoid mismatch.
         ResponseHeadersStatus::Continue
     }
 
@@ -592,8 +595,8 @@ impl HttpFilterInstance for SendResponseFilterInstance {
         request_headers: &RequestHeaders,
         _end_of_stream: bool,
     ) -> RequestHeadersStatus {
-        if let Some(value) = request_headers.get(":path") {
-            if value == "/on_request" {
+        if let Some(value) = request_headers.get(b":path") {
+            if value == "/on_request".as_bytes() {
                 let headers: Vec<(&[u8], &[u8])> = vec![
                     ("foo".as_bytes(), "bar".as_bytes()),
                     ("bar".as_bytes(), "baz".as_bytes()),
@@ -604,7 +607,7 @@ impl HttpFilterInstance for SendResponseFilterInstance {
                     "local response at request headers".as_bytes(),
                 );
             }
-            if value == "/on_response" {
+            if value == b"/on_response" {
                 self.on_response_headers = true;
             }
         }

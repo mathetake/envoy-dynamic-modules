@@ -2,6 +2,9 @@
 package envoy
 
 import (
+	"bytes"
+	"runtime"
+	"unicode/utf8"
 	"unsafe"
 )
 
@@ -68,6 +71,8 @@ type HttpFilterInstance interface {
 // HeaderValue represents a single header value whose data is owned by the Envoy.
 //
 // This is a view of the underlying data and doesn't copy the data.
+//
+// HeaderValue can be in any encoding, including non-UTF-8 encoding.
 type HeaderValue struct {
 	data *byte
 	size int
@@ -75,18 +80,46 @@ type HeaderValue struct {
 
 // String returns the string representation of the header value.
 // This copies the underlying data to a new buffer and returns the string.
+//
+// Note: The header value might not be UTF-8 encoded. Therefore,
+// this checks if the data is valid UTF-8 and returns the string.
+// To get the raw data, use the HeaderValue.Bytes function.
+//
+// This implements fmt.Strpinger interface.
 func (h HeaderValue) String() string {
-	view := unsafe.Slice(h.data, h.size)
+	view := h.rawBytes()
+	if !utf8.Valid(view) {
+		panic("invalid utf-8 data. To handle non-utf-8 header value, use HeaderValue.Bytes function.")
+	}
 	return string(view)
+}
+
+// Bytes returns the copied data of the header value.
+func (h HeaderValue) Bytes() []byte {
+	if h.data == nil {
+		return nil
+	}
+	d := h.rawBytes()
+	ret := make([]byte, h.size)
+	copy(ret, d)
+	return ret
+}
+
+func (h HeaderValue) rawBytes() []byte {
+	if h.data == nil {
+		return nil
+	}
+	return unsafe.Slice(h.data, h.size)
 }
 
 // Equal returns true if the header value is equal to the given string.
 //
 // This doesn't copy the data and compares the data directly.
 func (h HeaderValue) Equal(str string) bool {
-	if h.size != len(str) || h.data == nil {
-		return false
+	if str == "" {
+		return h.data == nil
 	}
-	v := unsafe.String(h.data, h.size)
-	return v == str
+	target := unsafe.Slice(unsafe.StringData(str), len(str))
+	runtime.KeepAlive(str)
+	return bytes.Equal(h.rawBytes(), target)
 }

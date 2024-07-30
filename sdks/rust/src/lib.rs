@@ -343,7 +343,7 @@ pub struct RequestHeaders {
 
 impl RequestHeaders {
     /// Returns the first header value for the given key. To handle multiple values, use the [`RequestHeaders::values`] method.
-    pub fn get(&self, key: &str) -> Option<&str> {
+    pub fn get(&self, key: &[u8]) -> Option<&[u8]> {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
@@ -364,15 +364,12 @@ impl RequestHeaders {
             return None;
         }
 
-        // Convert the result to a Rust string slice
         let result_slice = unsafe { std::slice::from_raw_parts(result_ptr, result_size) };
-        let result_str = std::str::from_utf8(result_slice).unwrap();
-
-        Some(result_str)
+        Some(result_slice)
     }
 
     /// Returns all the header values for the given key.
-    pub fn values(&self, key: &str) -> Vec<&str> {
+    pub fn values(&self, key: &[u8]) -> Vec<&[u8]> {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
@@ -395,9 +392,7 @@ impl RequestHeaders {
         }
 
         values = Vec::with_capacity(total);
-        values.push(unsafe {
-            std::str::from_utf8(std::slice::from_raw_parts(result_ptr, result_size)).unwrap()
-        });
+        values.push(unsafe { std::slice::from_raw_parts(result_ptr, result_size) });
 
         for i in 1..total {
             unsafe {
@@ -410,9 +405,7 @@ impl RequestHeaders {
                     i,
                 );
             }
-            values.push(unsafe {
-                std::str::from_utf8(std::slice::from_raw_parts(result_ptr, result_size)).unwrap()
-            });
+            values.push(unsafe { std::slice::from_raw_parts(result_ptr, result_size) });
         }
 
         values
@@ -420,7 +413,7 @@ impl RequestHeaders {
 
     /// Sets the value for the given key. If multiple values are set for the same key,
     /// this removes all the previous values and sets the new single value.
-    pub fn set(&self, key: &str, value: &str) {
+    pub fn set(&self, key: &[u8], value: &[u8]) {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
         let value_ptr = value.as_ptr();
@@ -439,7 +432,7 @@ impl RequestHeaders {
 
     /// Removes the value for the given key. If multiple values are set for the same key,
     /// this removes all the values.
-    pub fn remove(&self, key: &str) {
+    pub fn remove(&self, key: &[u8]) {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
@@ -644,7 +637,7 @@ pub struct ResponseHeaders {
 
 impl ResponseHeaders {
     /// Returns the first header value for the given key. To handle multiple values, use the [`ResponseHeaders::values`] method.
-    pub fn get(&self, key: &str) -> Option<&str> {
+    pub fn get(&self, key: &[u8]) -> Option<&[u8]> {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
@@ -665,15 +658,11 @@ impl ResponseHeaders {
             return None;
         }
 
-        // Convert the result to a Rust string slice
-        let result_slice = unsafe { std::slice::from_raw_parts(result_ptr, result_size) };
-        let result_str = std::str::from_utf8(result_slice).unwrap();
-
-        Some(result_str)
+        Some(unsafe { std::slice::from_raw_parts(result_ptr, result_size) })
     }
 
     /// Returns all the header values for the given key.
-    pub fn values(&self, key: &str) -> Vec<&str> {
+    pub fn values(&self, key: &[u8]) -> Vec<&[u8]> {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
@@ -696,9 +685,7 @@ impl ResponseHeaders {
         }
 
         values = Vec::with_capacity(total);
-        values.push(unsafe {
-            std::str::from_utf8(std::slice::from_raw_parts(result_ptr, result_size)).unwrap()
-        });
+        values.push(unsafe { std::slice::from_raw_parts(result_ptr, result_size) });
 
         for i in 1..total {
             unsafe {
@@ -711,16 +698,14 @@ impl ResponseHeaders {
                     i,
                 );
             }
-            values.push(unsafe {
-                std::str::from_utf8(std::slice::from_raw_parts(result_ptr, result_size)).unwrap()
-            });
+            values.push(unsafe { std::slice::from_raw_parts(result_ptr, result_size) });
         }
 
         values
     }
 
     /// Sets the value for the given key. If multiple values are set for the same key,
-    pub fn set(&self, key: &str, value: &str) {
+    pub fn set(&self, key: &[u8], value: &[u8]) {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
         let value_ptr = value.as_ptr();
@@ -738,7 +723,7 @@ impl ResponseHeaders {
     }
 
     /// Removes the value for the given key. If multiple values are set for the same key,
-    pub fn remove(&self, key: &str) {
+    pub fn remove(&self, key: &[u8]) {
         let key_ptr = key.as_ptr();
         let key_size = key.len();
 
