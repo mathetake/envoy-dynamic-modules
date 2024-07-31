@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
 )
@@ -36,7 +35,6 @@ type validateJsonFilterBody struct {
 
 // RequestBody implements envoy.HttpFilterInstance.
 func (h *validateJsonFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, endOfStream bool) envoy.RequestBodyStatus {
-	fmt.Printf("new request body frame: %s\n", string(frame.Copy()))
 	if !endOfStream {
 		// Wait for the end of the stream to see the full body.
 		return envoy.RequestBodyStatusStopIterationAndBuffer
@@ -47,6 +45,9 @@ func (h *validateJsonFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, 
 	reader := entireBody.NewReader()
 	var b validateJsonFilterBody
 	if err := json.NewDecoder(reader).Decode(&b); err != nil {
+		h.envoyFilter.SendResponse(400, nil, nil)
+		return envoy.RequestBodyStatusStopIterationAndBuffer
+	} else if b.Foo != "bar" {
 		h.envoyFilter.SendResponse(400, nil, nil)
 	}
 	return envoy.RequestBodyStatusContinue

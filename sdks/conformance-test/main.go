@@ -508,6 +508,19 @@ func TestValidateJson(t *T) {
 		defer res.Body.Close()
 		return res.StatusCode == http.StatusBadRequest
 	}, 5*time.Second, 100*time.Millisecond, "invalid json must get 400: %s")
+
+	require.Eventually(t, func() bool {
+		req, err := http.NewRequest("GET", "http://localhost:15006", bytes.NewBufferString(`{"not-foo": "bar"}`))
+		if err != nil {
+			return false
+		}
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return false
+		}
+		defer res.Body.Close()
+		return res.StatusCode == http.StatusBadRequest
+	}, 5*time.Second, 100*time.Millisecond, "invalid json must get 400: %s")
 }
 
 func requireEventuallyContainsMessages(t *T, buf *bytes.Buffer, messages ...string) {
