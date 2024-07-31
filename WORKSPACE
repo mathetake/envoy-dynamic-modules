@@ -28,7 +28,7 @@ envoy_python_dependencies()
 
 load("@envoy//bazel:dependency_imports.bzl", "envoy_dependency_imports")
 
-envoy_dependency_imports()
+envoy_dependency_imports(go_version = "1.22.4")
 
 load("@rules_rust//crate_universe:repositories.bzl", "crate_universe_dependencies")
 
