@@ -3,10 +3,10 @@ name = "envoy-dynamic-modules-rust-sdk"
 version = "0.1.0"
 edition = "2021"
 authors = ["Takeshi Yoneda <t.y.mathetake@gmail.com>"]
-description = "Envoy Dynamic Modules Rust SDK"
+description = "Envoy Proxy Dynamic Modules Rust SDK"
 readme = "README.md"
 license = "Apache-2.0"
-repository = "https://github.com/mathetake/envoy-dynamic-modules-rust-sdk"
+repository = "https://github.com/mathetake/envoy-dynamic-modules"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

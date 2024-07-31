@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 
-	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
 )
 
 // validateJsonFilter implements envoy.HttpFilter.

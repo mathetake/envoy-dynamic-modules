@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
 )
 
 // headersHttpFilter implements envoy.HttpFilter.

@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
 )
 
 // delayHttpFilter implements envoy.HttpFilter.

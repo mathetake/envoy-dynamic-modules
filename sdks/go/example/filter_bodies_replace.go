@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/mathetake/envoy-dynamic-modules-go-sdk/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
 )
 
 // bodiesReplaceHttpFilter implements envoy.HttpFilter.
