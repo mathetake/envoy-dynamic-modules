@@ -47,7 +47,10 @@ envoy_cc_library(
     srcs = ["abi.cc"],
     copts = COPTS,
     # Make sure that the symbols are exported so that they can be found by the dynamic loader.
-    linkopts = ["-Wl,--export-dynamic"],
+    linkopts = select({
+        "@bazel_tools//src/conditions:darwin": ["-rdynamic"],
+        "//conditions:default": ["-Wl,--export-dynamic"],
+    }),
     repository = "@envoy",
     deps = [
         ":filter_lib",

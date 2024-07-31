@@ -72,6 +72,8 @@ static_resources:
                       name: test
                       # The file_path is the path to the shared object file. We share the same file for both http filter chain.
                       file_path: ./target/debug/examples/libexample.so
+                      # macOS uses the dylib extension
+                      # file_path: ./target/debug/examples/libexample.dylib
                       # This is passed to newHttpFilter in new_http_filter function in example/lib.rs
                       filter_config: "bodies"
                   ######################################################################################################
