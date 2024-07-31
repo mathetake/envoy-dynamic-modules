@@ -14,6 +14,11 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# Install gcc needed for Rust builds (bindgen).
+RUN apt-get -y update \
+    && apt-get -y install --no-install-recommends gcc g++ \
+    && apt-get clean
+
 USER $USERNAME
 ENV HOME=$BUILD_DIR
 
@@ -26,4 +31,6 @@ RUN echo "Checking out ${GIT_SHA_ARG}" && git checkout --detach ${GIT_SHA_ARG} &
 # To have each layer smaller, we split the bazel build commands.
 RUN bazel build $BAZEL_BUILD_OPTIONS_ARG //x/...
 RUN bazel test  $BAZEL_BUILD_OPTIONS_ARG //test/...
+RUN bazel test  $BAZEL_BUILD_OPTIONS_ARG //sdk/...
 RUN bazel build  $BAZEL_BUILD_OPTIONS_ARG //...
+RUN bazel test  $BAZEL_BUILD_OPTIONS_ARG //...
