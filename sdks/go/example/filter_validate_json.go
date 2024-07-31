@@ -44,10 +44,7 @@ func (h *validateJsonFilterInstance) RequestBody(frame envoy.RequestBodyBuffer, 
 	// This demonstrates how to get Reader from the buffer and read the entire body.
 	reader := entireBody.NewReader()
 	var b validateJsonFilterBody
-	if err := json.NewDecoder(reader).Decode(&b); err != nil {
-		h.envoyFilter.SendResponse(400, nil, nil)
-		return envoy.RequestBodyStatusStopIterationAndBuffer
-	} else if b.Foo != "bar" {
+	if err := json.NewDecoder(reader).Decode(&b); err != nil || b.Foo != "bar" {
 		h.envoyFilter.SendResponse(400, nil, nil)
 	}
 	return envoy.RequestBodyStatusContinue
