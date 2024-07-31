@@ -4,3 +4,5 @@ cc_library(
     hdrs = ["abi.h"],
     visibility = ["//visibility:public"],
 )
+
+exports_files(["abi.h"])
