@@ -46,3 +46,13 @@ crates_repository(
 load("@rust_sdk_crate_index//:defs.bzl", crate_repositories_crate_repositories = "crate_repositories")
 
 crate_repositories_crate_repositories()
+
+load("@bazel_gazelle//:deps.bzl", "go_repository")
+
+# Download using "go mod download"
+go_repository(
+    name = "com_github_testify",
+    importpath = "github.com/stretchr/testify",
+    sum = "h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=",
+    version = "v1.9.0",
+)

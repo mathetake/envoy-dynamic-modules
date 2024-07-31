@@ -31,6 +31,7 @@ rust_shared_library(
     name = "example",
     srcs = ["example/example.rs"],
     edition = "2021",
+    visibility = ["//visibility:public"],
     deps = all_crate_deps(
         normal = True,
     ) + [

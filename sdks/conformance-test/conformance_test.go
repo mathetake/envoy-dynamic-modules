@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	_ "embed"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -12,8 +11,10 @@ import (
 	"net/http/httptest"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"sync"
+	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
@@ -28,24 +29,12 @@ var (
 	testUpstreamHeandlerMutex sync.Mutex
 )
 
-// T implements require.TestingT.
-type T struct {
-	name string
-}
-
-func (t *T) Errorf(format string, args ...interface{}) {
-	log.Printf("[%s] %s", t.name, fmt.Sprintf(format, args...))
-}
-
-func (t *T) FailNow() { panic("FailNow") }
-
-var (
-	target            = flag.String("target", "", "target to test")
-	sharedLibraryPath = flag.String("shared-library-path", "./main", "path to the shared library to test")
-)
-
-func main() {
-	flag.Parse()
+func TestMain(m *testing.M) {
+	envoyPath := path.Join(os.Getenv("RUNFILES_DIR"), os.Getenv("ENVOY_PATH"))
+	_, err := exec.LookPath(envoyPath)
+	if err != nil {
+		log.Panicf("envoy not found in path: %v", err)
+	}
 
 	envoyYamlTmp, err := os.CreateTemp("", "*.yaml")
 	if err != nil {
@@ -53,12 +42,12 @@ func main() {
 	}
 	defer os.RemoveAll(envoyYamlTmp.Name())
 
-	t := &T{name: "main"}
-
 	// Check if a binary named main exists.
-	derefSharedLibraryPath := *sharedLibraryPath
+	derefSharedLibraryPath := path.Join(os.Getenv("RUNFILES_DIR"), os.Getenv("SHARED_LIBRARY_PATH"))
 	_, err = os.Stat(derefSharedLibraryPath)
-	require.NoErrorf(t, err, "shared library at %s not found. Please build it.", derefSharedLibraryPath)
+	if err != nil {
+		log.Panicf("shared library at %s not found", derefSharedLibraryPath)
+	}
 
 	// Replace SHARED_LIBRARY_PATH with the actual path to the shared library.
 	envoyYaml = strings.ReplaceAll(string(envoyYaml), "SHARED_LIBRARY_PATH", derefSharedLibraryPath)
@@ -69,7 +58,9 @@ func main() {
 	}
 
 	l, err := net.Listen("tcp", "127.0.0.1:8199")
-	require.NoError(t, err)
+	if err != nil {
+		log.Panicf("failed to listen on: %v", err)
+	}
 	testUpstream := &httptest.Server{
 		Listener: l,
 		Config: &http.Server{Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -88,52 +79,22 @@ func main() {
 	testUpstream.Start()
 	defer testUpstream.Close()
 
-	// Check if `envoy` is installed.
-	_, err = exec.LookPath("envoy")
-	require.NoError(t, err, "envoy binary not found. Please install it from containers at https://github.com/mathetake/envoy-dynamic-modules/pkgs/container/envoy")
-
-	cmd := exec.Command("envoy", "--concurrency", "1", "-c", envoyYamlTmp.Name())
+	cmd := exec.Command(envoyPath, "--concurrency", "1", "-c", envoyYamlTmp.Name())
 	stdOut = new(bytes.Buffer)
 	cmd.Stdout = stdOut
 	cmd.Stderr = os.Stderr
-	require.NoError(t, cmd.Start())
-	defer func() { require.NoError(t, cmd.Process.Kill()) }()
-
-	if *target != "" {
-		if test, ok := testCases[*target]; ok {
-			log.Printf("Running test %s", *target)
-			test(&T{name: *target})
-			log.Printf("Test %s passed", *target)
-		} else {
-			log.Panicf("test case %s not found", *target)
-		}
-	} else {
-		var wg sync.WaitGroup
-		wg.Add(len(testCases))
-		for name, test := range testCases {
-			name, test := name, test
-			go func() {
-				defer wg.Done()
-				log.Printf("Running test %s", name)
-				test(&T{name: name})
-				log.Printf("Test %s passed", name)
-			}()
-		}
-		wg.Wait()
+	if err := cmd.Start(); err != nil {
+		log.Panicf("failed to start envoy: %v", err)
 	}
+	status := 0
+	defer func() {
+		_ = cmd.Process.Kill()
+		os.Exit(status)
+	}()
+	status = m.Run()
 }
 
-var testCases = map[string]func(*T){
-	"TestHelloWorld":    TestHelloWorld,
-	"TestHeaders":       TestHeaders,
-	"TestDelay":         TestDelayFilter,
-	"TestBodies":        TestBodies,
-	"TestBodiesReplace": TestBodiesReplace,
-	"TestSendReplay":    TestSendReplay,
-	"TestValidateJson":  TestValidateJson,
-}
-
-func TestHeaders(t *T) {
+func TestHeaders(t *testing.T) {
 	testUpstreamHeandlerMutex.Lock()
 	testUpstreamHandler["headers"] = func(w http.ResponseWriter, r *http.Request) {
 		require.Equal(t, "yes", r.Header.Get("foo"))
@@ -198,7 +159,7 @@ func TestHeaders(t *T) {
 	)
 }
 
-func TestDelayFilter(t *T) {
+func TestDelayFilter(t *testing.T) {
 	// Make four requests to the envoy proxy.
 	wg := new(sync.WaitGroup)
 	wg.Add(4)
@@ -248,7 +209,7 @@ func TestDelayFilter(t *T) {
 	)
 }
 
-func TestHelloWorld(t *T) {
+func TestHelloWorld(t *testing.T) {
 	require.Eventually(t, func() bool {
 		req, err := http.NewRequest("GET", "http://localhost:15000", bytes.NewBufferString("hello"))
 		if err != nil {
@@ -272,7 +233,7 @@ func TestHelloWorld(t *T) {
 	)
 }
 
-func TestBodies(t *T) {
+func TestBodies(t *testing.T) {
 	testUpstreamHeandlerMutex.Lock()
 	testUpstreamHandler["bodies"] = func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
@@ -326,7 +287,7 @@ func TestBodies(t *T) {
 	)
 }
 
-func TestBodiesReplace(t *T) {
+func TestBodiesReplace(t *testing.T) {
 	testUpstreamHeandlerMutex.Lock()
 	testUpstreamHandler["bodies_replace"] = func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
@@ -425,7 +386,7 @@ func TestBodiesReplace(t *T) {
 	wg.Wait()
 }
 
-func TestSendReplay(t *T) {
+func TestSendReplay(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
@@ -482,7 +443,7 @@ func TestSendReplay(t *T) {
 	wg.Wait()
 }
 
-func TestValidateJson(t *T) {
+func TestValidateJson(t *testing.T) {
 	require.Eventually(t, func() bool {
 		req, err := http.NewRequest("GET", "http://localhost:15006", bytes.NewBufferString(`{"foo": "bar"}`))
 		if err != nil {
@@ -523,7 +484,7 @@ func TestValidateJson(t *T) {
 	}, 5*time.Second, 100*time.Millisecond, "invalid json must get 400: %s")
 }
 
-func requireEventuallyContainsMessages(t *T, buf *bytes.Buffer, messages ...string) {
+func requireEventuallyContainsMessages(t *testing.T, buf *bytes.Buffer, messages ...string) {
 	for _, msg := range messages {
 		require.Eventually(t, func() bool {
 			return strings.Contains(buf.String(), msg)
