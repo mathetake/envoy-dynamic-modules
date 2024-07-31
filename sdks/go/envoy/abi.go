@@ -138,15 +138,21 @@ func (c *envoyFilterInstance) GetResponseBodyBuffer() ResponseBodyBuffer {
 
 // SendResponse implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
 func (c *envoyFilterInstance) SendResponse(statusCode int, headers [][2]string, body []byte) {
-	headersPtr := unsafe.Pointer(&headers[0])
 	headersLen := len(headers)
-	bodyPtr := unsafe.Pointer(&body[0])
+	var headersPtr uintptr
+	if headersLen > 0 {
+		headersPtr = uintptr(unsafe.Pointer(&headers[0]))
+	}
 	bodyLen := len(body)
+	var bodyPtr uintptr
+	if bodyLen > 0 {
+		bodyPtr = uintptr(unsafe.Pointer(&body[0]))
+	}
 	C.__envoy_dynamic_module_v1_http_send_response(c.raw,
 		C.uint32_t(statusCode),
-		C.__envoy_dynamic_module_v1_type_InModuleBufferPtr(uintptr(headersPtr)),
+		C.__envoy_dynamic_module_v1_type_InModuleBufferPtr(headersPtr),
 		C.__envoy_dynamic_module_v1_type_InModuleBufferLength(headersLen),
-		C.__envoy_dynamic_module_v1_type_InModuleBufferPtr(uintptr(bodyPtr)),
+		C.__envoy_dynamic_module_v1_type_InModuleBufferPtr(bodyPtr),
 		C.__envoy_dynamic_module_v1_type_InModuleBufferLength(bodyLen),
 	)
 }

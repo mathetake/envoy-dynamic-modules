@@ -4,6 +4,7 @@ use std::{
 };
 
 use envoy_dynamic_modules_rust_sdk::*;
+use serde::{Deserialize, Serialize};
 
 init!(new_http_filter);
 
@@ -21,6 +22,7 @@ fn new_http_filter(config: &str) -> Box<dyn HttpFilter> {
         "bodies" => Box::new(BodiesFilter {}),
         "bodies_replace" => Box::new(BodiesReplace {}),
         "send_response" => Box::new(SendResponseFilter {}),
+        "validate_json" => Box::new(ValidateJsonFilter {}),
         _ => panic!("Unknown config: {}", config),
     }
 }
@@ -628,5 +630,61 @@ impl HttpFilterInstance for SendResponseFilterInstance {
             );
         }
         ResponseHeadersStatus::Continue
+    }
+}
+
+/// ValidateJsonFilter is a filter that validates JSON.
+///
+/// This implements the [`HttpFilter`] trait, and will be created per each filter chain.
+struct ValidateJsonFilter {}
+
+impl HttpFilter for ValidateJsonFilter {
+    fn new_instance(
+        &mut self,
+        envoy_filter_instance: EnvoyFilterInstance,
+    ) -> Box<dyn HttpFilterInstance> {
+        Box::new(ValidateJsonFilterInstance {
+            envoy_filter_instance,
+        })
+    }
+}
+
+/// ValidateJsonFilterInstance is a filter instance that validates JSON.
+///
+/// This implements the [`HttpFilterInstance`] trait, and will be created per each request.
+struct ValidateJsonFilterInstance {
+    envoy_filter_instance: EnvoyFilterInstance,
+}
+
+#[derive(Serialize, Deserialize)]
+struct ValidateJsonFilterBody {
+    foo: String,
+}
+
+impl HttpFilterInstance for ValidateJsonFilterInstance {
+    fn request_body(
+        &mut self,
+        _request_body_frame: &RequestBodyBuffer,
+        end_of_stream: bool,
+    ) -> RequestBodyStatus {
+        if !end_of_stream {
+            // Wait for the end of the stream to see the full body.
+            return RequestBodyStatus::StopIterationAndBuffer;
+        }
+
+        let reader = self
+            .envoy_filter_instance
+            .get_request_body_buffer()
+            .reader();
+
+        match serde_json::from_reader(reader) {
+            Ok(body) => {
+                let _body: ValidateJsonFilterBody = body;
+            }
+            Err(_e) => {
+                self.envoy_filter_instance.send_response(400, &[], &[]);
+            }
+        }
+        RequestBodyStatus::Continue
     }
 }

@@ -130,6 +130,7 @@ var testCases = map[string]func(*T){
 	"TestBodies":        TestBodies,
 	"TestBodiesReplace": TestBodiesReplace,
 	"TestSendReplay":    TestSendReplay,
+	"TestValidateJson":  TestValidateJson,
 }
 
 func TestHeaders(t *T) {
@@ -479,6 +480,34 @@ func TestSendReplay(t *T) {
 		}, 5*time.Second, 100*time.Millisecond, "Envoy has not started: %s", stdOut.String())
 	}()
 	wg.Wait()
+}
+
+func TestValidateJson(t *T) {
+	require.Eventually(t, func() bool {
+		req, err := http.NewRequest("GET", "http://localhost:15006", bytes.NewBufferString(`{"foo": "bar"}`))
+		if err != nil {
+			return false
+		}
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return false
+		}
+		defer res.Body.Close()
+		return res.StatusCode == http.StatusOK
+	}, 5*time.Second, 100*time.Millisecond, "valid json must get 200: %s")
+
+	require.Eventually(t, func() bool {
+		req, err := http.NewRequest("GET", "http://localhost:15006", bytes.NewBufferString(`{"not-fooo": "bar"`))
+		if err != nil {
+			return false
+		}
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return false
+		}
+		defer res.Body.Close()
+		return res.StatusCode == http.StatusBadRequest
+	}, 5*time.Second, 100*time.Millisecond, "invalid json must get 400: %s")
 }
 
 func requireEventuallyContainsMessages(t *T, buf *bytes.Buffer, messages ...string) {

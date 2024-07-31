@@ -283,6 +283,47 @@ static_resources:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
 
+    - name: listener_15006
+      address:
+        socket_address:
+          address: 127.0.0.1
+          port_value: 15006
+      filter_chains:
+        - name: http
+          filters:
+            - name: http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: test
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains: ["*"]
+                      routes:
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: staticreply
+                http_filters:
+                  ######################################################################################################
+                  - name: envoy.http.dynamic_modules
+                    typed_config:
+                      # Schema is defined at https://github.com/mathetake/envoy-dynamic-modules/blob/main/x/config.proto
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.dynamic_modules.v3.DynamicModuleConfig
+                      # The file_path is the path to the shared object file. We share the same file for both http filter chain.
+                      file_path: SHARED_LIBRARY_PATH
+                      # This is passed to newHttpFilter in main.go
+                      filter_config: "validate_json"
+                      # Since c-shared modules by the Go compiler toolchain do not support dlclose, https://github.com/golang/go/issues/11100
+                      # we need to set do_not_dlclose to true to avoid the crash.
+                      do_not_dlclose: true
+                  ######################################################################################################
+                  - name: router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+
   clusters:
     - name: staticreply
       type: LOGICAL_DNS
