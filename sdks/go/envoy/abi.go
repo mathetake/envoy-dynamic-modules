@@ -44,7 +44,7 @@ func __envoy_dynamic_module_v1_event_http_filter_instance_init(
 	envoyFilterPtr C.__envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr,
 	httpFilterPtr C.__envoy_dynamic_module_v1_type_HttpFilterPtr,
 ) C.__envoy_dynamic_module_v1_type_HttpFilterInstancePtr {
-	envoyPtr := &envoyFilterInstance{raw: envoyFilterPtr}
+	envoyPtr := EnvoyFilterInstance{raw: envoyFilterPtr}
 	httpFilter := memManager.unwrapPinnedHttpFilter(uintptr(httpFilterPtr))
 	httpInstance := httpFilter.filter.NewInstance(envoyPtr)
 	pined := memManager.pinHttpFilterInstance(httpInstance)
@@ -109,35 +109,32 @@ func __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
 }
 
 // envoyFilterInstance implements the EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-type envoyFilterInstance struct {
+type EnvoyFilterInstance struct {
 	raw C.__envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr
 }
 
-// EnvoyFilterInstance implements the EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-type EnvoyFilterInstance = *envoyFilterInstance
-
 // ContinueRequest implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-func (c *envoyFilterInstance) ContinueRequest() {
+func (c EnvoyFilterInstance) ContinueRequest() {
 	C.__envoy_dynamic_module_v1_http_continue_request(c.raw)
 }
 
 // ContinueResponse implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-func (c *envoyFilterInstance) ContinueResponse() {
+func (c EnvoyFilterInstance) ContinueResponse() {
 	C.__envoy_dynamic_module_v1_http_continue_response(c.raw)
 }
 
 // GetRequestBodyBuffer implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-func (c *envoyFilterInstance) GetRequestBodyBuffer() RequestBodyBuffer {
+func (c EnvoyFilterInstance) GetRequestBodyBuffer() RequestBodyBuffer {
 	return RequestBodyBuffer{raw: C.__envoy_dynamic_module_v1_http_get_request_body_buffer(c.raw)}
 }
 
 // GetResponseBodyBuffer implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-func (c *envoyFilterInstance) GetResponseBodyBuffer() ResponseBodyBuffer {
+func (c EnvoyFilterInstance) GetResponseBodyBuffer() ResponseBodyBuffer {
 	return ResponseBodyBuffer{raw: C.__envoy_dynamic_module_v1_http_get_response_body_buffer(c.raw)}
 }
 
 // SendResponse implements EnvoyFilterInstance interface in abi_nocgo.go which is not included in the shared library.
-func (c *envoyFilterInstance) SendResponse(statusCode int, headers [][2]string, body []byte) {
+func (c EnvoyFilterInstance) SendResponse(statusCode int, headers [][2]string, body []byte) {
 	headersLen := len(headers)
 	var headersPtr uintptr
 	if headersLen > 0 {

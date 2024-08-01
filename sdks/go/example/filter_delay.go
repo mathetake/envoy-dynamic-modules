@@ -32,6 +32,7 @@ func (m *delayHttpFilter) Destroy() {
 type delayHttpFilterInstance struct {
 	id          int32
 	envoyFilter envoy.EnvoyFilterInstance
+	destroyed   bool
 }
 
 // RequestHeaders implements envoy.HttpFilterInstance.
@@ -41,7 +42,7 @@ func (h *delayHttpFilterInstance) RequestHeaders(_ envoy.RequestHeaders, _ bool)
 			fmt.Println("blocking for 1 second at RequestHeaders with id", h.id)
 			time.Sleep(1 * time.Second)
 			fmt.Println("calling ContinueRequest with id", h.id)
-			if h.envoyFilter != nil { // By the time when calling ContinueResponse, the filter might have been destroyed.
+			if !h.destroyed { // By the time when calling ContinueResponse, the filter might have been destroyed.
 				h.envoyFilter.ContinueRequest()
 			}
 		}()
@@ -59,7 +60,7 @@ func (h *delayHttpFilterInstance) RequestBody(_ envoy.RequestBodyBuffer, _ bool)
 			fmt.Println("blocking for 1 second at RequestBody with id", h.id)
 			time.Sleep(1 * time.Second)
 			fmt.Println("calling ContinueRequest with id", h.id)
-			if h.envoyFilter != nil { // By the time when calling ContinueResponse, the filter might have been destroyed.
+			if !h.destroyed { // By the time when calling ContinueResponse, the filter might have been destroyed.
 				h.envoyFilter.ContinueRequest()
 			}
 		}()
@@ -77,7 +78,7 @@ func (h *delayHttpFilterInstance) ResponseHeaders(_ envoy.ResponseHeaders, _ boo
 			fmt.Println("blocking for 1 second at ResponseHeaders with id", h.id)
 			time.Sleep(1 * time.Second)
 			fmt.Println("calling ContinueResponse with id", h.id)
-			if h.envoyFilter != nil { // By the time when calling ContinueResponse, the filter might have been destroyed.
+			if !h.destroyed { // By the time when calling ContinueResponse, the filter might have been destroyed.
 				h.envoyFilter.ContinueResponse()
 			}
 		}()
@@ -95,7 +96,7 @@ func (h *delayHttpFilterInstance) ResponseBody(_ envoy.ResponseBodyBuffer, _ boo
 			fmt.Println("blocking for 1 second at ResponseBody with id", h.id)
 			time.Sleep(1 * time.Second)
 			fmt.Println("calling ContinueResponse with id", h.id)
-			if h.envoyFilter != nil { // By the time when calling ContinueResponse, the filter might have been destroyed.
+			if !h.destroyed { // By the time when calling ContinueResponse, the filter might have been destroyed.
 				h.envoyFilter.ContinueResponse()
 			}
 		}()
@@ -107,7 +108,4 @@ func (h *delayHttpFilterInstance) ResponseBody(_ envoy.ResponseBodyBuffer, _ boo
 }
 
 // Destroy implements envoy.HttpFilterInstance.
-func (h *delayHttpFilterInstance) Destroy() {
-	// After the request is done, we can clean up the filter instance.
-	h.envoyFilter = nil
-}
+func (h *delayHttpFilterInstance) Destroy() { h.destroyed = true }
