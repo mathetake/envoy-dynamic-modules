@@ -14,7 +14,7 @@ namespace DynamicModule {
 
 DynamicModule::~DynamicModule() {
   ENVOY_LOG_MISC(info, "Destroying module: {}", name_);
-  __envoy_dynamic_module_v1_event_http_filter_destroy_(http_filter_);
+  envoy_dynamic_module_event_http_filter_destroy_(http_filter_);
   ASSERT(handle_ != nullptr);
   dlclose(handle_);
 }
@@ -50,13 +50,13 @@ void DynamicModule::initModule(const std::string_view location, const std::strin
     }
 
     // Resolve the program init function, and call it.
-    RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_program_init);
+    RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_program_init);
 
-    ENVOY_LOG_MISC(info, "[{}] -> __envoy_dynamic_module_v1_event_program_init ()", name_);
-    if (__envoy_dynamic_module_v1_event_program_init_() != 0) {
+    ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_event_program_init ()", name_);
+    if (envoy_dynamic_module_event_program_init_() != 0) {
       throw EnvoyException(fmt::format("program init in {} failed", name_));
     }
-    ENVOY_LOG_MISC(info, "[{}] <- __envoy_dynamic_module_v1_event_program_init", name_);
+    ENVOY_LOG_MISC(info, "[{}] <- envoy_dynamic_module_event_program_init", name_);
   } else {
     ENVOY_LOG_MISC(info, "[{}] the shared library {} is already opened", name_,
                    file_path_absolute.string());
@@ -67,23 +67,23 @@ void DynamicModule::initModule(const std::string_view location, const std::strin
 }
 
 void DynamicModule::initHttpFilter(const std::string& config) {
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_init);
-  ENVOY_LOG_MISC(info, "[{}] -> __envoy_dynamic_module_v1_event_http_filter_init ({}, {})", name_,
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_init);
+  ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_event_http_filter_init ({}, {})", name_,
                  const_cast<char*>(config.data()), config.size());
-  http_filter_ = __envoy_dynamic_module_v1_event_http_filter_init_(const_cast<char*>(config.data()),
-                                                                   config.size());
+  http_filter_ =
+      envoy_dynamic_module_event_http_filter_init_(const_cast<char*>(config.data()), config.size());
   if (http_filter_ == nullptr) {
     throw EnvoyException(fmt::format("http filter init in {} failed", name_));
   }
-  ENVOY_LOG_MISC(info, "[{}] <- __envoy_dynamic_module_v1_event_http_filter_init: {}", name_,
+  ENVOY_LOG_MISC(info, "[{}] <- envoy_dynamic_module_event_http_filter_init: {}", name_,
                  http_filter_);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_destroy);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_init);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_request_headers);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_request_body);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_response_headers);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_response_body);
-  RESOLVE_SYMBOL_OR_THROW(__envoy_dynamic_module_v1_event_http_filter_instance_destroy);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_destroy);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_init);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_request_headers);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_request_body);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_response_headers);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_response_body);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_destroy);
 }
 
 #undef RESOLVE_SYMBOL_OR_THROW

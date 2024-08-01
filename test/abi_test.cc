@@ -13,17 +13,17 @@ namespace DynamicModule {
 
 TEST(TestABI, GetRequestHeaderValueEmpty) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  int num_values = __envoy_dynamic_module_v1_http_get_request_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  int num_values = envoy_dynamic_module_http_get_request_header_value(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)(__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)(envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr);
 
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
@@ -32,17 +32,17 @@ TEST(TestABI, GetRequestHeaderValueEmpty) {
 
 TEST(TestABI, GetResponseHeaderValueEmpty) {
   Http::TestResponseHeaderMapImpl response_headers{};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &response_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  int num_values = __envoy_dynamic_module_v1_http_get_response_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  int num_values = envoy_dynamic_module_http_get_response_header_value(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 0);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
@@ -50,18 +50,18 @@ TEST(TestABI, GetResponseHeaderValueEmpty) {
 
 TEST(TestABI, GetRequestHeaderValue) {
   Http::TestRequestHeaderMapImpl request_headers{{":path", "/"}, {"key", "value"}};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
 
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  int num_values = __envoy_dynamic_module_v1_http_get_request_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  int num_values = envoy_dynamic_module_http_get_request_header_value(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
@@ -69,14 +69,14 @@ TEST(TestABI, GetRequestHeaderValue) {
 
   // Test different key.
   std::string key2 = ":path";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr2 =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key2.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length2 = key2.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr2;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr2;
-  int num_values2 = __envoy_dynamic_module_v1_http_get_request_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr2 =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key2.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length2 = key2.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr2;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr2;
+  int num_values2 = envoy_dynamic_module_http_get_request_header_value(
       headers, key_ptr2, key_length2, &result_buffer_ptr2,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr2);
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 1);
   // Read the value from the buffer.
   std::string result2 =
@@ -86,17 +86,17 @@ TEST(TestABI, GetRequestHeaderValue) {
 
 TEST(TestABI, GetResponseHeaderValue) {
   Http::TestResponseHeaderMapImpl response_headers{{"foo", "bar"}};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &response_headers;
   std::string key = "foo";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  int num_values = __envoy_dynamic_module_v1_http_get_response_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  int num_values = envoy_dynamic_module_http_get_response_header_value(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr);
   EXPECT_EQ(num_values, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
@@ -104,14 +104,14 @@ TEST(TestABI, GetResponseHeaderValue) {
 
   // Test different key.
   std::string key2 = "non-existent-key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr2 =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key2.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length2 = key2.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr2;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr2;
-  int num_values2 = __envoy_dynamic_module_v1_http_get_response_header_value(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr2 =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key2.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length2 = key2.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr2;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr2;
+  int num_values2 = envoy_dynamic_module_http_get_response_header_value(
       headers, key_ptr2, key_length2, &result_buffer_ptr2,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr2);
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr2);
   EXPECT_EQ(num_values2, 0);
   EXPECT_EQ(result_buffer_ptr2, nullptr);
   EXPECT_EQ(result_buffer_length_ptr2, 0);
@@ -121,17 +121,17 @@ TEST(TestABI, GetRequestHeaderValueNth) {
   Http::TestRequestHeaderMapImpl request_headers{};
   request_headers.addCopy(LowerCaseString("key"), "value1");
   request_headers.addCopy(LowerCaseString("key"), "value2");
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  __envoy_dynamic_module_v1_http_get_request_header_value_nth(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  envoy_dynamic_module_http_get_request_header_value_nth(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
   EXPECT_EQ(result, "value2");
@@ -141,17 +141,17 @@ TEST(TestABI, GetResponseHeaderValueNth) {
   Http::TestResponseHeaderMapImpl response_headers{};
   response_headers.addCopy(LowerCaseString("key"), "value1");
   response_headers.addCopy(LowerCaseString("key"), "value2");
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &response_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  __envoy_dynamic_module_v1_http_get_response_header_value_nth(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  envoy_dynamic_module_http_get_response_header_value_nth(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   // Read the value from the buffer.
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length_ptr);
   EXPECT_EQ(result, "value2");
@@ -160,17 +160,17 @@ TEST(TestABI, GetResponseHeaderValueNth) {
 TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
   Http::TestRequestHeaderMapImpl request_headers{};
   request_headers.addCopy(LowerCaseString("key"), "value1");
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  __envoy_dynamic_module_v1_http_get_request_header_value_nth(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  envoy_dynamic_module_http_get_request_header_value_nth(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
 }
@@ -178,17 +178,17 @@ TEST(TestABI, GetRequestHeaderValueNthOutOfBounds) {
 TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
   Http::TestResponseHeaderMapImpl response_headers{};
   response_headers.addCopy(LowerCaseString("key"), "value1");
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &response_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &response_headers;
   std::string key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = key.size();
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length_ptr;
-  __envoy_dynamic_module_v1_http_get_response_header_value_nth(
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key.data());
+  envoy_dynamic_module_type_InModuleBufferLength key_length = key.size();
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length_ptr;
+  envoy_dynamic_module_http_get_response_header_value_nth(
       headers, key_ptr, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length_ptr, 1);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length_ptr, 0);
 }
@@ -208,24 +208,24 @@ TEST(TestABIRoundTrip, GetHeaders) {
 
 TEST(TestABI, GetRequestBodyBufferSlicesCount) {
   Buffer::OwnedImpl body;
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 0);
+  EXPECT_EQ(envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 0);
 
   body.appendSliceForTest("hello");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 1);
+  EXPECT_EQ(envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 1);
 
   body.appendSliceForTest("world");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(&body), 2);
+  EXPECT_EQ(envoy_dynamic_module_http_get_request_body_buffer_slices_count(&body), 2);
 }
 
 TEST(TestABI, GetResponseBodyBufferSlicesCount) {
   Buffer::OwnedImpl body;
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 0);
+  EXPECT_EQ(envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 0);
 
   body.appendSliceForTest("hello");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 1);
+  EXPECT_EQ(envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 1);
 
   body.appendSliceForTest("world");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(&body), 2);
+  EXPECT_EQ(envoy_dynamic_module_http_get_response_body_buffer_slices_count(&body), 2);
 }
 
 TEST(TestABI, GetRequestBodyBufferSlice) {
@@ -233,24 +233,24 @@ TEST(TestABI, GetRequestBodyBufferSlice) {
   body.appendSliceForTest("hello");
   body.appendSliceForTest("world");
 
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
-      &body, 0, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length;
+  envoy_dynamic_module_http_get_request_body_buffer_slice(
+      &body, 0, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
 
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
-      &body, 1, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_http_get_request_body_buffer_slice(
+      &body, 1, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   std::string result2 = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  __envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
-      &body, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_http_get_request_body_buffer_slice(
+      &body, 2, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
 }
@@ -260,23 +260,23 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
   body.appendSliceForTest("hello");
   body.appendSliceForTest("world");
 
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
-      &body, 0, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length;
+  envoy_dynamic_module_http_get_response_body_buffer_slice(
+      &body, 0, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   std::string result = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result, "hello");
 
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
-      &body, 1, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_http_get_response_body_buffer_slice(
+      &body, 1, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   std::string result2 = std::string(static_cast<char*>(result_buffer_ptr), result_buffer_length);
   EXPECT_EQ(result2, "world");
 
-  __envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
-      &body, 2, (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+  envoy_dynamic_module_http_get_response_body_buffer_slice(
+      &body, 2, (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
 
   EXPECT_EQ(result_buffer_ptr, nullptr);
   EXPECT_EQ(result_buffer_length, 0);
@@ -302,63 +302,63 @@ TEST(TestABIRoundTrip, GetBody) {
 
 TEST(TestABI, SetHeader_Add) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   char key[] = "key";
   char value[] = "value";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = strlen(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(value);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength value_length = strlen(value);
-  __envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
-                                                    value_length);
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key);
+  envoy_dynamic_module_type_InModuleBufferLength key_length = strlen(key);
+  envoy_dynamic_module_type_InModuleBufferPtr value_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(value);
+  envoy_dynamic_module_type_InModuleBufferLength value_length = strlen(value);
+  envoy_dynamic_module_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                               value_length);
   EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
 }
 
 TEST(TestABI, SetHeader_Add_empty_value) {
   Http::TestRequestHeaderMapImpl request_headers{};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   char key[] = "key";
   char value[] = "";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = strlen(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(value);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength value_length = strlen(value);
-  __envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
-                                                    value_length);
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key);
+  envoy_dynamic_module_type_InModuleBufferLength key_length = strlen(key);
+  envoy_dynamic_module_type_InModuleBufferPtr value_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(value);
+  envoy_dynamic_module_type_InModuleBufferLength value_length = strlen(value);
+  envoy_dynamic_module_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                               value_length);
   EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
 }
 
 TEST(TestABI, SetHeader_Remove) {
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   char key[] = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = strlen(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value_ptr = nullptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength value_length = 0;
-  __envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
-                                                    value_length);
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key);
+  envoy_dynamic_module_type_InModuleBufferLength key_length = strlen(key);
+  envoy_dynamic_module_type_InModuleBufferPtr value_ptr = nullptr;
+  envoy_dynamic_module_type_InModuleBufferLength value_length = 0;
+  envoy_dynamic_module_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                               value_length);
   EXPECT_EQ(request_headers.size(), 0);
 }
 
 TEST(TestABI, SetHeader_Replaces) {
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
-  __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr headers = &request_headers;
+  envoy_dynamic_module_type_HttpResponseHeaderMapPtr headers = &request_headers;
   char key[] = "key";
   char value[] = "new_value";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr key_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = strlen(key);
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr value_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(value);
-  __envoy_dynamic_module_v1_type_InModuleBufferLength value_length = strlen(value);
-  __envoy_dynamic_module_v1_http_set_request_header(headers, key_ptr, key_length, value_ptr,
-                                                    value_length);
+  envoy_dynamic_module_type_InModuleBufferPtr key_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(key);
+  envoy_dynamic_module_type_InModuleBufferLength key_length = strlen(key);
+  envoy_dynamic_module_type_InModuleBufferPtr value_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(value);
+  envoy_dynamic_module_type_InModuleBufferLength value_length = strlen(value);
+  envoy_dynamic_module_http_set_request_header(headers, key_ptr, key_length, value_ptr,
+                                               value_length);
   EXPECT_EQ(request_headers.get(LowerCaseString(key))[0]->value().getStringView(), value);
 }
 
@@ -429,38 +429,38 @@ TEST(TestABI, GetRequestBodyLength) {
   Buffer::OwnedImpl body;
   body.add("hello");
   body.add("world");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_request_body_buffer_length(&body), 10);
+  EXPECT_EQ(envoy_dynamic_module_http_get_request_body_buffer_length(&body), 10);
 }
 
 TEST(TestABI, GetResponseBodyLength) {
   Buffer::OwnedImpl body;
   body.add("a");
   body.add("b");
-  EXPECT_EQ(__envoy_dynamic_module_v1_http_get_response_body_buffer_length(&body), 2);
+  EXPECT_EQ(envoy_dynamic_module_http_get_response_body_buffer_length(&body), 2);
 }
 
 TEST(TestABI, ResponseBodyAppendPrependDrain) {
   Buffer::OwnedImpl body;
   body.add("[INITIAL_VALUE]");
   std::string data = "hello";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = data.size();
-  __envoy_dynamic_module_v1_http_append_response_body_buffer(&body, data_ptr, data_length);
+  envoy_dynamic_module_type_InModuleBufferPtr data_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(data.data());
+  envoy_dynamic_module_type_InModuleBufferLength data_length = data.size();
+  envoy_dynamic_module_http_append_response_body_buffer(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   std::string data2 = "world";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = data2.size();
-  __envoy_dynamic_module_v1_http_prepend_response_body_buffer(&body, data_ptr2, data_length2);
+  envoy_dynamic_module_type_InModuleBufferPtr data_ptr2 =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(data2.data());
+  envoy_dynamic_module_type_InModuleBufferLength data_length2 = data2.size();
+  envoy_dynamic_module_http_prepend_response_body_buffer(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
-  __envoy_dynamic_module_v1_http_drain_response_body_buffer(&body, 5);
+  envoy_dynamic_module_http_drain_response_body_buffer(&body, 5);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   // Drain the rest of the buffer.
-  __envoy_dynamic_module_v1_http_drain_response_body_buffer(&body, 20);
+  envoy_dynamic_module_http_drain_response_body_buffer(&body, 20);
   EXPECT_EQ(body.toString(), "");
 }
 
@@ -468,24 +468,24 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
   Buffer::OwnedImpl body;
   body.add("[INITIAL_VALUE]");
   std::string data = "hello";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length = data.size();
-  __envoy_dynamic_module_v1_http_append_request_body_buffer(&body, data_ptr, data_length);
+  envoy_dynamic_module_type_InModuleBufferPtr data_ptr =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(data.data());
+  envoy_dynamic_module_type_InModuleBufferLength data_length = data.size();
+  envoy_dynamic_module_http_append_request_body_buffer(&body, data_ptr, data_length);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   std::string data2 = "world";
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr data_ptr2 =
-      reinterpret_cast<__envoy_dynamic_module_v1_type_InModuleBufferPtr>(data2.data());
-  __envoy_dynamic_module_v1_type_InModuleBufferLength data_length2 = data2.size();
-  __envoy_dynamic_module_v1_http_prepend_request_body_buffer(&body, data_ptr2, data_length2);
+  envoy_dynamic_module_type_InModuleBufferPtr data_ptr2 =
+      reinterpret_cast<envoy_dynamic_module_type_InModuleBufferPtr>(data2.data());
+  envoy_dynamic_module_type_InModuleBufferLength data_length2 = data2.size();
+  envoy_dynamic_module_http_prepend_request_body_buffer(&body, data_ptr2, data_length2);
   EXPECT_EQ(body.toString(), "world[INITIAL_VALUE]hello");
 
-  __envoy_dynamic_module_v1_http_drain_request_body_buffer(&body, 5);
+  envoy_dynamic_module_http_drain_request_body_buffer(&body, 5);
   EXPECT_EQ(body.toString(), "[INITIAL_VALUE]hello");
 
   // Drain the rest of the buffer.
-  __envoy_dynamic_module_v1_http_drain_request_body_buffer(&body, 20);
+  envoy_dynamic_module_http_drain_request_body_buffer(&body, 20);
   EXPECT_EQ(body.toString(), "");
 }
 
@@ -517,26 +517,22 @@ TEST(TestABI, BufferCopyOut) {
   buffer.add("world");
   {
     std::vector<char> result_buffer(10);
-    __envoy_dynamic_module_v1_http_copy_out_request_body_buffer(&buffer, 0, 10,
-                                                                result_buffer.data());
+    envoy_dynamic_module_http_copy_out_request_body_buffer(&buffer, 0, 10, result_buffer.data());
     EXPECT_EQ(std::string(result_buffer.data(), result_buffer.size()), "helloworld");
   }
   {
     std::vector<char> result_buffer(1000);
-    __envoy_dynamic_module_v1_http_copy_out_request_body_buffer(&buffer, 5, 5,
-                                                                result_buffer.data());
+    envoy_dynamic_module_http_copy_out_request_body_buffer(&buffer, 5, 5, result_buffer.data());
     EXPECT_EQ(std::string(result_buffer.data(), 5), "world");
   }
   {
     std::vector<char> result_buffer(10);
-    __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(&buffer, 0, 10,
-                                                                 result_buffer.data());
+    envoy_dynamic_module_http_copy_out_response_body_buffer(&buffer, 0, 10, result_buffer.data());
     EXPECT_EQ(std::string(result_buffer.data(), result_buffer.size()), "helloworld");
   }
   {
     std::vector<char> result_buffer(1000);
-    __envoy_dynamic_module_v1_http_copy_out_response_body_buffer(&buffer, 5, 5,
-                                                                 result_buffer.data());
+    envoy_dynamic_module_http_copy_out_response_body_buffer(&buffer, 5, 5, result_buffer.data());
     EXPECT_EQ(std::string(result_buffer.data(), 5), "world");
   }
 }

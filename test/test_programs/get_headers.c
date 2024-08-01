@@ -4,20 +4,20 @@
 #include <string.h>
 #include "abi/abi.h"
 
-__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
-__envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
-    __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr request_headers_ptr,
-    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+envoy_dynamic_module_type_EventHttpRequestHeadersStatus
+envoy_dynamic_module_event_http_filter_instance_request_headers(
+    envoy_dynamic_module_type_HttpFilterInstancePtr http_filter_instance_ptr,
+    envoy_dynamic_module_type_HttpRequestHeadersMapPtr request_headers_ptr,
+    envoy_dynamic_module_type_EndOfStream end_of_stream) {
   // Get the value of the header "key" from the headers.
   char* key = "key";
-  __envoy_dynamic_module_v1_type_InModuleBufferLength key_length = 3;
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
-  __envoy_dynamic_module_v1_type_InModuleBufferLength result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_request_header_value(
+  envoy_dynamic_module_type_InModuleBufferLength key_length = 3;
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferLength result_buffer_length;
+  envoy_dynamic_module_http_get_request_header_value(
       request_headers_ptr, (uintptr_t)key, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is "value".
   char* value = "value";
   if (result_buffer_length != 5 ||
@@ -29,10 +29,10 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
   // Get the non-existent header "non-existent-key" from the headers.
   key = "non-existent-key";
   key_length = 15;
-  __envoy_dynamic_module_v1_http_get_request_header_value(
+  envoy_dynamic_module_http_get_request_header_value(
       request_headers_ptr, (uintptr_t)key, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is NULL.
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
@@ -43,20 +43,20 @@ __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
   return 0;
 }
 
-__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
-__envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
-    __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
-    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+envoy_dynamic_module_type_EventHttpResponseHeadersStatus
+envoy_dynamic_module_event_http_filter_instance_response_headers(
+    envoy_dynamic_module_type_HttpFilterInstancePtr http_filter_instance_ptr,
+    envoy_dynamic_module_type_HttpResponseHeaderMapPtr response_headers_map_ptr,
+    envoy_dynamic_module_type_EndOfStream end_of_stream) {
   // Get the value of the header "foo" from the headers.
   char* key = "foo";
   size_t key_length = 3;
-  __envoy_dynamic_module_v1_type_InModuleBufferPtr result_buffer_ptr;
+  envoy_dynamic_module_type_InModuleBufferPtr result_buffer_ptr;
   size_t result_buffer_length;
-  __envoy_dynamic_module_v1_http_get_response_header_value(
+  envoy_dynamic_module_http_get_response_header_value(
       response_headers_map_ptr, (uintptr_t)key, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is "value".
   char* value = "bar";
   if (result_buffer_length != 3 ||
@@ -68,10 +68,10 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
   // Get the non-existent header "non-existent-key" from the headers.
   key = "non-existent-key";
   key_length = 15;
-  __envoy_dynamic_module_v1_http_get_response_header_value(
+  envoy_dynamic_module_http_get_response_header_value(
       response_headers_map_ptr, (uintptr_t)key, key_length,
-      (__envoy_dynamic_module_v1_type_DataSlicePtrResult)&result_buffer_ptr,
-      (__envoy_dynamic_module_v1_type_DataSliceLengthResult)&result_buffer_length);
+      (envoy_dynamic_module_type_DataSlicePtrResult)&result_buffer_ptr,
+      (envoy_dynamic_module_type_DataSliceLengthResult)&result_buffer_length);
   // Check if the header value is NULL.
   if (result_buffer_length != 0 || result_buffer_ptr != 0) {
     printf("non-existent result_buffer_length: %zu\n", result_buffer_length);
@@ -82,41 +82,41 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
   return 0;
 }
 
-__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus
-__envoy_dynamic_module_v1_event_http_filter_instance_request_body(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
-    __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr buffer,
-    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+envoy_dynamic_module_type_EventHttpRequestBodyStatus
+envoy_dynamic_module_event_http_filter_instance_request_body(
+    envoy_dynamic_module_type_HttpFilterInstancePtr http_filter_instance_ptr,
+    envoy_dynamic_module_type_HttpRequestBodyBufferPtr buffer,
+    envoy_dynamic_module_type_EndOfStream end_of_stream) {
   return 0;
 }
 
-__envoy_dynamic_module_v1_type_HttpFilterPtr __envoy_dynamic_module_v1_event_http_filter_init(
-    __envoy_dynamic_module_v1_type_HttpFilterConfigPtr config_ptr,
-    __envoy_dynamic_module_v1_type_HttpFilterConfigSize config_size) {
+envoy_dynamic_module_type_HttpFilterPtr envoy_dynamic_module_event_http_filter_init(
+    envoy_dynamic_module_type_HttpFilterConfigPtr config_ptr,
+    envoy_dynamic_module_type_HttpFilterConfigSize config_size) {
   static size_t obj = 0;
   return (uintptr_t)&obj;
 }
 
-__envoy_dynamic_module_v1_type_HttpFilterInstancePtr
-__envoy_dynamic_module_v1_event_http_filter_instance_init(
-    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
-    __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {
+envoy_dynamic_module_type_HttpFilterInstancePtr
+envoy_dynamic_module_event_http_filter_instance_init(
+    envoy_dynamic_module_type_EnvoyFilterInstancePtr envoy_filter_instance_ptr,
+    envoy_dynamic_module_type_HttpFilterPtr http_filter_ptr) {
   static size_t obj = 0;
   return (uintptr_t)&obj;
 }
 
-__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
-__envoy_dynamic_module_v1_event_http_filter_instance_response_body(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr,
-    __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr buffer,
-    __envoy_dynamic_module_v1_type_EndOfStream end_of_stream) {
+envoy_dynamic_module_type_EventHttpResponseBodyStatus
+envoy_dynamic_module_event_http_filter_instance_response_body(
+    envoy_dynamic_module_type_HttpFilterInstancePtr http_filter_instance_ptr,
+    envoy_dynamic_module_type_HttpResponseBodyBufferPtr buffer,
+    envoy_dynamic_module_type_EndOfStream end_of_stream) {
   return 0;
 }
 
-void __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr) {}
+void envoy_dynamic_module_event_http_filter_instance_destroy(
+    envoy_dynamic_module_type_HttpFilterInstancePtr http_filter_instance_ptr) {}
 
-void __envoy_dynamic_module_v1_event_http_filter_destroy(
-    __envoy_dynamic_module_v1_type_HttpFilterPtr http_filter_ptr) {}
+void envoy_dynamic_module_event_http_filter_destroy(
+    envoy_dynamic_module_type_HttpFilterPtr http_filter_ptr) {}
 
-size_t __envoy_dynamic_module_v1_event_program_init() { return 0; }
+size_t envoy_dynamic_module_event_program_init() { return 0; }

@@ -19,7 +19,7 @@ TEST(TestDynamicModule, InvalidPath) {
 
 TEST(TestDynamicModule, InitNonExist) {
   EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("no_init", "config"), EnvoyException,
-                          "cannot resolve symbol: __envoy_dynamic_module_v1_event_program_init");
+                          "cannot resolve symbol: envoy_dynamic_module_event_program_init");
 }
 
 TEST(TestDynamicModule, ProgramIwnitFail) {
@@ -36,7 +36,7 @@ TEST(TestDynamicModule, DoNotClose) {
   size_t* in_module_ptr = nullptr;
   {
     DynamicModuleSharedPtr module = loadTestDynamicModule("do_not_close", "", "", true);
-    in_module_ptr = (size_t*)module->__envoy_dynamic_module_v1_event_http_filter_init_(nullptr, 0);
+    in_module_ptr = (size_t*)module->envoy_dynamic_module_event_http_filter_init_(nullptr, 0);
     module.reset();
   }
 
@@ -69,7 +69,7 @@ TEST(TestDynamicModule, ConstructorHappyPath) {
   }
 
   // But still the first module is alive.
-  first->__envoy_dynamic_module_v1_event_http_filter_instance_init_(nullptr, 0);
+  first->envoy_dynamic_module_event_http_filter_instance_init_(nullptr, 0);
 }
 
 } // namespace DynamicModule

@@ -49,7 +49,7 @@ mod abi {
 macro_rules! init {
     ($new_filter_fn:expr) => {
         #[no_mangle]
-        pub extern "C" fn __envoy_dynamic_module_v1_event_program_init() -> usize {
+        pub extern "C" fn envoy_dynamic_module_event_program_init() -> usize {
             unsafe {
                 envoy_dynamic_modules_rust_sdk::NEW_HTTP_FILTER_FN = $new_filter_fn;
             }
@@ -63,10 +63,10 @@ pub static mut NEW_HTTP_FILTER_FN: fn(&str) -> Box<dyn HttpFilter> = |_: &str| {
 };
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_init(
-    config_ptr: abi::__envoy_dynamic_module_v1_type_HttpFilterConfigPtr,
-    config_size: abi::__envoy_dynamic_module_v1_type_HttpFilterConfigSize,
-) -> abi::__envoy_dynamic_module_v1_type_HttpFilterPtr {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_init(
+    config_ptr: abi::envoy_dynamic_module_type_HttpFilterConfigPtr,
+    config_size: abi::envoy_dynamic_module_type_HttpFilterConfigSize,
+) -> abi::envoy_dynamic_module_type_HttpFilterPtr {
     // Convert the raw pointer to the str.
     let config = {
         let slice = std::slice::from_raw_parts(config_ptr as *const u8, config_size);
@@ -75,12 +75,12 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_init(
 
     let boxed_filter = Box::into_raw(NEW_HTTP_FILTER_FN(config));
     let boxed_filter_ptr = Box::into_raw(Box::new(boxed_filter));
-    boxed_filter_ptr as abi::__envoy_dynamic_module_v1_type_HttpFilterPtr
+    boxed_filter_ptr as abi::envoy_dynamic_module_type_HttpFilterPtr
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_destroy(
-    http_filter: abi::__envoy_dynamic_module_v1_type_HttpFilterPtr,
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_destroy(
+    http_filter: abi::envoy_dynamic_module_type_HttpFilterPtr,
 ) {
     let http_filter = http_filter as *mut *mut dyn HttpFilter;
     (**http_filter).destroy();
@@ -91,10 +91,10 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_destroy(
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_init(
-    envoy_filter_instance_ptr: abi::__envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr,
-    http_filter: abi::__envoy_dynamic_module_v1_type_HttpFilterPtr,
-) -> abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_init(
+    envoy_filter_instance_ptr: abi::envoy_dynamic_module_type_EnvoyFilterInstancePtr,
+    http_filter: abi::envoy_dynamic_module_type_HttpFilterPtr,
+) -> abi::envoy_dynamic_module_type_HttpFilterInstancePtr {
     let http_filter = http_filter as *mut *mut dyn HttpFilter;
 
     let instance = {
@@ -105,15 +105,15 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_init(
     };
 
     let http_filter_instance = Box::into_raw(Box::new(instance));
-    http_filter_instance as abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr
+    http_filter_instance as abi::envoy_dynamic_module_type_HttpFilterInstancePtr
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_request_headers(
-    http_filter_instance: abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    request_headers_ptr: abi::__envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr,
-    end_of_stream: abi::__envoy_dynamic_module_v1_type_EndOfStream,
-) -> abi::__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_headers(
+    http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
+    request_headers_ptr: abi::envoy_dynamic_module_type_HttpRequestHeadersMapPtr,
+    end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
+) -> abi::envoy_dynamic_module_type_EventHttpRequestHeadersStatus {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;
     let http_filter_instance = &mut **http_filter_instance;
     http_filter_instance
@@ -127,11 +127,11 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_reques
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_request_body(
-    http_filter_instance: abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    buffer: abi::__envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr,
-    end_of_stream: abi::__envoy_dynamic_module_v1_type_EndOfStream,
-) -> abi::__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_body(
+    http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
+    buffer: abi::envoy_dynamic_module_type_HttpRequestBodyBufferPtr,
+    end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
+) -> abi::envoy_dynamic_module_type_EventHttpRequestBodyStatus {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;
     let http_filter_instance = &mut **http_filter_instance;
     http_filter_instance
@@ -140,11 +140,11 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_reques
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_response_headers(
-    http_filter_instance: abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    response_headers_map_ptr: abi::__envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr,
-    end_of_stream: abi::__envoy_dynamic_module_v1_type_EndOfStream,
-) -> abi::__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_headers(
+    http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
+    response_headers_map_ptr: abi::envoy_dynamic_module_type_HttpResponseHeaderMapPtr,
+    end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
+) -> abi::envoy_dynamic_module_type_EventHttpResponseHeadersStatus {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;
     let http_filter_instance = &mut **http_filter_instance;
     http_filter_instance
@@ -158,11 +158,11 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_respon
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
-    http_filter_instance: abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    buffer: abi::__envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr,
-    end_of_stream: abi::__envoy_dynamic_module_v1_type_EndOfStream,
-) -> abi::__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus {
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_body(
+    http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
+    buffer: abi::envoy_dynamic_module_type_HttpResponseBodyBufferPtr,
+    end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
+) -> abi::envoy_dynamic_module_type_EventHttpResponseBodyStatus {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;
     let http_filter_instance = &mut **http_filter_instance;
     http_filter_instance
@@ -171,8 +171,8 @@ unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_respon
 }
 
 #[no_mangle]
-unsafe extern "C" fn __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
-    http_filter_instance: abi::__envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
+unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_destroy(
+    http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
 ) {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;
     (**http_filter_instance).destroy();
@@ -275,31 +275,31 @@ pub trait HttpFilterInstance {
 ///
 #[derive(Debug, Clone, Copy)]
 pub struct EnvoyFilterInstance {
-    raw_addr: abi::__envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr,
+    raw_addr: abi::envoy_dynamic_module_type_EnvoyFilterInstancePtr,
 }
 
 impl EnvoyFilterInstance {
     /// Used to resume the request processing after the filter has stopped it.
     pub fn continue_request(&self) {
-        unsafe { abi::__envoy_dynamic_module_v1_http_continue_request(self.raw_addr) }
+        unsafe { abi::envoy_dynamic_module_http_continue_request(self.raw_addr) }
     }
 
     /// Used to resume the response processing after the filter has stopped it.
     pub fn continue_response(&self) {
-        unsafe { abi::__envoy_dynamic_module_v1_http_continue_response(self.raw_addr) }
+        unsafe { abi::envoy_dynamic_module_http_continue_response(self.raw_addr) }
     }
 
     /// Returns the entire request body buffer.
     pub fn get_request_body_buffer(&self) -> RequestBodyBuffer {
         let buffer =
-            unsafe { abi::__envoy_dynamic_module_v1_http_get_request_body_buffer(self.raw_addr) };
+            unsafe { abi::envoy_dynamic_module_http_get_request_body_buffer(self.raw_addr) };
         RequestBodyBuffer { raw: buffer }
     }
 
     /// Returns the entire request body buffer.
     pub fn get_response_body_buffer(&self) -> ResponseBodyBuffer {
         let buffer =
-            unsafe { abi::__envoy_dynamic_module_v1_http_get_response_body_buffer(self.raw_addr) };
+            unsafe { abi::envoy_dynamic_module_http_get_response_body_buffer(self.raw_addr) };
         ResponseBodyBuffer { raw: buffer }
     }
 
@@ -318,7 +318,7 @@ impl EnvoyFilterInstance {
         let body_ptr = body.as_ptr();
         let body_size = body.len();
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_send_response(
+            abi::envoy_dynamic_module_http_send_response(
                 self.raw_addr,
                 status_code,
                 headers_ptr as usize,
@@ -338,7 +338,7 @@ impl EnvoyFilterInstance {
 ///
 #[derive(Debug, Clone, Copy)]
 pub struct RequestHeaders {
-    raw: abi::__envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr,
+    raw: abi::envoy_dynamic_module_type_HttpRequestHeadersMapPtr,
 }
 
 impl RequestHeaders {
@@ -351,7 +351,7 @@ impl RequestHeaders {
         let mut result_size: usize = 0;
 
         let total = unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_request_header_value(
+            abi::envoy_dynamic_module_http_get_request_header_value(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -378,7 +378,7 @@ impl RequestHeaders {
 
         let mut values = Vec::new();
         let total = unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_request_header_value(
+            abi::envoy_dynamic_module_http_get_request_header_value(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -396,7 +396,7 @@ impl RequestHeaders {
 
         for i in 1..total {
             unsafe {
-                abi::__envoy_dynamic_module_v1_http_get_request_header_value_nth(
+                abi::envoy_dynamic_module_http_get_request_header_value_nth(
                     self.raw,
                     key_ptr as *const _ as usize,
                     key_size,
@@ -420,7 +420,7 @@ impl RequestHeaders {
         let value_size = value.len();
 
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_set_request_header(
+            abi::envoy_dynamic_module_http_set_request_header(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -437,7 +437,7 @@ impl RequestHeaders {
         let key_size = key.len();
 
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_set_request_header(
+            abi::envoy_dynamic_module_http_set_request_header(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -459,20 +459,18 @@ impl RequestHeaders {
 /// TODO: implement the `std::io::Read` trait for this object.
 #[derive(Debug, Clone, Copy)]
 pub struct RequestBodyBuffer {
-    raw: abi::__envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr,
+    raw: abi::envoy_dynamic_module_type_HttpRequestBodyBufferPtr,
 }
 
 impl RequestBodyBuffer {
     /// Returns the number of bytes in the buffer.
     pub fn length(&self) -> usize {
-        unsafe { abi::__envoy_dynamic_module_v1_http_get_request_body_buffer_length(self.raw) }
+        unsafe { abi::envoy_dynamic_module_http_get_request_body_buffer_length(self.raw) }
     }
 
     /// Returns the number of slices in the buffer.
     pub fn slices_count(&self) -> usize {
-        unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_request_body_buffer_slices_count(self.raw)
-        }
+        unsafe { abi::envoy_dynamic_module_http_get_request_body_buffer_slices_count(self.raw) }
     }
 
     /// Returns the slices of the buffer.
@@ -484,7 +482,7 @@ impl RequestBodyBuffer {
             let mut slice_ptr: *mut u8 = ptr::null_mut();
             let mut slice_size: usize = 0;
             unsafe {
-                abi::__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+                abi::envoy_dynamic_module_http_get_request_body_buffer_slice(
                     self.raw,
                     i,
                     &mut slice_ptr as *mut _ as usize,
@@ -504,7 +502,7 @@ impl RequestBodyBuffer {
         let mut slice_ptr: *mut u8 = ptr::null_mut();
         let mut slice_size: usize = 0;
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_request_body_buffer_slice(
+            abi::envoy_dynamic_module_http_get_request_body_buffer_slice(
                 self.raw,
                 index,
                 &mut slice_ptr as *mut _ as usize,
@@ -537,7 +535,7 @@ impl RequestBodyBuffer {
         let data_ptr = data.as_ptr();
         let data_size = data.len();
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_append_request_body_buffer(
+            abi::envoy_dynamic_module_http_append_request_body_buffer(
                 self.raw,
                 data_ptr as *const _ as usize,
                 data_size,
@@ -552,7 +550,7 @@ impl RequestBodyBuffer {
         let data_ptr = data.as_ptr();
         let data_size = data.len();
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_prepend_request_body_buffer(
+            abi::envoy_dynamic_module_http_prepend_request_body_buffer(
                 self.raw,
                 data_ptr as *const _ as usize,
                 data_size,
@@ -565,7 +563,7 @@ impl RequestBodyBuffer {
     /// After this operation, previous slices might be invalidated.
     pub fn drain(&self, size: usize) {
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_drain_request_body_buffer(self.raw, size);
+            abi::envoy_dynamic_module_http_drain_request_body_buffer(self.raw, size);
         }
     }
 
@@ -632,7 +630,7 @@ impl std::io::Read for RequestBodyBufferReader {
 ///
 #[derive(Debug, Clone, Copy)]
 pub struct ResponseHeaders {
-    raw: abi::__envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr,
+    raw: abi::envoy_dynamic_module_type_HttpResponseHeaderMapPtr,
 }
 
 impl ResponseHeaders {
@@ -645,7 +643,7 @@ impl ResponseHeaders {
         let mut result_size: usize = 0;
 
         let total = unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_response_header_value(
+            abi::envoy_dynamic_module_http_get_response_header_value(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -671,7 +669,7 @@ impl ResponseHeaders {
 
         let mut values = Vec::new();
         let total = unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_response_header_value(
+            abi::envoy_dynamic_module_http_get_response_header_value(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -689,7 +687,7 @@ impl ResponseHeaders {
 
         for i in 1..total {
             unsafe {
-                abi::__envoy_dynamic_module_v1_http_get_response_header_value_nth(
+                abi::envoy_dynamic_module_http_get_response_header_value_nth(
                     self.raw,
                     key_ptr as *const _ as usize,
                     key_size,
@@ -712,7 +710,7 @@ impl ResponseHeaders {
         let value_size = value.len();
 
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_set_response_header(
+            abi::envoy_dynamic_module_http_set_response_header(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -728,7 +726,7 @@ impl ResponseHeaders {
         let key_size = key.len();
 
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_set_response_header(
+            abi::envoy_dynamic_module_http_set_response_header(
                 self.raw,
                 key_ptr as *const _ as usize,
                 key_size,
@@ -748,20 +746,18 @@ impl ResponseHeaders {
 /// This is a shallow wrapper around the raw pointer to the Envoy response body buffer.
 #[derive(Debug, Clone, Copy)]
 pub struct ResponseBodyBuffer {
-    raw: abi::__envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr,
+    raw: abi::envoy_dynamic_module_type_HttpResponseBodyBufferPtr,
 }
 
 impl ResponseBodyBuffer {
     /// Returns the number of bytes in the buffer.
     pub fn length(&self) -> usize {
-        unsafe { abi::__envoy_dynamic_module_v1_http_get_response_body_buffer_length(self.raw) }
+        unsafe { abi::envoy_dynamic_module_http_get_response_body_buffer_length(self.raw) }
     }
 
     /// Returns the number of slices in the buffer.
     pub fn slices_count(&self) -> usize {
-        unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_response_body_buffer_slices_count(self.raw)
-        }
+        unsafe { abi::envoy_dynamic_module_http_get_response_body_buffer_slices_count(self.raw) }
     }
 
     /// Returns the slices of the buffer.
@@ -772,7 +768,7 @@ impl ResponseBodyBuffer {
             let mut slice_ptr: *mut u8 = ptr::null_mut();
             let mut slice_size: usize = 0;
             unsafe {
-                abi::__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+                abi::envoy_dynamic_module_http_get_response_body_buffer_slice(
                     self.raw,
                     i,
                     &mut slice_ptr as *mut _ as usize,
@@ -792,7 +788,7 @@ impl ResponseBodyBuffer {
         let mut slice_ptr: *mut u8 = ptr::null_mut();
         let mut slice_size: usize = 0;
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_get_response_body_buffer_slice(
+            abi::envoy_dynamic_module_http_get_response_body_buffer_slice(
                 self.raw,
                 index,
                 &mut slice_ptr as *mut _ as usize,
@@ -825,7 +821,7 @@ impl ResponseBodyBuffer {
         let data_ptr = data.as_ptr();
         let data_size = data.len();
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_append_response_body_buffer(
+            abi::envoy_dynamic_module_http_append_response_body_buffer(
                 self.raw,
                 data_ptr as *const _ as usize,
                 data_size,
@@ -840,7 +836,7 @@ impl ResponseBodyBuffer {
         let data_ptr = data.as_ptr();
         let data_size = data.len();
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_prepend_response_body_buffer(
+            abi::envoy_dynamic_module_http_prepend_response_body_buffer(
                 self.raw,
                 data_ptr as *const _ as usize,
                 data_size,
@@ -853,7 +849,7 @@ impl ResponseBodyBuffer {
     /// After this operation, previous slices might be invalidated.
     pub fn drain(&self, size: usize) {
         unsafe {
-            abi::__envoy_dynamic_module_v1_http_drain_response_body_buffer(self.raw, size);
+            abi::envoy_dynamic_module_http_drain_response_body_buffer(self.raw, size);
         }
     }
 
@@ -934,19 +930,17 @@ pub enum RequestHeadersStatus {
     StopAllIterationAndBuffer,
 }
 
-impl From<RequestHeadersStatus>
-    for abi::__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus
-{
+impl From<RequestHeadersStatus> for abi::envoy_dynamic_module_type_EventHttpRequestHeadersStatus {
     fn from(val: RequestHeadersStatus) -> Self {
         match val {
             RequestHeadersStatus::Continue => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatusContinue
+                abi::envoy_dynamic_module_type_EventHttpRequestHeadersStatusContinue
             }
             RequestHeadersStatus::StopIteration => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatusStopIteration
+                abi::envoy_dynamic_module_type_EventHttpRequestHeadersStatusStopIteration
             }
             RequestHeadersStatus::StopAllIterationAndBuffer => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatusStopAllIterationAndBuffer
+                abi::envoy_dynamic_module_type_EventHttpRequestHeadersStatusStopAllIterationAndBuffer
             }
             _ => {
                 panic!("Invalid EventHttpRequestHeadersStatus")
@@ -969,14 +963,14 @@ pub enum RequestBodyStatus {
     StopIterationAndBuffer,
 }
 
-impl From<RequestBodyStatus> for abi::__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus {
+impl From<RequestBodyStatus> for abi::envoy_dynamic_module_type_EventHttpRequestBodyStatus {
     fn from(val: RequestBodyStatus) -> Self {
         match val {
             RequestBodyStatus::Continue => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatusContinue
+                abi::envoy_dynamic_module_type_EventHttpRequestBodyStatusContinue
             }
             RequestBodyStatus::StopIterationAndBuffer => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpRequestBodyStatusStopIterationAndBuffer
+                abi::envoy_dynamic_module_type_EventHttpRequestBodyStatusStopIterationAndBuffer
             }
         }
     }
@@ -1002,19 +996,17 @@ pub enum ResponseHeadersStatus {
     StopAllIterationAndBuffer,
 }
 
-impl From<ResponseHeadersStatus>
-    for abi::__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus
-{
+impl From<ResponseHeadersStatus> for abi::envoy_dynamic_module_type_EventHttpResponseHeadersStatus {
     fn from(val: ResponseHeadersStatus) -> Self {
         match val {
             ResponseHeadersStatus::Continue => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatusContinue
+                abi::envoy_dynamic_module_type_EventHttpResponseHeadersStatusContinue
             }
             ResponseHeadersStatus::StopIteration => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatusStopIteration
+                abi::envoy_dynamic_module_type_EventHttpResponseHeadersStatusStopIteration
             }
             ResponseHeadersStatus::StopAllIterationAndBuffer => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatusStopAllIterationAndBuffer
+                abi::envoy_dynamic_module_type_EventHttpResponseHeadersStatusStopAllIterationAndBuffer
             }
             _ => {
                 panic!("Invalid EventHttpResponseHeadersStatus")
@@ -1037,14 +1029,14 @@ pub enum ResponseBodyStatus {
     StopIterationAndBuffer,
 }
 
-impl From<ResponseBodyStatus> for abi::__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus {
+impl From<ResponseBodyStatus> for abi::envoy_dynamic_module_type_EventHttpResponseBodyStatus {
     fn from(val: ResponseBodyStatus) -> Self {
         match val {
             ResponseBodyStatus::Continue => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatusContinue
+                abi::envoy_dynamic_module_type_EventHttpResponseBodyStatusContinue
             }
             ResponseBodyStatus::StopIterationAndBuffer => {
-                abi::__envoy_dynamic_module_v1_type_EventHttpResponseBodyStatusStopIterationAndBuffer
+                abi::envoy_dynamic_module_type_EventHttpResponseBodyStatusStopIterationAndBuffer
             }
         }
     }
