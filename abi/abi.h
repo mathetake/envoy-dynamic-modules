@@ -237,44 +237,6 @@ static const __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus
 // Event hooks are functions that are called by Envoy to notify the module of events.
 // The module must implement and export these functions in the dynamic module.
 
-// If this is the Envoy code, all definitions are declared as function pointers typedefs.
-#ifdef ENVOY_DYNAMIC_MODULE
-typedef size_t (*__envoy_dynamic_module_v1_event_program_init)();
-typedef __envoy_dynamic_module_v1_type_HttpFilterPtr (
-    *__envoy_dynamic_module_v1_event_http_filter_init)(
-    __envoy_dynamic_module_v1_type_HttpFilterConfigPtr,
-    __envoy_dynamic_module_v1_type_HttpFilterConfigSize);
-typedef void (*__envoy_dynamic_module_v1_event_http_filter_destroy)(
-    __envoy_dynamic_module_v1_type_HttpFilterPtr);
-typedef __envoy_dynamic_module_v1_type_HttpFilterInstancePtr (
-    *__envoy_dynamic_module_v1_event_http_filter_instance_init)(
-    __envoy_dynamic_module_v1_type_EnvoyFilterInstancePtr,
-    __envoy_dynamic_module_v1_type_HttpFilterPtr);
-typedef __envoy_dynamic_module_v1_type_EventHttpRequestHeadersStatus (
-    *__envoy_dynamic_module_v1_event_http_filter_instance_request_headers)(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    __envoy_dynamic_module_v1_type_HttpRequestHeadersMapPtr,
-    __envoy_dynamic_module_v1_type_EndOfStream);
-typedef __envoy_dynamic_module_v1_type_EventHttpRequestBodyStatus (
-    *__envoy_dynamic_module_v1_event_http_filter_instance_request_body)(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    __envoy_dynamic_module_v1_type_HttpRequestBodyBufferPtr,
-    __envoy_dynamic_module_v1_type_EndOfStream);
-typedef __envoy_dynamic_module_v1_type_EventHttpResponseHeadersStatus (
-    *__envoy_dynamic_module_v1_event_http_filter_instance_response_headers)(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    __envoy_dynamic_module_v1_type_HttpResponseHeaderMapPtr,
-    __envoy_dynamic_module_v1_type_EndOfStream);
-typedef __envoy_dynamic_module_v1_type_EventHttpResponseBodyStatus (
-    *__envoy_dynamic_module_v1_event_http_filter_instance_response_body)(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr,
-    __envoy_dynamic_module_v1_type_HttpResponseBodyBufferPtr,
-    __envoy_dynamic_module_v1_type_EndOfStream);
-typedef void (*__envoy_dynamic_module_v1_event_http_filter_instance_destroy)(
-    __envoy_dynamic_module_v1_type_HttpFilterInstancePtr);
-
-#else // If this is the module code, all definitions are declared function prototypes.
-
 // __envoy_dynamic_module_v1_event_program_init is called by the main thread when the module is
 // loaded exactly once per shared object file. The function returns 0 on success and non-zero on
 // failure.
@@ -340,7 +302,6 @@ __envoy_dynamic_module_v1_event_http_filter_instance_response_body(
 // destroyed.
 void __envoy_dynamic_module_v1_event_http_filter_instance_destroy(
     __envoy_dynamic_module_v1_type_HttpFilterInstancePtr http_filter_instance_ptr);
-#endif
 
 #undef OWNED_BY_ENVOY
 #undef OWNED_BY_MODULE
