@@ -1,10 +1,13 @@
 workspace(name = "envoyx")
 
-load("@envoyx//bazel:repositories.bzl", "repositories")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-repositories()
-
-# Envoy deps
+http_archive(
+    name = "envoy",
+    sha256 = "39ba37aed81a9d4988a5736cf558243179f2bf1490843da25687d1aafd9d01c6",
+    strip_prefix = "envoy-1.31.0",
+    url = "https://github.com/envoyproxy/envoy/archive/v1.31.0.tar.gz",
+)
 
 load("@envoy//bazel:api_binding.bzl", "envoy_api_binding")
 
@@ -49,7 +52,6 @@ crate_repositories_crate_repositories()
 
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
-# Download using "go mod download"
 go_repository(
     name = "com_github_testify",
     importpath = "github.com/stretchr/testify",

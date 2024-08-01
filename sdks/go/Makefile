@@ -1,18 +1,6 @@
 goimports := golang.org/x/tools/cmd/goimports@v0.21.0
 golangci_lint := github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.0
 
-.PHONY: build
-build:
-	@go build -buildmode=c-shared -o example/main.so ./example/
-
-.PHONY: test
-test:
-	@CGO_ENABLED=0 go test ./...
-
-.PHONY: conformance
-conformance:
-	@$$(go env GOPATH)/bin/envoy-dynamic-modules-sdk-conformance-tests --shared-library-path=./example/main.so
-
 .PHONY: lint
 lint:
 	@echo "lint => ./..."
@@ -46,5 +34,3 @@ check:
 		echo "The following differences will fail CI until committed:"; \
 		git diff --exit-code; \
 	fi
-
-all: precommit build test conformance
