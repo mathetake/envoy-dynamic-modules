@@ -34,11 +34,6 @@ jobs:
 
     - uses: actions/checkout@v4
 
-    # TODO: This should be done in Bazel but it's cumbersome to do so.
-    - name: Run Go SDK format
-      run: | 
-        cd ./sdks/go && make check
-
     # To extract the Envoy binary from the buildcontainer, we run docker run in a single step.
     - name: Run tests
       run: |
