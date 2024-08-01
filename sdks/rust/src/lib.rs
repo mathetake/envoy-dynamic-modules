@@ -42,8 +42,8 @@ mod abi {
 /// }
 /// init!(new_http_filter);
 ///
-// TODO: eliminating the entire use of dyn keyword is possible. One idea is to take types as arguments to the macro.
-// and the generates the enum and dispatching logic accordingly. That way, we can also eliminate the double
+// TODO: eliminating the entire use of dyn keyword is possible. One idea is to take types as arguments to the macro,
+// and then generates the enum and dispatching logic accordingly. That way, we can also eliminate the double
 // boxing in raw pointer passing.
 #[macro_export]
 macro_rules! init {
