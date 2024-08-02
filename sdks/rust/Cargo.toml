@@ -1,6 +1,6 @@
 [package]
 name = "envoy-dynamic-modules-rust-sdk"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Takeshi Yoneda <t.y.mathetake@gmail.com>"]
 description = "Envoy Proxy Dynamic Modules Rust SDK"
