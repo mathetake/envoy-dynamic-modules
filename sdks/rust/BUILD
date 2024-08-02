@@ -5,11 +5,8 @@ load("@rust_sdk_crate_index//:defs.bzl", "all_crate_deps")
 cargo_build_script(
     name = "build_script",
     srcs = ["build.rs"],
-    build_script_env = {
-        "ABI_HEADER_ABSOLUTE_PATH": "$(execpath //abi:abi.h)",
-    },
     data = [
-        "//abi:abi.h",
+        "abi.h",
     ],
     edition = "2021",
     deps = all_crate_deps(
