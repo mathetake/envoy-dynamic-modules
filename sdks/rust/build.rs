@@ -4,7 +4,7 @@ use std::path::PathBuf;
 fn main() {
     let path = match env::var("ABI_HEADER_ABSOLUTE_PATH") {
         Ok(val) => val,
-        Err(_) => String::from("src/abi.h"),
+        Err(_) => String::from("../../abi/abi.h"),
     };
     let bindings = bindgen::Builder::default()
         .header(path)
