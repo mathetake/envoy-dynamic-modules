@@ -3,8 +3,7 @@
 package envoy
 
 /*
-#cgo CFLAGS:-I${SRCDIR}/../../../abi
-#include <abi.h>
+#include "abi.h"
 */
 import "C"
 import (
