@@ -2,6 +2,8 @@ load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
 load("@rules_rust//rust:defs.bzl", "rust_library", "rust_shared_library", "rust_test")
 load("@rust_sdk_crate_index//:defs.bzl", "all_crate_deps")
 
+exports_files(["abi.h"])  # Exported for tests.
+
 cargo_build_script(
     name = "build_script",
     srcs = ["build.rs"],

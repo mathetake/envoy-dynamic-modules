@@ -1,5 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
+exports_files(["abi.h"])  # Exported for tests.
+
 go_library(
     name = "envoy_dynamic_modules_go_sdk",
     srcs = glob(["*.go"]) + ["abi.h"],
