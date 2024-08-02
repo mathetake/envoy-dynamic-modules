@@ -129,7 +129,7 @@ if __name__ == "__main__":
     parser.add_argument('--bazel', default='bazel')
     parser.add_argument(
         'bazel_targets', nargs='*', default=[
-            "//x/...",
+            "//source/...",
             "//test/...",
         ])
     args = parser.parse_args()

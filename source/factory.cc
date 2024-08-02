@@ -6,9 +6,9 @@
 #include "envoy/registry/registry.h"
 #include "envoy/server/filter_config.h"
 
-#include "x/config.pb.h"
-#include "x/config.pb.validate.h"
-#include "x/filter.h"
+#include "source/config.pb.h"
+#include "source/config.pb.validate.h"
+#include "source/filter.h"
 
 namespace Envoy {
 namespace Server {

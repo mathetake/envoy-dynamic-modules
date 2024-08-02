@@ -5,7 +5,7 @@
 
 #include "source/common/common/assert.h"
 
-#include "x/dynamic_module.h"
+#include "source/dynamic_module.h"
 
 namespace Envoy {
 namespace Http {

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-#include "x/dynamic_module.h"
-#include "x/filter.h"
+#include "source/dynamic_module.h"
+#include "source/filter.h"
 
 #include "test/test_common/utility.h"
 #include "test/test_util.h"

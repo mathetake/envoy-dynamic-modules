@@ -3,7 +3,7 @@
 #include <exception>
 #include <vector>
 
-#include "x/dynamic_module.h"
+#include "source/dynamic_module.h"
 
 #include "test/test_util.h"
 #include "test/test_common/utility.h"
