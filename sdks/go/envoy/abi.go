@@ -7,8 +7,10 @@ package envoy
 */
 import "C"
 import (
+	"bytes"
 	"io"
 	"runtime"
+	"unicode/utf8"
 	"unsafe"
 )
 
@@ -585,4 +587,51 @@ func (r *responseBufferReader) Read(buf []byte) (int, error) {
 		totalRead += readSize
 	}
 	return totalRead, nil
+}
+
+// HeaderValue represents a single header value whose data is owned by the Envoy.
+//
+// This is a view of the underlying data and doesn't copy the data.
+//
+// HeaderValue can be in any encoding, including non-UTF-8 encoding.
+type HeaderValue struct {
+	data *byte
+	size int
+}
+
+// String implements HeaderValue interface in abi_nocgo.go which is not included in the shared library.
+func (h HeaderValue) String() string {
+	view := h.rawBytes()
+	if !utf8.Valid(view) {
+		panic("invalid utf-8 data. To handle non-utf-8 header value, use HeaderValue.Bytes function.")
+	}
+	return string(view)
+}
+
+// Bytes implements HeaderValue interface in abi_nocgo.go which is not included in the shared library.
+func (h HeaderValue) Bytes() []byte {
+	if h.data == nil {
+		return nil
+	}
+	d := h.rawBytes()
+	ret := make([]byte, h.size)
+	copy(ret, d)
+	return ret
+}
+
+func (h HeaderValue) rawBytes() []byte {
+	if h.data == nil {
+		return nil
+	}
+	return unsafe.Slice(h.data, h.size)
+}
+
+// Equal implements HeaderValue interface in abi_nocgo.go which is not included in the shared library.
+func (h HeaderValue) Equal(str string) bool {
+	if str == "" {
+		return h.data == nil
+	}
+	target := unsafe.Slice(unsafe.StringData(str), len(str))
+	runtime.KeepAlive(str)
+	return bytes.Equal(h.rawBytes(), target)
 }

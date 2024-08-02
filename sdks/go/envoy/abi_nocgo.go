@@ -112,3 +112,26 @@ type ResponseBodyBuffer interface {
 	// NewReader returns an io.Reader for the buffer.
 	NewReader() io.Reader
 }
+
+// HeaderValue represents a single header value whose data is owned by the Envoy.
+//
+// This is a view of the underlying data and doesn't copy the data.
+//
+// HeaderValue can be in any encoding, including non-UTF-8 encoding.
+type HeaderValue interface {
+	// String returns the string representation of the header value.
+	// This copies the underlying data to a new buffer and returns the string.
+	//
+	// Note: The header value might not be UTF-8 encoded. Therefore,
+	// this checks if the data is valid UTF-8 and returns the string.
+	// To get the raw data, use the HeaderValue.Bytes function.
+	String() string
+
+	// Bytes returns the copied data of the header value.
+	Bytes() []byte
+
+	// Equal returns true if the header value is equal to the given string.
+	//
+	// This doesn't copy the data and compares the data directly.
+	Equal(str string) bool
+}
