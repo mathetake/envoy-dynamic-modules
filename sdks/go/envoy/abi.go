@@ -3,7 +3,7 @@
 package envoy
 
 /*
-#include "../../../abi/abi.h"
+#include "abi.h"
 */
 import "C"
 import (
