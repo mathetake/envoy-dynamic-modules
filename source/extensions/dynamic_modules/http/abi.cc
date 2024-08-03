@@ -3,7 +3,7 @@
 #include <string>
 #include <dlfcn.h>
 
-#include "source/filter.h"
+#include "source/extensions/dynamic_modules/http/filter.h"
 #include "source/extensions/dynamic_modules/abi/abi.h"
 
 #include "source/common/common/assert.h"

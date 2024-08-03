@@ -5,8 +5,8 @@
 
 #include "source/extensions/filters/http/common/pass_through_filter.h"
 
-#include "source/config.pb.h"
-#include "source/http_dynamic_module.h"
+#include "source/extensions/dynamic_modules/http/config.pb.h"
+#include "source/extensions/dynamic_modules/http/http_dynamic_module.h"
 
 namespace Envoy {
 namespace Extensions {

@@ -8,7 +8,7 @@
 
 #include "envoy/server/filter_config.h"
 
-#include "source/config.pb.h"
+#include "source/extensions/dynamic_modules/http/config.pb.h"
 #include "source/extensions/dynamic_modules/dynamic_modules.h"
 #include "source/extensions/dynamic_modules/abi/abi.h"
 

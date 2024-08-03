@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "source/extensions/dynamic_modules/abi/abi.h"
-#include "source/filter.h"
+#include "source/extensions/dynamic_modules/http/filter.h"
 
 #include "test/test_common/utility.h"
 #include "test/test_util.h"

@@ -10,7 +10,7 @@ envoy_cc_binary(
     repository = "@envoy",
     stamped = True,
     deps = [
-        "//source:factory",
+        "//source/extensions/dynamic_modules/http:factory",
         "@envoy//source/exe:envoy_main_entry_lib",
     ],
 )

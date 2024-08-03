@@ -3,7 +3,7 @@
 #include <exception>
 #include <vector>
 
-#include "source/http_dynamic_module.h"
+#include "source/extensions/dynamic_modules/http/http_dynamic_module.h"
 
 #include "test/test_util.h"
 #include "test/test_common/utility.h"

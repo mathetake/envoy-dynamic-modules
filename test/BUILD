@@ -25,7 +25,7 @@ cc_library(
     hdrs = ["test_util.h"],
     copts = COPTS,
     deps = [
-        "//source:http_dynamic_module_lib",
+        "//source/extensions/dynamic_modules/http:http_dynamic_module_lib",
     ],
 )
 
@@ -43,7 +43,7 @@ cc_test(
     ],
     linkopts = LINK_OPTS,
     deps = [
-        "//source:http_dynamic_module_lib",
+        "//source/extensions/dynamic_modules/http:http_dynamic_module_lib",
     ] + DEPS,
 )
 
@@ -57,7 +57,7 @@ cc_test(
     ],
     linkopts = LINK_OPTS,
     deps = [
-        "//source:filter_lib",
+        "//source/extensions/dynamic_modules/http:filter_lib",
     ] + DEPS,
 )
 
@@ -73,7 +73,7 @@ cc_test(
     ],
     linkopts = LINK_OPTS,
     deps = [
-        "//source:abi_lib",
+        "//source/extensions/dynamic_modules/http:abi_lib",
     ] + DEPS,
 )
 
@@ -87,7 +87,7 @@ envoy_cc_test(
     ],
     repository = "@envoy",
     deps = [
-        "//source:factory",
+        "//source/extensions/dynamic_modules/http:factory",
         "@envoy//test/integration:http_integration_lib",
     ],
 )

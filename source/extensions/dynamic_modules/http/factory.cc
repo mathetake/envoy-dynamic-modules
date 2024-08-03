@@ -3,13 +3,13 @@
 #include <string_view>
 
 #include "source/extensions/dynamic_modules/dynamic_modules.h"
-#include "source/http_dynamic_module.h"
+#include "source/extensions/dynamic_modules/http/http_dynamic_module.h"
 #include "envoy/registry/registry.h"
 #include "envoy/server/filter_config.h"
 
-#include "source/config.pb.h"
-#include "source/config.pb.validate.h"
-#include "source/filter.h"
+#include "source/extensions/dynamic_modules/http/config.pb.h"
+#include "source/extensions/dynamic_modules/http/config.pb.validate.h"
+#include "source/extensions/dynamic_modules/http/filter.h"
 
 namespace Envoy {
 namespace Server {

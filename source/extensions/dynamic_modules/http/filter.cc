@@ -3,7 +3,7 @@
 #include "filter.h"
 
 #include "envoy/server/filter_config.h"
-#include "source/http_dynamic_module.h"
+#include "source/extensions/dynamic_modules/http/http_dynamic_module.h"
 
 namespace Envoy {
 namespace Extensions {

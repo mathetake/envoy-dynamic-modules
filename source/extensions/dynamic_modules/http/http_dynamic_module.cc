@@ -2,7 +2,7 @@
 #include <string>
 
 #include "http_dynamic_module.h"
-#include "source/http_dynamic_module.h"
+#include "source/extensions/dynamic_modules/http/http_dynamic_module.h"
 
 #include <dlfcn.h>
 
