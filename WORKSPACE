@@ -41,9 +41,9 @@ load("@rules_rust//crate_universe:defs.bzl", "crates_repository")
 
 crates_repository(
     name = "rust_sdk_crate_index",
-    cargo_lockfile = "//source/extensions/dynamic_modules/sdks/rust:Cargo.lock",
+    cargo_lockfile = "//source/extensions/dynamic_modules/sdk/rust:Cargo.lock",
     generator = "@cargo_bazel_bootstrap//:cargo-bazel",
-    manifests = ["//source/extensions/dynamic_modules/sdks/rust:Cargo.toml"],
+    manifests = ["//source/extensions/dynamic_modules/sdk/rust:Cargo.toml"],
 )
 
 load("@rust_sdk_crate_index//:defs.bzl", crate_repositories_crate_repositories = "crate_repositories")

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/mathetake/envoy-dynamic-modules/source/extensions/dynmic_modules/sdks/go/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/source/extensions/dynmic_modules/sdk/go/envoy"
 )
 
 func main() {} // main function must be present but empty.

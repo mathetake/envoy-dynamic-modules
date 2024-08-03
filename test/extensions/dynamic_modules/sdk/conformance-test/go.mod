@@ -1,4 +1,4 @@
-module github.com/mathetake/envoy-dynamic-modules/test/extensions/dynamic_modules/sdks/conformance-test
+module github.com/mathetake/envoy-dynamic-modules/test/extensions/dynamic_modules/sdk/conformance-test
 
 go 1.22.5
 
