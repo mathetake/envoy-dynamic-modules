@@ -6,20 +6,21 @@
 #include "source/extensions/filters/http/common/pass_through_filter.h"
 
 #include "source/config.pb.h"
-#include "source/dynamic_module.h"
+#include "source/http_dynamic_module.h"
 
 namespace Envoy {
+namespace Extensions {
+namespace DynamicModules {
 namespace Http {
-namespace DynamicModule {
 
-using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
+using namespace Envoy::Http;
 
 /**
  * A filter that uses a dynamic module and corresponds to a single filter instance.
  */
 class HttpFilter : public Http::StreamFilter, public std::enable_shared_from_this<HttpFilter> {
 public:
-  HttpFilter(DynamicModuleSharedPtr);
+  HttpFilter(HttpDynamicModuleSharedPtr);
   ~HttpFilter() override;
 
   /**
@@ -140,9 +141,10 @@ public:
   bool in_continue_ = false;
 
 private:
-  const DynamicModuleSharedPtr dynamic_module_ = nullptr;
+  const HttpDynamicModuleSharedPtr dynamic_module_ = nullptr;
 };
 
-} // namespace DynamicModule
 } // namespace Http
+} // namespace DynamicModules
+} // namespace Extensions
 } // namespace Envoy

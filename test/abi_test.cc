@@ -8,8 +8,9 @@
 #include "test/test_util.h"
 
 namespace Envoy {
+namespace Extensions {
+namespace DynamicModules {
 namespace Http {
-namespace DynamicModule {
 
 TEST(TestABI, GetRequestHeaderValueEmpty) {
   Http::TestRequestHeaderMapImpl request_headers{};
@@ -194,7 +195,7 @@ TEST(TestABI, GetResponseHeaderValueNthOutOfBounds) {
 }
 
 TEST(TestABIRoundTrip, GetHeaders) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("get_headers", "config");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("get_headers", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{{"key", "value"}};
@@ -283,7 +284,7 @@ TEST(TestABI, GetResponseBodyBufferSlice) {
 }
 
 TEST(TestABIRoundTrip, GetBody) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("get_body", "config");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("get_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureHttpFilterInstance();
 
@@ -363,7 +364,7 @@ TEST(TestABI, SetHeader_Replaces) {
 }
 
 TEST(TestABIRoundTrip, SetHeaders) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("set_headers", "config");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("set_headers", "config");
   auto filter = std::make_shared<HttpFilter>(module);
 
   Http::TestRequestHeaderMapImpl request_headers{
@@ -490,7 +491,7 @@ TEST(TestABI, RequestBodyAppendPrependDrain) {
 }
 
 TEST(TestABIRoundTrip, BodyManipulations) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("manipulate_body", "config");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("manipulate_body", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   filter->ensureHttpFilterInstance();
 
@@ -537,6 +538,7 @@ TEST(TestABI, BufferCopyOut) {
   }
 }
 
-} // namespace DynamicModule
 } // namespace Http
+} // namespace DynamicModules
+} // namespace Extensions
 } // namespace Envoy

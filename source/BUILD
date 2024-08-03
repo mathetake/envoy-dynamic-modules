@@ -15,16 +15,17 @@ api_proto_package(
 COPTS = ["-DENVOY_DYNAMIC_MODULE=1"]
 
 envoy_cc_library(
-    name = "dynamic_module_lib",
-    srcs = ["dynamic_module.cc"],
+    name = "http_dynamic_module_lib",
+    srcs = ["http_dynamic_module.cc"],
     hdrs = [
-        "dynamic_module.h",
+        "http_dynamic_module.h",
         "//abi:abi.h",
     ],
     copts = COPTS,
     repository = "@envoy",
     deps = [
         ":pkg_cc_proto",
+        "//source/extensions/dynamic_modules:dynamic_modules_lib",
         "@envoy//envoy/common:exception_lib",
         "@envoy//envoy/server:filter_config_interface",
         "@envoy//source/extensions/filters/http/common:pass_through_filter_lib",
@@ -38,7 +39,7 @@ envoy_cc_library(
     copts = COPTS,
     repository = "@envoy",
     deps = [
-        ":dynamic_module_lib",
+        ":http_dynamic_module_lib",
         ":pkg_cc_proto",
         "@envoy//source/extensions/filters/http/common:pass_through_filter_lib",
     ],

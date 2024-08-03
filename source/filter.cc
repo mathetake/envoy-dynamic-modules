@@ -3,15 +3,18 @@
 #include "filter.h"
 
 #include "envoy/server/filter_config.h"
+#include "source/http_dynamic_module.h"
 
 namespace Envoy {
+namespace Extensions {
+namespace DynamicModules {
 namespace Http {
-namespace DynamicModule {
 
 #define STATIC_CAST_AS_VOID(x) static_cast<void*>(x)
 #define THIS_AS_VOID STATIC_CAST_AS_VOID(this)
 
-HttpFilter::HttpFilter(DynamicModuleSharedPtr dynamic_module) : dynamic_module_(dynamic_module) {}
+HttpFilter::HttpFilter(HttpDynamicModuleSharedPtr dynamic_module)
+    : dynamic_module_(dynamic_module) {}
 
 HttpFilter::~HttpFilter() { this->destoryHttpFilterInstance(); }
 
@@ -110,6 +113,7 @@ FilterDataStatus HttpFilter::encodeData(Buffer::Instance& buffer, bool end_of_st
   return static_cast<FilterDataStatus>(result);
 };
 
-} // namespace DynamicModule
 } // namespace Http
+} // namespace DynamicModules
+} // namespace Extensions
 } // namespace Envoy

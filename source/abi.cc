@@ -11,8 +11,10 @@
 
 namespace Envoy {
 namespace Http {
-namespace DynamicModule {
+namespace {
 extern "C" {
+
+using HttpFilter = Envoy::Extensions::DynamicModules::Http::HttpFilter;
 
 #define GET_HEADER_VALUE(header_map_type, request_or_response)                                     \
   const std::string_view key_str(static_cast<const char*>(key), key_length);                       \
@@ -359,6 +361,6 @@ void envoy_dynamic_module_http_send_response(
 
 } // extern "C"
 
-} // namespace DynamicModule
+} // namespace
 } // namespace Http
 } // namespace Envoy

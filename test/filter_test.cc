@@ -1,18 +1,19 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-#include "source/dynamic_module.h"
+#include "source/http_dynamic_module.h"
 #include "source/filter.h"
 
 #include "test/test_common/utility.h"
 #include "test/test_util.h"
 
 namespace Envoy {
+namespace Extensions {
+namespace DynamicModules {
 namespace Http {
-namespace DynamicModule {
 
 TEST(TestHttpFilter, StreamContextNull) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("init", "config");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("init", "config");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -20,7 +21,7 @@ TEST(TestHttpFilter, StreamContextNull) {
 }
 
 TEST(TestHttpFilter, StreamContextOK) {
-  DynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "");
+  HttpDynamicModuleSharedPtr module = loadTestDynamicModule("stream_init", "");
   auto filter = std::make_shared<HttpFilter>(module);
   Http::TestRequestHeaderMapImpl request_headers{};
   const auto result = filter->decodeHeaders(request_headers, false);
@@ -34,6 +35,7 @@ TEST(TestHttpFilter, StreamContextOK) {
   EXPECT_EQ(*value, 999999);
 }
 
-} // namespace DynamicModule
 } // namespace Http
+} // namespace DynamicModules
+} // namespace Extensions
 } // namespace Envoy

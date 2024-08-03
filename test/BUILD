@@ -25,7 +25,7 @@ cc_library(
     hdrs = ["test_util.h"],
     copts = COPTS,
     deps = [
-        "//source:dynamic_module_lib",
+        "//source:http_dynamic_module_lib",
     ],
 )
 
@@ -43,7 +43,7 @@ cc_test(
     ],
     linkopts = LINK_OPTS,
     deps = [
-        "//source:dynamic_module_lib",
+        "//source:http_dynamic_module_lib",
     ] + DEPS,
 )
 

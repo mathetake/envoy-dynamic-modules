@@ -2,7 +2,8 @@
 #include <string>
 #include <string_view>
 
-#include "dynamic_module.h"
+#include "source/extensions/dynamic_modules/dynamic_modules.h"
+#include "source/http_dynamic_module.h"
 #include "envoy/registry/registry.h"
 #include "envoy/server/filter_config.h"
 
@@ -36,12 +37,19 @@ public:
 
 private:
   Http::FilterFactoryCb createFactory(const DynamicModuleConfig& proto_config, FactoryContext&) {
-    auto config = std::make_shared<Http::DynamicModule::DynamicModule>(
-        proto_config.name(), proto_config.file_path(), proto_config.filter_config(),
-        proto_config.do_not_dlclose());
+    const auto dynamic_module = Extensions::DynamicModules::newDynamicModule(
+        proto_config.file_path(), proto_config.do_not_dlclose());
+    if (!dynamic_module.ok()) {
+      throw EnvoyException("Failed to load dynamic module: " +
+                           std::string(dynamic_module.status().message()));
+    }
+    auto http_dynamic_module =
+        std::make_shared<Envoy::Extensions::DynamicModules::Http::HttpDynamicModule>(
+            proto_config.name(), proto_config.filter_config(), dynamic_module.value());
 
-    return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
-      auto filter = std::make_shared<Http::DynamicModule::HttpFilter>(config);
+    return [http_dynamic_module](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+      auto filter = std::make_shared<Envoy::Extensions::DynamicModules::Http::HttpFilter>(
+          http_dynamic_module);
       callbacks.addStreamDecoderFilter(filter);
       callbacks.addStreamEncoderFilter(filter);
     };

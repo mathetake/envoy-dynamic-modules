@@ -1,7 +1,8 @@
 #include <filesystem>
 #include <string>
 
-#include "source/dynamic_module.h"
+#include "http_dynamic_module.h"
+#include "source/http_dynamic_module.h"
 
 #include <dlfcn.h>
 
@@ -9,64 +10,25 @@
 #include "envoy/common/exception.h"
 
 namespace Envoy {
+namespace Extensions {
+namespace DynamicModules {
 namespace Http {
-namespace DynamicModule {
 
-DynamicModule::~DynamicModule() {
+HttpDynamicModule::~HttpDynamicModule() {
   ENVOY_LOG_MISC(info, "Destroying module: {}", name_);
   envoy_dynamic_module_event_http_filter_destroy_(http_filter_);
-  ASSERT(handle_ != nullptr);
-  dlclose(handle_);
 }
 
 #define RESOLVE_SYMBOL_OR_THROW(symbol_type)                                                       \
   do {                                                                                             \
-    symbol_type##_ = reinterpret_cast<symbol_type>(dlsym(handle_, #symbol_type));                  \
+    symbol_type##_ = dynamic_module_->getFunctionPointer<symbol_type>(#symbol_type);               \
     if (symbol_type##_ == nullptr) {                                                               \
       throw EnvoyException(                                                                        \
           fmt::format("cannot resolve symbol: {} error: {}", #symbol_type, dlerror()));            \
     }                                                                                              \
   } while (0)
 
-void DynamicModule::initModule(const std::string_view location, const std::string& config,
-                               const bool do_not_close) {
-  const std::filesystem::path file_path_absolute = std::filesystem::absolute(location);
-  ENVOY_LOG_MISC(info, "[{}] checking the shared library {} is opened", name_,
-                 file_path_absolute.string());
-
-  // Test if the shared object is already openend.
-  handle_ = dlopen(file_path_absolute.c_str(), RTLD_NOLOAD | RTLD_LOCAL | RTLD_LAZY);
-  if (!handle_) {
-    ENVOY_LOG_MISC(info, "[{}] the shared library {} is not opened yet. Opening...", name_,
-                   file_path_absolute.string());
-    int mode = RTLD_LOCAL | RTLD_LAZY;
-    if (do_not_close) {
-      mode |= RTLD_NODELETE;
-    }
-    // If the shared object is not opened, open it. Note that this runs on main thread.
-    handle_ = dlopen(file_path_absolute.c_str(), mode);
-    if (!handle_) {
-      throw EnvoyException(fmt::format("cannot load : {} error: {}", name_, dlerror()));
-    }
-
-    // Resolve the program init function, and call it.
-    RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_program_init);
-
-    ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_event_program_init ()", name_);
-    if (envoy_dynamic_module_event_program_init_() != 0) {
-      throw EnvoyException(fmt::format("program init in {} failed", name_));
-    }
-    ENVOY_LOG_MISC(info, "[{}] <- envoy_dynamic_module_event_program_init", name_);
-  } else {
-    ENVOY_LOG_MISC(info, "[{}] the shared library {} is already opened", name_,
-                   file_path_absolute.string());
-  }
-
-  // Initialize the module.
-  initHttpFilter(config);
-}
-
-void DynamicModule::initHttpFilter(const std::string& config) {
+void HttpDynamicModule::initHttpFilter(const std::string_view config) {
   RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_init);
   ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_event_http_filter_init ({}, {})", name_,
                  const_cast<char*>(config.data()), config.size());
@@ -88,6 +50,7 @@ void DynamicModule::initHttpFilter(const std::string& config) {
 
 #undef RESOLVE_SYMBOL_OR_THROW
 
-} // namespace DynamicModule
 } // namespace Http
+} // namespace DynamicModules
+} // namespace Extensions
 } // namespace Envoy
