@@ -5,17 +5,17 @@ go_test(
     srcs = glob(["*.go"]),
     data = [
         "//:envoy",
-        "//sdks/go/example:example.so",
+        "//source/extensions/dynamic_modules/sdks/go/example:example.so",
     ],
     embedsrcs = ["envoy.yaml"],
     env = {
-        "SHARED_LIBRARY_PATH": "envoyx/sdks/go/example/libexample.so",
+        "SHARED_LIBRARY_PATH": "envoyx/source/extensions/dynamic_modules/sdks/go/example/libexample.so",
         "ENVOY_PATH": "envoyx/envoy",
     },
     importpath = "github.com/mathetake/envoy-dynamic-modules/sdks/conformance-test",
     tags = ["exclusive"],
     deps = [
-        "//sdks/go/envoy:envoy_dynamic_modules_go_sdk",
+        "//source/extensions/dynamic_modules/sdks/go/envoy:envoy_dynamic_modules_go_sdk",
         "@com_github_testify//require",
     ],
 )
@@ -25,17 +25,17 @@ go_test(
     srcs = glob(["*.go"]),
     data = [
         "//:envoy",
-        "//sdks/rust:example",
+        "//source/extensions/dynamic_modules/sdks/rust:example",
     ],
     embedsrcs = ["envoy.yaml"],
     env = {
-        "SHARED_LIBRARY_PATH": "envoyx/sdks/rust/libexample.so",
+        "SHARED_LIBRARY_PATH": "envoyx/source/extensions/dynamic_modules/sdks/rust/libexample.so",
         "ENVOY_PATH": "envoyx/envoy",
     },
     importpath = "github.com/mathetake/envoy-dynamic-modules/sdks/conformance-test",
     tags = ["exclusive"],
     deps = [
-        "//sdks/go/envoy:envoy_dynamic_modules_go_sdk",
+        "//source/extensions/dynamic_modules/sdks/go/envoy:envoy_dynamic_modules_go_sdk",
         "@com_github_testify//require",
     ],
 )

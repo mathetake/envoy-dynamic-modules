@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/source/extensions/dynmic_modules/sdks/go/envoy"
 )
 
 // bodiesHttpFilter implements envoy.HttpFilter.

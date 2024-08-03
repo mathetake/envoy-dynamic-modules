@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/source/extensions/dynmic_modules/sdks/go/envoy"
 )
 
 // helloWorldFilter implements envoy.HttpFilter.

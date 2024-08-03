@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/mathetake/envoy-dynamic-modules/sdks/go/envoy"
+	"github.com/mathetake/envoy-dynamic-modules/source/extensions/dynmic_modules/sdks/go/envoy"
 )
 
 // sendResponseFilter implements envoy.HttpFilter.
