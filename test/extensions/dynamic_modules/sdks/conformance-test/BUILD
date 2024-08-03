@@ -12,7 +12,7 @@ go_test(
         "SHARED_LIBRARY_PATH": "envoyx/source/extensions/dynamic_modules/sdks/go/example/libexample.so",
         "ENVOY_PATH": "envoyx/envoy",
     },
-    importpath = "github.com/mathetake/envoy-dynamic-modules/sdks/conformance-test",
+    importpath = "github.com/mathetake/envoy-dynamic-modules/test/extensions/dynamic_modules/sdks/conformance-test",
     tags = ["exclusive"],
     deps = [
         "//source/extensions/dynamic_modules/sdks/go/envoy:envoy_dynamic_modules_go_sdk",
@@ -32,7 +32,7 @@ go_test(
         "SHARED_LIBRARY_PATH": "envoyx/source/extensions/dynamic_modules/sdks/rust/libexample.so",
         "ENVOY_PATH": "envoyx/envoy",
     },
-    importpath = "github.com/mathetake/envoy-dynamic-modules/sdks/conformance-test",
+    importpath = "github.com/mathetake/envoy-dynamic-modules/test/extensions/dynamic_modules/sdks/conformance-test",
     tags = ["exclusive"],
     deps = [
         "//source/extensions/dynamic_modules/sdks/go/envoy:envoy_dynamic_modules_go_sdk",

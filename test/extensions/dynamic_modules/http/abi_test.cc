@@ -5,7 +5,7 @@
 #include "source/extensions/dynamic_modules/http/filter.h"
 
 #include "test/test_common/utility.h"
-#include "test/test_util.h"
+#include "test/extensions/dynamic_modules/http/test_util.h"
 
 namespace Envoy {
 namespace Extensions {

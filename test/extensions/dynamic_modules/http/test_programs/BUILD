@@ -1,4 +1,4 @@
-load("//test/test_programs:test_programs.bzl", "test_program")
+load("//test/extensions/dynamic_modules/http/test_programs:test_programs.bzl", "test_program")
 
 package(default_visibility = ["//visibility:public"])
 

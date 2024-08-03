@@ -12,7 +12,7 @@ COPTS = [
 ]
 
 DEPS = [
-    "//test:test_util",
+    "//test/extensions/dynamic_modules/http:test_util",
     "@com_google_googletest//:gtest",
     "@com_google_googletest//:gtest_main",
     "@envoy//test/test_common:test_version_linkstamp",
@@ -30,16 +30,16 @@ cc_library(
 )
 
 cc_test(
-    name = "dynamic_module_test",
-    srcs = ["dynamic_module_test.cc"],
+    name = "http_dynamic_module_test",
+    srcs = ["http_dynamic_module_test.cc"],
     copts = COPTS,
     data = [
-        "//test/test_programs:do_not_close",
-        "//test/test_programs:http_filter_init_fail",
-        "//test/test_programs:init",
-        "//test/test_programs:no_init",
-        "//test/test_programs:program_init_fail",
-        "//test/test_programs:stream_init",
+        "//test/extensions/dynamic_modules/http/test_programs:do_not_close",
+        "//test/extensions/dynamic_modules/http/test_programs:http_filter_init_fail",
+        "//test/extensions/dynamic_modules/http/test_programs:init",
+        "//test/extensions/dynamic_modules/http/test_programs:no_init",
+        "//test/extensions/dynamic_modules/http/test_programs:program_init_fail",
+        "//test/extensions/dynamic_modules/http/test_programs:stream_init",
     ],
     linkopts = LINK_OPTS,
     deps = [
@@ -52,8 +52,8 @@ cc_test(
     srcs = ["filter_test.cc"],
     copts = COPTS,
     data = [
-        "//test/test_programs:init",
-        "//test/test_programs:stream_init",
+        "//test/extensions/dynamic_modules/http/test_programs:init",
+        "//test/extensions/dynamic_modules/http/test_programs:stream_init",
     ],
     linkopts = LINK_OPTS,
     deps = [
@@ -66,10 +66,10 @@ cc_test(
     srcs = ["abi_test.cc"],
     copts = COPTS,
     data = [
-        "//test/test_programs:get_body",
-        "//test/test_programs:get_headers",
-        "//test/test_programs:manipulate_body",
-        "//test/test_programs:set_headers",
+        "//test/extensions/dynamic_modules/http/test_programs:get_body",
+        "//test/extensions/dynamic_modules/http/test_programs:get_headers",
+        "//test/extensions/dynamic_modules/http/test_programs:manipulate_body",
+        "//test/extensions/dynamic_modules/http/test_programs:set_headers",
     ],
     linkopts = LINK_OPTS,
     deps = [
@@ -81,29 +81,13 @@ envoy_cc_test(
     name = "integration_test",
     srcs = ["integration_test.cc"],
     data = [
-        "//test/test_programs:integration_test_bodies",
-        "//test/test_programs:integration_test_headers",
-        "//test/test_programs:integration_test_local_response",
+        "//test/extensions/dynamic_modules/http/test_programs:integration_test_bodies",
+        "//test/extensions/dynamic_modules/http/test_programs:integration_test_headers",
+        "//test/extensions/dynamic_modules/http/test_programs:integration_test_local_response",
     ],
     repository = "@envoy",
     deps = [
         "//source/extensions/dynamic_modules/http:factory",
         "@envoy//test/integration:http_integration_lib",
-    ],
-)
-
-sh_test(
-    name = "compare_abi_headers",
-    srcs = ["compare_abi_headers.sh"],
-    args = [
-        "$(location //source/extensions/dynamic_modules/abi:abi.h)",
-        "$(location //source/extensions/dynamic_modules/sdks/go/envoy:abi.h)",
-        "$(location //source/extensions/dynamic_modules/sdks/rust:abi.h)",
-    ],
-    data = [
-        "compare_abi_headers.sh",
-        "//source/extensions/dynamic_modules/abi:abi.h",
-        "//source/extensions/dynamic_modules/sdks/go/envoy:abi.h",
-        "//source/extensions/dynamic_modules/sdks/rust:abi.h",
     ],
 )

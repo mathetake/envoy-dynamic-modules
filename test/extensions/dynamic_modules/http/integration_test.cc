@@ -23,7 +23,8 @@ INSTANTIATE_TEST_SUITE_P(IpVersions, HttpFilterIntegrationTest,
                          testing::ValuesIn(TestEnvironment::getIpVersionsForTest()));
 
 TEST_P(HttpFilterIntegrationTest, Headers) {
-  initializeDynamicFilter("./test/test_programs/libintegration_test_headers.so");
+  initializeDynamicFilter(
+      "./test/extensions/dynamic_modules/http/test_programs/libintegration_test_headers.so");
 
   Http::TestRequestHeaderMapImpl headers{
       {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
@@ -49,7 +50,9 @@ TEST_P(HttpFilterIntegrationTest, Headers) {
 }
 
 TEST_P(HttpFilterIntegrationTest, HeadersStopIteration) {
-  initializeDynamicFilter("./test/test_programs/libintegration_test_headers.so", "should_wait");
+  initializeDynamicFilter(
+      "./test/extensions/dynamic_modules/http/test_programs/libintegration_test_headers.so",
+      "should_wait");
 
   Http::TestRequestHeaderMapImpl headers{
       {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
@@ -73,7 +76,8 @@ TEST_P(HttpFilterIntegrationTest, HeadersStopIteration) {
 }
 
 TEST_P(HttpFilterIntegrationTest, Bodies) {
-  initializeDynamicFilter("./test/test_programs/libintegration_test_bodies.so", "");
+  initializeDynamicFilter(
+      "./test/extensions/dynamic_modules/http/test_programs/libintegration_test_bodies.so", "");
 
   Http::TestRequestHeaderMapImpl headers{
       {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
@@ -100,8 +104,9 @@ TEST_P(HttpFilterIntegrationTest, Bodies) {
 }
 
 TEST_P(HttpFilterIntegrationTest, LocalResponse_OnRequest) {
-  initializeDynamicFilter("./test/test_programs/libintegration_test_local_response.so",
-                          "on_request");
+  initializeDynamicFilter(
+      "./test/extensions/dynamic_modules/http/test_programs/libintegration_test_local_response.so",
+      "on_request");
 
   Http::TestRequestHeaderMapImpl headers{
       {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
@@ -122,8 +127,9 @@ TEST_P(HttpFilterIntegrationTest, LocalResponse_OnRequest) {
 }
 
 TEST_P(HttpFilterIntegrationTest, LocalResponse_OnRespnose) {
-  initializeDynamicFilter("./test/test_programs/libintegration_test_local_response.so",
-                          "on_response");
+  initializeDynamicFilter(
+      "./test/extensions/dynamic_modules/http/test_programs/libintegration_test_local_response.so",
+      "on_response");
 
   Http::TestRequestHeaderMapImpl headers{
       {":method", "GET"}, {":path", "/"}, {":authority", "host"}};
