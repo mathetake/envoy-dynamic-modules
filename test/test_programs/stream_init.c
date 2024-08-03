@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 
 envoy_dynamic_module_type_HttpFilterInstancePtr
 envoy_dynamic_module_event_http_filter_instance_init(

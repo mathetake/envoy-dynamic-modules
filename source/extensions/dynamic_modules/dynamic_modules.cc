@@ -7,7 +7,7 @@
 
 #include "envoy/common/exception.h"
 
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 
 namespace Envoy {
 namespace Extensions {

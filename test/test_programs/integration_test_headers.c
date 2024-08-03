@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 
 size_t should_wait = 0;
 

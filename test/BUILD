@@ -96,14 +96,14 @@ sh_test(
     name = "compare_abi_headers",
     srcs = ["compare_abi_headers.sh"],
     args = [
-        "$(location //abi:abi.h)",
+        "$(location //source/extensions/dynamic_modules/abi:abi.h)",
         "$(location //sdks/go/envoy:abi.h)",
         "$(location //sdks/rust:abi.h)",
     ],
     data = [
         "compare_abi_headers.sh",
-        "//abi:abi.h",
         "//sdks/go/envoy:abi.h",
         "//sdks/rust:abi.h",
+        "//source/extensions/dynamic_modules/abi:abi.h",
     ],
 )

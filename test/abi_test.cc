@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 #include "source/filter.h"
 
 #include "test/test_common/utility.h"

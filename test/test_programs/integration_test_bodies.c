@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 
 static envoy_dynamic_module_type_EnvoyFilterInstancePtr envoy_filter;
 

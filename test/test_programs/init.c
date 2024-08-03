@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include "abi/abi.h"
+#include "source/extensions/dynamic_modules/abi/abi.h"
 
 int already_called = 0;
 

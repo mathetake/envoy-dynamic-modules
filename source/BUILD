@@ -19,7 +19,7 @@ envoy_cc_library(
     srcs = ["http_dynamic_module.cc"],
     hdrs = [
         "http_dynamic_module.h",
-        "//abi:abi.h",
+        "//source/extensions/dynamic_modules/abi:abi.h",
     ],
     copts = COPTS,
     repository = "@envoy",
@@ -49,7 +49,7 @@ envoy_cc_library(
     name = "abi_lib",
     srcs = [
         "abi.cc",
-        "//abi:abi.h",
+        "//source/extensions/dynamic_modules/abi:abi.h",
     ],
     copts = COPTS,
     # Make sure that the symbols are exported so that they can be found by the dynamic loader.

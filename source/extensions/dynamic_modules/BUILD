@@ -12,7 +12,7 @@ envoy_cc_library(
     ],
     hdrs = [
         "dynamic_modules.h",
-        "//abi:abi.h",
+        "//source/extensions/dynamic_modules/abi:abi.h",
     ],
     repository = "@envoy",
     deps = [
