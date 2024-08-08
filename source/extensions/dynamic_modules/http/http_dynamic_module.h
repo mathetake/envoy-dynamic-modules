@@ -42,52 +42,25 @@ public:
    */
   void initHttpFilter(const std::string_view config);
 
-  // Extracts the function types of each event hook.
-  using envoy_dynamic_module_event_program_init =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_program_init)>*;
-  using envoy_dynamic_module_event_http_filter_init =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_init)>*;
-  using envoy_dynamic_module_event_http_filter_destroy =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_destroy)>*;
-  using envoy_dynamic_module_event_http_filter_instance_init =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_init)>*;
-  using envoy_dynamic_module_event_http_filter_instance_request_headers =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_request_headers)>*;
-  using envoy_dynamic_module_event_http_filter_instance_request_body =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_request_body)>*;
-  using envoy_dynamic_module_event_http_filter_instance_response_headers =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_response_headers)>*;
-  using envoy_dynamic_module_event_http_filter_instance_response_body =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_response_body)>*;
-  using envoy_dynamic_module_event_http_filter_instance_destroy =
-      Envoy::Extensions::DynamicModules::function_type_t<
-          decltype(&envoy_dynamic_module_event_http_filter_instance_destroy)>*;
-
   // The event hooks for the module.
-  envoy_dynamic_module_event_program_init envoy_dynamic_module_event_program_init_ = nullptr;
-  envoy_dynamic_module_event_http_filter_init envoy_dynamic_module_event_http_filter_init_ =
+
+  decltype(&envoy_dynamic_module_event_program_init) envoy_dynamic_module_event_program_init_ =
       nullptr;
-  envoy_dynamic_module_event_http_filter_destroy envoy_dynamic_module_event_http_filter_destroy_ =
-      nullptr;
-  envoy_dynamic_module_event_http_filter_instance_init
+  decltype(&envoy_dynamic_module_event_http_filter_init)
+      envoy_dynamic_module_event_http_filter_init_ = nullptr;
+  decltype(&envoy_dynamic_module_event_http_filter_destroy)
+      envoy_dynamic_module_event_http_filter_destroy_ = nullptr;
+  decltype(&envoy_dynamic_module_event_http_filter_instance_init)
       envoy_dynamic_module_event_http_filter_instance_init_ = nullptr;
-  envoy_dynamic_module_event_http_filter_instance_request_headers
+  decltype(&envoy_dynamic_module_event_http_filter_instance_request_headers)
       envoy_dynamic_module_event_http_filter_instance_request_headers_ = nullptr;
-  envoy_dynamic_module_event_http_filter_instance_request_body
+  decltype(&envoy_dynamic_module_event_http_filter_instance_request_body)
       envoy_dynamic_module_event_http_filter_instance_request_body_ = nullptr;
-  envoy_dynamic_module_event_http_filter_instance_response_headers
+  decltype(&envoy_dynamic_module_event_http_filter_instance_response_headers)
       envoy_dynamic_module_event_http_filter_instance_response_headers_ = nullptr;
-  envoy_dynamic_module_event_http_filter_instance_response_body
+  decltype(&envoy_dynamic_module_event_http_filter_instance_response_body)
       envoy_dynamic_module_event_http_filter_instance_response_body_ = nullptr;
-  envoy_dynamic_module_event_http_filter_instance_destroy
+  decltype(&envoy_dynamic_module_event_http_filter_instance_destroy)
       envoy_dynamic_module_event_http_filter_instance_destroy_ = nullptr;
 
   // The in-module http filter for the module.
@@ -97,7 +70,7 @@ public:
   const std::string name_;
 
   // The handle for the module.
-  Extensions::DynamicModules::DynamicModuleSharedPtr dynamic_module_ = nullptr;
+  Extensions::DynamicModules::DynamicModuleSharedPtr dynamic_module_;
 };
 
 using HttpDynamicModuleSharedPtr = std::shared_ptr<HttpDynamicModule>;

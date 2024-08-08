@@ -31,9 +31,9 @@ absl::StatusOr<DynamicModuleSharedPtr> newDynamicModule(const absl::string_view 
   }
   DynamicModuleSharedPtr dynamic_module = std::make_shared<DynamicModule>(handle);
 
-  const auto init_function = dynamic_module->getFunctionPointer<
-      function_type_t<decltype(&envoy_dynamic_module_event_program_init)>*>(
-      "envoy_dynamic_module_event_program_init");
+  const auto init_function =
+      dynamic_module->getFunctionPointer<decltype(&envoy_dynamic_module_event_program_init)>(
+          "envoy_dynamic_module_event_program_init");
 
   if (init_function == nullptr) {
     return absl::InvalidArgumentError(
@@ -49,10 +49,7 @@ absl::StatusOr<DynamicModuleSharedPtr> newDynamicModule(const absl::string_view 
   return dynamic_module;
 }
 
-DynamicModule::~DynamicModule() {
-  ASSERT(handle_ != nullptr, "dlopen handle must be alive until the DynamicModule is destroyed.");
-  dlclose(handle_);
-}
+DynamicModule::~DynamicModule() { dlclose(handle_); }
 
 void* DynamicModule::getSymbol(const absl::string_view symbol_ref) const {
   // TODO(mathetake): maybe we should accept null-terminated const char* instead of string_view to

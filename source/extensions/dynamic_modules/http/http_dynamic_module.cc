@@ -21,7 +21,7 @@ HttpDynamicModule::~HttpDynamicModule() {
 
 #define RESOLVE_SYMBOL_OR_THROW(symbol_type)                                                       \
   do {                                                                                             \
-    symbol_type##_ = dynamic_module_->getFunctionPointer<symbol_type>(#symbol_type);               \
+    symbol_type##_ = dynamic_module_->getFunctionPointer<decltype(&symbol_type)>(#symbol_type);    \
     if (symbol_type##_ == nullptr) {                                                               \
       throw EnvoyException(                                                                        \
           fmt::format("cannot resolve symbol: {} error: {}", #symbol_type, dlerror()));            \

@@ -10,13 +10,6 @@ namespace Envoy {
 namespace Extensions {
 namespace DynamicModules {
 
-// Templates to get the function type from a function declaration in abi.h.
-template <typename T> struct function_traits;
-template <typename Ret, typename... Args> struct function_traits<Ret (*)(Args...)> {
-  using type = Ret(Args...);
-};
-template <typename T> using function_type_t = typename function_traits<T>::type;
-
 /**
  * A class for loading and managing dynamic modules. This corresponds to a single dlopen handle.
  * When the DynamicModule object is destroyed, the dlopen handle is closed.
@@ -53,7 +46,7 @@ private:
   void* getSymbol(const absl::string_view symbol_ref) const;
 
   // The raw dlopen handle that can be used to look up symbols.
-  void* handle_ = nullptr;
+  void* handle_;
 };
 
 using DynamicModuleSharedPtr = std::shared_ptr<DynamicModule>;
