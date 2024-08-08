@@ -11,15 +11,7 @@ type (
 	// memoryManager manages the heap allocated objects.
 	// It is used to pin the objects to the heap to avoid them being garbage collected by the Go runtime.
 	//
-	// TODO: shard the linked lists to reduce contention.
-	//
-	// TODO: is this really necessary? Pinning a pointer to the interface might work? e.g.
-	// 	...
-	//   pinner := runtime.Pinner{}
-	//   wrapper := &pinedHttpFilterInstance{ctx: ctx}
-	//   pinn.Pinned(wrapper)
-	// 	...
-	//  does this work even when the data inside the interface contains pointers?
+	// TODO: shard the linked lists to reduce contention. E.g. we can use the thread id to shard the linked lists.
 	memoryManager struct {
 		// httpFilters holds a linked lists of HttpFilter.
 		httpFilters      *pinedHttpFilter
@@ -31,15 +23,14 @@ type (
 	}
 
 	// pinedHttpFilter holds a pinned HttpFilter managed by the memory manager.
-	pinedHttpFilter struct {
-		filter     HttpFilter
-		next, prev *pinedHttpFilter
-	}
+	pinedHttpFilter = linkedList[HttpFilter]
 
 	// pinedHttpFilterInstance holds a pinned HttpFilterInstance managed by the memory manager.
-	pinedHttpFilterInstance struct {
-		filterInstance HttpFilterInstance
-		next, prev     *pinedHttpFilterInstance
+	pinedHttpFilterInstance = linkedList[HttpFilterInstance]
+
+	linkedList[T any] struct {
+		obj        T
+		next, prev *linkedList[T]
 	}
 )
 
@@ -48,7 +39,7 @@ func (m *memoryManager) pinHttpFilter(filter HttpFilter) *pinedHttpFilter {
 	m.httpFiltersMutex.Lock()
 	defer m.httpFiltersMutex.Unlock()
 
-	item := &pinedHttpFilter{filter: filter, next: m.httpFilters, prev: nil}
+	item := &pinedHttpFilter{obj: filter, next: m.httpFilters, prev: nil}
 	if m.httpFilters != nil {
 		m.httpFilters.prev = item
 	}
@@ -78,7 +69,7 @@ func (m *memoryManager) unwrapPinnedHttpFilter(raw uintptr) *pinedHttpFilter {
 func (m *memoryManager) pinHttpFilterInstance(filterInstance HttpFilterInstance) *pinedHttpFilterInstance {
 	m.httpFilterInstancesMutex.Lock()
 	defer m.httpFilterInstancesMutex.Unlock()
-	item := &pinedHttpFilterInstance{filterInstance: filterInstance, next: m.httpFilterInstances, prev: nil}
+	item := &pinedHttpFilterInstance{obj: filterInstance, next: m.httpFilterInstances, prev: nil}
 	if m.httpFilterInstances != nil {
 		m.httpFilterInstances.prev = item
 	}
