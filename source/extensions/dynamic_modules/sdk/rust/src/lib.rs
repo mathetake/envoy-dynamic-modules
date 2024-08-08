@@ -49,7 +49,7 @@ mod abi {
 macro_rules! init {
     ($new_filter_fn:expr) => {
         #[no_mangle]
-        pub extern "C" fn envoy_dynamic_module_event_program_init() -> usize {
+        pub extern "C" fn envoy_dynamic_module_on_program_init() -> usize {
             unsafe {
                 envoy_dynamic_modules_rust_sdk::NEW_HTTP_FILTER_FN = $new_filter_fn;
             }
@@ -63,7 +63,7 @@ pub static mut NEW_HTTP_FILTER_FN: fn(&str) -> Box<dyn HttpFilter> = |_: &str| {
 };
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_init(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_init(
     config_ptr: abi::envoy_dynamic_module_type_HttpFilterConfigPtr,
     config_size: abi::envoy_dynamic_module_type_HttpFilterConfigSize,
 ) -> abi::envoy_dynamic_module_type_HttpFilterPtr {
@@ -79,7 +79,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_init(
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_destroy(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_destroy(
     http_filter: abi::envoy_dynamic_module_type_HttpFilterPtr,
 ) {
     let http_filter = http_filter as *mut *mut dyn HttpFilter;
@@ -91,7 +91,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_destroy(
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_init(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_init(
     envoy_filter_instance_ptr: abi::envoy_dynamic_module_type_EnvoyFilterInstancePtr,
     http_filter: abi::envoy_dynamic_module_type_HttpFilterPtr,
 ) -> abi::envoy_dynamic_module_type_HttpFilterInstancePtr {
@@ -109,7 +109,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_init(
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_headers(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_request_headers(
     http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
     request_headers_ptr: abi::envoy_dynamic_module_type_HttpRequestHeadersMapPtr,
     end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
@@ -127,7 +127,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_hea
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_body(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_request_body(
     http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
     buffer: abi::envoy_dynamic_module_type_HttpRequestBodyBufferPtr,
     end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
@@ -140,7 +140,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_request_bod
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_headers(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_response_headers(
     http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
     response_headers_map_ptr: abi::envoy_dynamic_module_type_HttpResponseHeaderMapPtr,
     end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
@@ -158,7 +158,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_he
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_body(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_response_body(
     http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
     buffer: abi::envoy_dynamic_module_type_HttpResponseBodyBufferPtr,
     end_of_stream: abi::envoy_dynamic_module_type_EndOfStream,
@@ -171,7 +171,7 @@ unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_response_bo
 }
 
 #[no_mangle]
-unsafe extern "C" fn envoy_dynamic_module_event_http_filter_instance_destroy(
+unsafe extern "C" fn envoy_dynamic_module_on_http_filter_instance_destroy(
     http_filter_instance: abi::envoy_dynamic_module_type_HttpFilterInstancePtr,
 ) {
     let http_filter_instance = http_filter_instance as *mut *mut dyn HttpFilterInstance;

@@ -20,12 +20,12 @@ TEST(TestDynamicModule, InvalidPath) {
 
 TEST(TestDynamicModule, InitNonExist) {
   EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("no_init", "config"), EnvoyException,
-                          "Failed to resolve envoy_dynamic_module_event_program_init");
+                          "Failed to resolve envoy_dynamic_module_on_program_init");
 }
 
 TEST(TestDynamicModule, ProgramIwnitFail) {
   EXPECT_THROW_WITH_REGEX(loadTestDynamicModule("program_init_fail", "", "fooooooooooo"),
-                          EnvoyException, "envoy_dynamic_module_event_program_init failed:");
+                          EnvoyException, "envoy_dynamic_module_on_program_init failed:");
 }
 
 TEST(TestDynamicModule, HttpFilterInitFail) {
@@ -37,7 +37,7 @@ TEST(TestDynamicModule, DoNotClose) {
   size_t* in_module_ptr = nullptr;
   {
     HttpDynamicModuleSharedPtr module = loadTestDynamicModule("do_not_close", "", "", true);
-    in_module_ptr = (size_t*)module->envoy_dynamic_module_event_http_filter_init_(nullptr, 0);
+    in_module_ptr = (size_t*)module->envoy_dynamic_module_on_http_filter_init_(nullptr, 0);
     module.reset();
   }
 
@@ -71,7 +71,7 @@ TEST(TestDynamicModule, ConstructorHappyPath) {
   }
 
   // But still the first module is alive.
-  first->envoy_dynamic_module_event_http_filter_instance_init_(nullptr, 0);
+  first->envoy_dynamic_module_on_http_filter_instance_init_(nullptr, 0);
 }
 
 } // namespace Http

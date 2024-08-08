@@ -16,7 +16,7 @@ namespace Http {
 
 HttpDynamicModule::~HttpDynamicModule() {
   ENVOY_LOG_MISC(info, "Destroying module: {}", name_);
-  envoy_dynamic_module_event_http_filter_destroy_(http_filter_);
+  envoy_dynamic_module_on_http_filter_destroy_(http_filter_);
 }
 
 #define RESOLVE_SYMBOL_OR_THROW(symbol_type)                                                       \
@@ -29,23 +29,22 @@ HttpDynamicModule::~HttpDynamicModule() {
   } while (0)
 
 void HttpDynamicModule::initHttpFilter(const std::string_view config) {
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_init);
-  ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_event_http_filter_init ({}, {})", name_,
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_init);
+  ENVOY_LOG_MISC(info, "[{}] -> envoy_dynamic_module_on_http_filter_init ({}, {})", name_,
                  const_cast<char*>(config.data()), config.size());
   http_filter_ =
-      envoy_dynamic_module_event_http_filter_init_(const_cast<char*>(config.data()), config.size());
+      envoy_dynamic_module_on_http_filter_init_(const_cast<char*>(config.data()), config.size());
   if (http_filter_ == nullptr) {
     throw EnvoyException(fmt::format("http filter init in {} failed", name_));
   }
-  ENVOY_LOG_MISC(info, "[{}] <- envoy_dynamic_module_event_http_filter_init: {}", name_,
-                 http_filter_);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_destroy);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_init);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_request_headers);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_request_body);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_response_headers);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_response_body);
-  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_event_http_filter_instance_destroy);
+  ENVOY_LOG_MISC(info, "[{}] <- envoy_dynamic_module_on_http_filter_init: {}", name_, http_filter_);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_destroy);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_init);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_request_headers);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_request_body);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_response_headers);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_response_body);
+  RESOLVE_SYMBOL_OR_THROW(envoy_dynamic_module_on_http_filter_instance_destroy);
 }
 
 #undef RESOLVE_SYMBOL_OR_THROW

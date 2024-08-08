@@ -44,24 +44,23 @@ public:
 
   // The event hooks for the module.
 
-  decltype(&envoy_dynamic_module_event_program_init) envoy_dynamic_module_event_program_init_ =
+  decltype(&envoy_dynamic_module_on_program_init) envoy_dynamic_module_on_program_init_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_init) envoy_dynamic_module_on_http_filter_init_ =
       nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_init)
-      envoy_dynamic_module_event_http_filter_init_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_destroy)
-      envoy_dynamic_module_event_http_filter_destroy_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_init)
-      envoy_dynamic_module_event_http_filter_instance_init_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_request_headers)
-      envoy_dynamic_module_event_http_filter_instance_request_headers_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_request_body)
-      envoy_dynamic_module_event_http_filter_instance_request_body_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_response_headers)
-      envoy_dynamic_module_event_http_filter_instance_response_headers_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_response_body)
-      envoy_dynamic_module_event_http_filter_instance_response_body_ = nullptr;
-  decltype(&envoy_dynamic_module_event_http_filter_instance_destroy)
-      envoy_dynamic_module_event_http_filter_instance_destroy_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_destroy)
+      envoy_dynamic_module_on_http_filter_destroy_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_init)
+      envoy_dynamic_module_on_http_filter_instance_init_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_request_headers)
+      envoy_dynamic_module_on_http_filter_instance_request_headers_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_request_body)
+      envoy_dynamic_module_on_http_filter_instance_request_body_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_response_headers)
+      envoy_dynamic_module_on_http_filter_instance_response_headers_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_response_body)
+      envoy_dynamic_module_on_http_filter_instance_response_body_ = nullptr;
+  decltype(&envoy_dynamic_module_on_http_filter_instance_destroy)
+      envoy_dynamic_module_on_http_filter_instance_destroy_ = nullptr;
 
   // The in-module http filter for the module.
   void* http_filter_ = nullptr;

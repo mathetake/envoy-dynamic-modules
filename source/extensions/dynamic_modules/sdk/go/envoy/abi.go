@@ -14,13 +14,13 @@ import (
 	"unsafe"
 )
 
-//export envoy_dynamic_module_event_program_init
-func envoy_dynamic_module_event_program_init() C.size_t {
+//export envoy_dynamic_module_on_program_init
+func envoy_dynamic_module_on_program_init() C.size_t {
 	return 0
 }
 
-//export envoy_dynamic_module_event_http_filter_init
-func envoy_dynamic_module_event_http_filter_init(
+//export envoy_dynamic_module_on_http_filter_init
+func envoy_dynamic_module_on_http_filter_init(
 	configPtr C.envoy_dynamic_module_type_HttpFilterConfigPtr,
 	configSize C.envoy_dynamic_module_type_HttpFilterConfigSize) C.envoy_dynamic_module_type_HttpFilterPtr {
 	rawStr := unsafe.String((*byte)(unsafe.Pointer(uintptr(configPtr))), configSize)
@@ -33,16 +33,16 @@ func envoy_dynamic_module_event_http_filter_init(
 	return C.envoy_dynamic_module_type_HttpFilterPtr((uintptr)(unsafe.Pointer(pined)))
 }
 
-//export envoy_dynamic_module_event_http_filter_destroy
-func envoy_dynamic_module_event_http_filter_destroy(
+//export envoy_dynamic_module_on_http_filter_destroy
+func envoy_dynamic_module_on_http_filter_destroy(
 	httpFilterPtr C.envoy_dynamic_module_type_HttpFilterPtr) {
 	httpFilter := memManager.unwrapPinnedHttpFilter(uintptr(httpFilterPtr))
 	httpFilter.obj.Destroy()
 	memManager.unpinHttpFilter(httpFilter)
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_init
-func envoy_dynamic_module_event_http_filter_instance_init(
+//export envoy_dynamic_module_on_http_filter_instance_init
+func envoy_dynamic_module_on_http_filter_instance_init(
 	envoyFilterPtr C.envoy_dynamic_module_type_EnvoyFilterInstancePtr,
 	httpFilterPtr C.envoy_dynamic_module_type_HttpFilterPtr,
 ) C.envoy_dynamic_module_type_HttpFilterInstancePtr {
@@ -53,8 +53,8 @@ func envoy_dynamic_module_event_http_filter_instance_init(
 	return C.envoy_dynamic_module_type_HttpFilterInstancePtr(uintptr((unsafe.Pointer(pined))))
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_request_headers
-func envoy_dynamic_module_event_http_filter_instance_request_headers(
+//export envoy_dynamic_module_on_http_filter_instance_request_headers
+func envoy_dynamic_module_on_http_filter_instance_request_headers(
 	httpFilterInstancePtr C.envoy_dynamic_module_type_HttpFilterInstancePtr,
 	requestHeadersPtr C.envoy_dynamic_module_type_HttpRequestHeadersMapPtr,
 	endOfStream C.envoy_dynamic_module_type_EndOfStream,
@@ -66,8 +66,8 @@ func envoy_dynamic_module_event_http_filter_instance_request_headers(
 	return C.envoy_dynamic_module_type_EventHttpRequestHeadersStatus(result)
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_request_body
-func envoy_dynamic_module_event_http_filter_instance_request_body(
+//export envoy_dynamic_module_on_http_filter_instance_request_body
+func envoy_dynamic_module_on_http_filter_instance_request_body(
 	httpFilterInstancePtr C.envoy_dynamic_module_type_HttpFilterInstancePtr,
 	buffer C.envoy_dynamic_module_type_HttpRequestBodyBufferPtr,
 	endOfStream C.envoy_dynamic_module_type_EndOfStream) C.envoy_dynamic_module_type_EventHttpRequestBodyStatus {
@@ -78,8 +78,8 @@ func envoy_dynamic_module_event_http_filter_instance_request_body(
 	return C.envoy_dynamic_module_type_EventHttpRequestBodyStatus(result)
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_response_headers
-func envoy_dynamic_module_event_http_filter_instance_response_headers(
+//export envoy_dynamic_module_on_http_filter_instance_response_headers
+func envoy_dynamic_module_on_http_filter_instance_response_headers(
 	httpFilterInstancePtr C.envoy_dynamic_module_type_HttpFilterInstancePtr,
 	responseHeadersMapPtr C.envoy_dynamic_module_type_HttpResponseHeaderMapPtr,
 	endOfStream C.envoy_dynamic_module_type_EndOfStream) C.envoy_dynamic_module_type_EventHttpResponseHeadersStatus {
@@ -90,8 +90,8 @@ func envoy_dynamic_module_event_http_filter_instance_response_headers(
 	return C.envoy_dynamic_module_type_EventHttpResponseHeadersStatus(result)
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_response_body
-func envoy_dynamic_module_event_http_filter_instance_response_body(
+//export envoy_dynamic_module_on_http_filter_instance_response_body
+func envoy_dynamic_module_on_http_filter_instance_response_body(
 	httpFilterInstancePtr C.envoy_dynamic_module_type_HttpFilterInstancePtr,
 	buffer C.envoy_dynamic_module_type_HttpResponseBodyBufferPtr,
 	endOfStream C.envoy_dynamic_module_type_EndOfStream) C.envoy_dynamic_module_type_EventHttpResponseBodyStatus {
@@ -102,8 +102,8 @@ func envoy_dynamic_module_event_http_filter_instance_response_body(
 	return C.envoy_dynamic_module_type_EventHttpResponseBodyStatus(result)
 }
 
-//export envoy_dynamic_module_event_http_filter_instance_destroy
-func envoy_dynamic_module_event_http_filter_instance_destroy(
+//export envoy_dynamic_module_on_http_filter_instance_destroy
+func envoy_dynamic_module_on_http_filter_instance_destroy(
 	httpFilterInstancePtr C.envoy_dynamic_module_type_HttpFilterInstancePtr) {
 	httpInstance := unwrapRawPinHttpFilterInstance(uintptr(httpFilterInstancePtr))
 	httpInstance.obj.Destroy()

@@ -6,4 +6,4 @@ int getSomeVariable() {
   return some_variable;
 }
 
-size_t envoy_dynamic_module_event_program_init() { return 0; }
+size_t envoy_dynamic_module_on_program_init() { return 0; }
