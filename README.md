@@ -1,4 +1,10 @@
-# Envoy + dynamic modules 
+> [!WARNING]
+> The work here has been upstreamd:
+> * https://github.com/envoyproxy/envoy/tree/main/source/extensions/dynamic_modules
+> * https://github.com/envoyproxy/envoy/tree/main/source/extensions/filters/http/dynamic_modules
+
+  
+# Envoy + dynamic modules (Archived)
 
 This is the repository that hosts the custom C++ code that is compiled togather with the Envoy Proxy code to allow dynamically loadable modules to be loaded as HTTP filters.
 
